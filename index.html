@@ -77,7 +77,7 @@
         </div>
     </section>
 
-    <!-- GALERIE DES PRODUITS -->
+    <!-- GALERIE DES PRODUITS (EXEMPLES / DEMO) -->
     <section class="max-w-7xl mx-auto px-5 py-8">
         <div class="flex items-center justify-between mb-8">
             <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2">
@@ -169,7 +169,16 @@
             <h3 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
                 <i class="fas fa-store text-violet-400"></i> Rejoindre WiseMarket
             </h3>
-            <p class="text-xs text-slate-400 mb-6">Exposez vos articles et recevez des commandes directement de clients togolais.</p>
+            <p class="text-xs text-slate-400 mb-4">Exposez vos articles et recevez des commandes directement de clients togolais.</p>
+
+            <!-- AVERTISSEMENT SÉCURITÉ / CNI -->
+            <div class="bg-amber-500/10 border border-amber-500/20 text-amber-300 p-3 rounded-2xl mb-5 flex items-start gap-2.5 text-[11px] leading-relaxed">
+                <i class="fas fa-shield-alt text-amber-400 text-sm mt-0.5"></i>
+                <div>
+                    <strong class="font-bold text-amber-200">Sécurité & Vérification :</strong><br>
+                    Une pièce d'identité valide (CNI ou Permis de conduire) vous sera demandée par message pour valider l'ouverture de votre boutique.
+                </div>
+            </div>
 
             <form onsubmit="envoyerDemandeVendeur(event)" class="space-y-4 text-xs">
                 <div>
@@ -179,7 +188,7 @@
 
                 <div>
                     <label class="block text-slate-300 mb-1 font-semibold">Votre Numéro WhatsApp</label>
-                    <input type="tel" id="vendeurTel" required placeholder="Ex: +228 90 00 00 00" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
+                    <input type="tel" id="vendeurTel" required placeholder="Ex: +228 97 81 73 76" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
                 </div>
 
                 <div>
@@ -204,7 +213,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT AVEC TON NUMÉRO INTEGRÉ -->
+    <!-- JAVASCRIPT -->
     <script>
         const MON_NUMERO_WHATSAPP = "22897817376"; 
 
