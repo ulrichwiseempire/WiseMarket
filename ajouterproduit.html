@@ -46,9 +46,9 @@
   <a href="index.html" class="back-link">⬅️ Retour à l'accueil</a>
 
   <script>
-    // Configuration de ton projet Supabase (Remplace avec tes vraies clés si nécessaire)
-    const SUPABASE_URL = "TON_URL_SUPABASE";
-    const SUPABASE_KEY = "TA_CLE_ANON_SUPABASE";
+    // Tes paramètres Supabase configurés
+    const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
+    const SUPABASE_KEY = "Sb_publishable_HEYqdUqe0zfTb1AodGsxeQ_Fv__b0tF";
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function ajouterProduit() {
@@ -100,7 +100,7 @@
         alert("Erreur d'enregistrement : " + insertError.message);
       } else {
         alert("Produit et photo publiés avec succès ! 🚀");
-        window.location.href = "index.html"; // Redirige vers l'accueil
+        window.location.href = "index.html";
       }
     }
   </script>
