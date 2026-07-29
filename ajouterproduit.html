@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajouter un produit - WiseMarket</title>
+  <!-- Chargement du script Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto; background-color: #f4f4f9; }
+    h2 { text-align: center; color: #333; }
+    form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    label { font-weight: bold; display: block; margin-top: 10px; }
+    input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+    button { width: 100%; background-color: #28a745; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; margin-top: 15px; cursor: pointer; }
+    button:hover { background-color: #218838; }
+    .back-link { display: block; text-align: center; margin-top: 15px; color: #007bff; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <h2>➕ Ajouter un nouveau produit</h2>
+
+  <form id="formProduit">
+    <label for="titre">Titre du produit :</label>
+    <input type="text" id="titre" placeholder="Ex: Chaussures Nike" required />
+
+    <label for="prix">Prix (FCFA) :</label>
+    <input type="number" id="prix" placeholder="Ex: 15000" required />
+
+    <label for="categorie">Catégorie :</label>
+    <input type="text" id="categorie" placeholder="Ex: Vêtements, Électronique..." required />
+
+    <label for="description">Description :</label>
+    <textarea id="description" rows="3" placeholder="Description de l'article..."></textarea>
+
+    <label for="vendeur_nom">Nom du vendeur :</label>
+    <input type="text" id="vendeur_nom" placeholder="Votre nom ou prénom" required />
+
+    <label for="imageFile">Photo du produit (Galerie) :</label>
+    <input type="file" id="imageFile" accept="image/*" required />
+
+    <button type="button" onclick="ajouterProduit()">Publier le produit</button>
+  </form>
+
+  <a href="index.html" class="back-link">⬅️ Retour à l'accueil</a>
+
+  <script>
+    // Configuration de ton projet Supabase (Remplace avec tes vraies clés si nécessaire)
+    const SUPABASE_URL = "TON_URL_SUPABASE";
+    const SUPABASE_KEY = "TA_CLE_ANON_SUPABASE";
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function ajouterProduit() {
+      const fileInput = document.getElementById('imageFile');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("Veuillez sélectionner une photo depuis votre galerie !");
+        return;
+      }
+
+      // Nom unique pour l'image
+      const fileName = `${Date.now()}_${file.name}`;
+
+      // 1. Envoi de la photo vers le bucket "produits-images"
+      const { data: uploadData, error: uploadError } = await supabase
+        .storage
+        .from('produits-images')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        alert("Erreur lors de l'envoi de la photo : " + uploadError.message);
+        return;
+      }
+
+      // 2. Récupération de l'URL publique de l'image
+      const { data: urlData } = supabase
+        .storage
+        .from('produits-images')
+        .getPublicUrl(fileName);
+
+      const imageUrl = urlData.publicUrl;
+
+      // 3. Enregistrement dans la table "produits"
+      const { error: insertError } = await supabase
+        .from('produits')
+        .insert([
+          {
+            titre: document.getElementById('titre').value,
+            prix: document.getElementById('prix').value,
+            categorie: document.getElementById('categorie').value,
+            description: document.getElementById('description').value,
+            image_url: imageUrl,
+            vendeur_nom: document.getElementById('vendeur_nom').value
+          }
+        ]);
+
+      if (insertError) {
+        alert("Erreur d'enregistrement : " + insertError.message);
+      } else {
+        alert("Produit et photo publiés avec succès ! 🚀");
+        window.location.href = "index.html"; // Redirige vers l'accueil
+      }
+    }
+  </script>
+</body>
+</html>
