@@ -27,9 +27,9 @@
             </a>
 
             <div class="flex items-center gap-4">
-                <a href="#vendeur" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition bg-slate-800/60 px-4 py-2 rounded-xl border border-slate-700/50">
-                    <i class="fas fa-store text-violet-400 mr-1.5"></i> Vendre
-                </a>
+                <button onclick="ouvrirModalVendeur()" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition bg-slate-800/60 px-4 py-2 rounded-xl border border-slate-700/50 flex items-center gap-2">
+                    <i class="fas fa-store text-violet-400"></i> Devenir Vendeur
+                </button>
             </div>
         </div>
     </header>
@@ -159,11 +159,56 @@
         </div>
     </section>
 
-    <!-- JAVASCRIPT POUR L'ENVOI WHATSAPP -->
-    <script>
-        // Remplace par ton vrai numéro WhatsApp (ex: 22891234567)
-        const MON_NUMERO_WHATSAPP = "22890000000"; 
+    <!-- MODALE "DEVENIR VENDEUR" -->
+    <div id="modalVendeur" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-[#0F172A] border border-slate-800 w-full max-w-lg rounded-3xl p-6 relative glow-violet">
+            <button onclick="fermerModalVendeur()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg">
+                <i class="fas fa-times"></i>
+            </button>
 
+            <h3 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
+                <i class="fas fa-store text-violet-400"></i> Rejoindre WiseMarket
+            </h3>
+            <p class="text-xs text-slate-400 mb-6">Exposez vos articles et recevez des commandes directement de clients togolais.</p>
+
+            <form onsubmit="envoyerDemandeVendeur(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block text-slate-300 mb-1 font-semibold">Nom de votre Boutique / Artisan</label>
+                    <input type="text" id="vendeurNom" required placeholder="Ex: Maison du Parfum, Artiste Koffi..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 mb-1 font-semibold">Votre Numéro WhatsApp</label>
+                    <input type="tel" id="vendeurTel" required placeholder="Ex: +228 90 00 00 00" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 mb-1 font-semibold">Catégorie d'articles</label>
+                    <select id="vendeurCategorie" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
+                        <option value="Parfums">Parfums & Beauté</option>
+                        <option value="Mode">Mode & Vêtements</option>
+                        <option value="Portraits">Portraits & Tableaux Sur-Mesure</option>
+                        <option value="Autre">Autre produit</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 mb-1 font-semibold">Description courte de ce que vous vendez</label>
+                    <textarea id="vendeurDesc" rows="3" required placeholder="Décrivez vos produits et vos prix moyens..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-violet-600/30">
+                    <i class="fab fa-whatsapp mr-2 text-sm"></i> Envoyer ma candidature
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT AVEC TON NUMÉRO INTEGRÉ -->
+    <script>
+        const MON_NUMERO_WHATSAPP = "22897817376"; 
+
+        // Commander un produit
         function commanderWA(nomProduit, prix, estSurMesure = false) {
             let message = `Bonjour WiseMarket ! 👋\nJe souhaite commander le produit suivant :\n\n📌 *Article* : ${nomProduit}\n💰 *Prix* : ${prix}`;
             
@@ -178,6 +223,30 @@
 
             const url = `https://wa.me/${MON_NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');
+        }
+
+        // Gestion de la modale Vendeur
+        function ouvrirModalVendeur() {
+            document.getElementById('modalVendeur').classList.remove('hidden');
+        }
+
+        function fermerModalVendeur() {
+            document.getElementById('modalVendeur').classList.add('hidden');
+        }
+
+        // Soumission du formulaire vendeur
+        function envoyerDemandeVendeur(event) {
+            event.preventDefault();
+            const nom = document.getElementById('vendeurNom').value;
+            const tel = document.getElementById('vendeurTel').value;
+            const cat = document.getElementById('vendeurCategorie').value;
+            const desc = document.getElementById('vendeurDesc').value;
+
+            const message = `Bonjour WiseMarket ! 🏪\nJe souhaite devenir vendeur sur la plateforme.\n\n👤 *Boutique/Nom* : ${nom}\n📱 *WhatsApp* : ${tel}\n🏷️ *Catégorie* : ${cat}\n📝 *Description* : ${desc}`;
+
+            const url = `https://wa.me/${MON_NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            fermerModalVendeur();
         }
     </script>
 
