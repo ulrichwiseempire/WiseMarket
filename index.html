@@ -22,12 +22,10 @@
     <!-- NAVBAR -->
     <header class="border-b border-slate-800/80 bg-[#090D16]/90 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
-            <!-- Logo -->
             <a href="#" class="text-2xl font-black tracking-tight text-white flex items-center gap-2">
-                <span class="bg-gradient-to-r from-violet-500 to-indigo-500 text-transparent bg-clip-text">Wise</span>Market
+                <span class="bg-gradient-to-r from-violet-400 via-indigo-300 to-emerald-400 text-transparent bg-clip-text">Wise</span>Market
             </a>
 
-            <!-- Navigation Quick Links -->
             <div class="flex items-center gap-4">
                 <a href="#vendeur" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition bg-slate-800/60 px-4 py-2 rounded-xl border border-slate-700/50">
                     <i class="fas fa-store text-violet-400 mr-1.5"></i> Vendre
@@ -38,12 +36,10 @@
 
     <!-- BANNIÈRE PRINCIPALE (HERO) -->
     <section class="max-w-5xl mx-auto px-5 pt-12 pb-8 text-center">
-        <!-- Badge -->
         <div class="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-6">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 🇹🇬 La vitrine du savoir-faire togolais
         </div>
 
-        <!-- Grand Titre -->
         <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight mb-5">
             Découvrez des créations <br class="hidden sm:inline"/>
             <span class="bg-gradient-to-r from-violet-400 via-indigo-300 to-emerald-400 text-transparent bg-clip-text">uniques & faites pour vous</span>
@@ -53,7 +49,7 @@
             Commandez vos vêtements, parfums exclusifs ou demandez un portrait personnalisé réalisé sur-mesure par nos artisans.
         </p>
 
-        <!-- BARRE DE RECHERCHE PRINCIPALE -->
+        <!-- BARRE DE RECHERCHE -->
         <div class="max-w-xl mx-auto relative mb-12">
             <div class="glass-card rounded-2xl p-2 flex items-center glow-violet border border-violet-500/30">
                 <i class="fas fa-search text-slate-400 ml-3 mr-2"></i>
@@ -102,10 +98,9 @@
                     <h3 class="font-bold text-lg text-white mt-1">Portrait Dessiné Personnalisé</h3>
                     <p class="text-xs text-slate-400 mt-1 mb-4">Envoyez la photo de votre choix et recevez votre portrait chez vous.</p>
                     
-                    <!-- Upload Photo -->
                     <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 mb-4">
                         <label class="block text-[11px] text-slate-300 font-medium mb-1.5"><i class="fas fa-upload text-violet-400 mr-1"></i> Importer votre photo :</label>
-                        <input type="file" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-violet-600/20 file:text-violet-300 hover:file:bg-violet-600/30">
+                        <input type="file" id="photoInput" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-violet-600/20 file:text-violet-300 hover:file:bg-violet-600/30">
                     </div>
                 </div>
                 <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
@@ -113,7 +108,7 @@
                         <span class="text-[10px] text-slate-400 block">Prix à partir de</span>
                         <span class="font-black text-lg text-emerald-400">25 000 FCFA</span>
                     </div>
-                    <button class="bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-lg shadow-violet-600/30">
+                    <button onclick="commanderWA('Portrait Dessiné Personnalisé', '25 000 FCFA', true)" class="bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-lg shadow-violet-600/30">
                         Commander
                     </button>
                 </div>
@@ -123,7 +118,7 @@
             <div class="glass-card rounded-3xl p-5 flex flex-col justify-between hover:border-slate-700 transition">
                 <div>
                     <div class="w-full h-48 bg-slate-900/80 rounded-2xl mb-4 flex items-center justify-center text-slate-500 border border-slate-800">
-                        <i class="fas fa-[#e0e0e0] fa-wine-bottle text-5xl"></i>
+                        <i class="fas fa-wine-bottle text-5xl text-violet-300"></i>
                     </div>
                     <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Parfumerie</span>
                     <h3 class="font-bold text-lg text-white mt-1">Parfum De Luxe (50ml)</h3>
@@ -134,7 +129,7 @@
                         <span class="text-[10px] text-slate-400 block">Prix</span>
                         <span class="font-black text-lg text-white">15 000 FCFA</span>
                     </div>
-                    <button class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition">
+                    <button onclick="commanderWA('Parfum De Luxe (50ml)', '15 000 FCFA')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition">
                         Commander
                     </button>
                 </div>
@@ -144,7 +139,7 @@
             <div class="glass-card rounded-3xl p-5 flex flex-col justify-between hover:border-slate-700 transition">
                 <div>
                     <div class="w-full h-48 bg-slate-900/80 rounded-2xl mb-4 flex items-center justify-center text-slate-500 border border-slate-800">
-                        <i class="fas fa-tshirt text-5xl"></i>
+                        <i class="fas fa-tshirt text-5xl text-emerald-300"></i>
                     </div>
                     <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Vêtements</span>
                     <h3 class="font-bold text-lg text-white mt-1">Ensemble Tissu Traditionnel</h3>
@@ -155,7 +150,7 @@
                         <span class="text-[10px] text-slate-400 block">Prix</span>
                         <span class="font-black text-lg text-white">20 000 FCFA</span>
                     </div>
-                    <button class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition">
+                    <button onclick="commanderWA('Ensemble Tissu Traditionnel', '20 000 FCFA')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition">
                         Commander
                     </button>
                 </div>
@@ -163,6 +158,28 @@
 
         </div>
     </section>
+
+    <!-- JAVASCRIPT POUR L'ENVOI WHATSAPP -->
+    <script>
+        // Remplace par ton vrai numéro WhatsApp (ex: 22891234567)
+        const MON_NUMERO_WHATSAPP = "22890000000"; 
+
+        function commanderWA(nomProduit, prix, estSurMesure = false) {
+            let message = `Bonjour WiseMarket ! 👋\nJe souhaite commander le produit suivant :\n\n📌 *Article* : ${nomProduit}\n💰 *Prix* : ${prix}`;
+            
+            if (estSurMesure) {
+                const inputPhoto = document.getElementById('photoInput');
+                if (inputPhoto && inputPhoto.files.length > 0) {
+                    message += `\n📸 *Photo* : J'ai sélectionné une photo sur le site et je vous l'envoie ci-joint.`;
+                } else {
+                    message += `\n🎨 *Portrait* : Je vais vous envoyer la photo directement dans ce chat.`;
+                }
+            }
+
+            const url = `https://wa.me/${MON_NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+    </script>
 
 </body>
 </html>
