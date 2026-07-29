@@ -22,6 +22,9 @@
     </style>
 
     <script>
+        // NUMÉRO SERVICE CLIENT PRO (WhatsApp Business)
+        var numeroServiceClient = "22872119966";
+
         function ouvrirModalVendeur() {
             var modal = document.getElementById('modalVendeur');
             if (modal) modal.style.display = 'flex';
@@ -34,7 +37,6 @@
 
         // FONCTION COMMANDER
         function commanderWA(nomProduit, prix, estSurMesure = false) {
-            var numero = "22897817376";
             var message = "Bonjour WiseMarket ! 👋\nJe souhaite commander :\n\n📌 *Article* : " + nomProduit + "\n💰 *Prix* : " + prix;
             
             if (estSurMesure) {
@@ -46,14 +48,13 @@
                 }
             }
 
-            var url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(message);
+            var url = "https://wa.me/" + numeroServiceClient + "?text=" + encodeURIComponent(message);
             window.open(url, '_blank');
         }
 
         // FONCTION DEVENIR VENDEUR
         function envoyerDemandeVendeur(event) {
             event.preventDefault();
-            var numero = "22897817376";
             var nom = document.getElementById('vendeurNom').value;
             var boutique = document.getElementById('vendeurBoutique').value;
             var tel = document.getElementById('vendeurTel').value;
@@ -62,7 +63,7 @@
 
             var message = "Bonjour WiseMarket ! 🏪\nJe souhaite devenir vendeur sur la plateforme (1er mois gratuit).\n\n👤 *Gérant* : " + nom + "\n🏢 *Boutique* : " + boutique + "\n📱 *WhatsApp* : " + tel + "\n🏷️ *Catégorie* : " + cat + "\n📝 *Description* : " + desc;
 
-            var url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(message);
+            var url = "https://wa.me/" + numeroServiceClient + "?text=" + encodeURIComponent(message);
             window.open(url, '_blank');
             fermerModalVendeur();
         }
@@ -296,4 +297,4 @@
 
 </body>
     </html>
-    
+                        
