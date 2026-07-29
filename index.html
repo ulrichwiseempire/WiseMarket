@@ -1,263 +1,77 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiseMarket - Plateforme E-Commerce Togo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .glow-violet {
-            box-shadow: 0 0 25px rgba(139, 92, 246, 0.25);
-        }
-        .glass-card {
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WiseMarket</title>
+  <!-- Chargement du SDK Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-[#090D16] text-slate-100 font-sans min-h-screen pb-20 selection:bg-violet-500 selection:text-white">
+<body>
 
-    <!-- NAVBAR -->
-    <header class="border-b border-slate-800/80 bg-[#090D16]/90 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
-            <a href="#" class="text-2xl font-black tracking-tight text-white flex items-center gap-2">
-                <span class="bg-gradient-to-r from-violet-400 via-indigo-300 to-emerald-400 text-transparent bg-clip-text">Wise</span>Market
-            </a>
+  <header>
+    <h1>WiseMarket</h1>
+    <!-- Lien vers la page d'ajout de produit -->
+    <a href="ajouterproduit.html">➕ Vendre un produit</a>
+  </header>
 
-            <div class="flex items-center gap-4">
-                <button onclick="ouvrirModalVendeur()" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition bg-slate-800/60 px-4 py-2 rounded-xl border border-slate-700/50 flex items-center gap-2">
-                    <i class="fas fa-store text-violet-400"></i> Devenir Vendeur
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- BANNIÈRE PRINCIPALE (HERO) -->
-    <section class="max-w-5xl mx-auto px-5 pt-12 pb-8 text-center">
-        <div class="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-6">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 🇹🇬 La vitrine du savoir-faire togolais
-        </div>
-
-        <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight mb-5">
-            Découvrez des créations <br class="hidden sm:inline"/>
-            <span class="bg-gradient-to-r from-violet-400 via-indigo-300 to-emerald-400 text-transparent bg-clip-text">uniques & faites pour vous</span>
-        </h1>
-
-        <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base mb-8">
-            Commandez vos vêtements, parfums exclusifs ou demandez un portrait personnalisé réalisé sur-mesure par nos artisans.
-        </p>
-
-        <!-- BARRE DE RECHERCHE -->
-        <div class="max-w-xl mx-auto relative mb-12">
-            <div class="glass-card rounded-2xl p-2 flex items-center glow-violet border border-violet-500/30">
-                <i class="fas fa-search text-slate-400 ml-3 mr-2"></i>
-                <input type="text" placeholder="Que recherchez-vous aujourd'hui ?" class="bg-transparent w-full outline-none text-sm text-slate-200 placeholder-slate-500">
-                <button class="bg-violet-600 hover:bg-violet-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">
-                    Chercher
-                </button>
-            </div>
-        </div>
-
-        <!-- CARTES DE CATÉGORIES -->
-        <div class="grid grid-cols-3 gap-3 max-w-3xl mx-auto">
-            <div class="glass-card p-4 rounded-2xl text-center hover:border-violet-500/50 transition cursor-pointer">
-                <div class="text-2xl mb-1">👔</div>
-                <div class="text-xs font-bold text-slate-200">Mode</div>
-            </div>
-            <div class="glass-card p-4 rounded-2xl text-center hover:border-violet-500/50 transition cursor-pointer">
-                <div class="text-2xl mb-1">✨</div>
-                <div class="text-xs font-bold text-slate-200">Parfums</div>
-            </div>
-            <div class="glass-card p-4 rounded-2xl text-center hover:border-emerald-500/50 transition cursor-pointer border-emerald-500/20">
-                <div class="text-2xl mb-1">🎨</div>
-                <div class="text-xs font-bold text-emerald-400">Sur-mesure</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- GALERIE DES PRODUITS (EXEMPLES / DEMO) -->
-    <section class="max-w-7xl mx-auto px-5 py-8">
-        <div class="flex items-center justify-between mb-8">
-            <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2">
-                <i class="fas fa-sparkles text-violet-400"></i> À la une
-            </h2>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-            <!-- Produit : Portrait sur-mesure -->
-            <div class="glass-card rounded-3xl p-5 border border-violet-500/30 glow-violet flex flex-col justify-between relative overflow-hidden">
-                <span class="absolute top-4 right-4 bg-emerald-500 text-black font-black text-[10px] px-2.5 py-1 rounded-full uppercase">Sur-Mesure</span>
-                <div>
-                    <div class="w-full h-48 bg-slate-900/80 rounded-2xl mb-4 flex items-center justify-center text-violet-400 border border-slate-800">
-                        <i class="fas fa-paint-brush text-5xl"></i>
-                    </div>
-                    <span class="text-[11px] font-semibold text-violet-400 uppercase tracking-wider">Art & Portrait</span>
-                    <h3 class="font-bold text-lg text-white mt-1">Portrait Dessiné Personnalisé</h3>
-                    <p class="text-xs text-slate-400 mt-1 mb-4">Envoyez la photo de votre choix et recevez votre portrait chez vous.</p>
-                    
-                    <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 mb-4">
-                        <label class="block text-[11px] text-slate-300 font-medium mb-1.5"><i class="fas fa-upload text-violet-400 mr-1"></i> Importer votre photo :</label>
-                        <input type="file" id="photoInput" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-violet-600/20 file:text-violet-300 hover:file:bg-violet-600/30">
-                    </div>
-                </div>
-                <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                    <div>
-                        <span class="text-[10px] text-slate-400 block">Prix à partir de</span>
-                        <span class="font-black text-lg text-emerald-400">25 000 FCFA</span>
-                    </div>
-                    <button onclick="commanderWA('Portrait Dessiné Personnalisé', '25 000 FCFA', true)" class="bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-lg shadow-violet-600/30">
-                        Commander
-                    </button>
-                </div>
-            </div>
-
-            <!-- Produit : Parfum -->
-            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between hover:border-slate-700 transition">
-                <div>
-                    <div class="w-full h-48 bg-slate-900/80 rounded-2xl mb-4 flex items-center justify-center text-slate-500 border border-slate-800">
-                        <i class="fas fa-wine-bottle text-5xl text-violet-300"></i>
-                    </div>
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Parfumerie</span>
-                    <h3 class="font-bold text-lg text-white mt-1">Parfum De Luxe (50ml)</h3>
-                    <p class="text-xs text-slate-400 mt-1 mb-4">Fragrance tenue longue durée, collection réservée.</p>
-                </div>
-                <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                    <div>
-                        <span class="text-[10px] text-slate-400 block">Prix</span>
-                        <span class="font-black text-lg text-white">15 000 FCFA</span>
-                    </div>
-                    <button onclick="commanderWA('Parfum De Luxe (50ml)', '15 000 FCFA')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition">
-                        Commander
-                    </button>
-                </div>
-            </div>
-
-            <!-- Produit : Mode -->
-            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between hover:border-slate-700 transition">
-                <div>
-                    <div class="w-full h-48 bg-slate-900/80 rounded-2xl mb-4 flex items-center justify-center text-slate-500 border border-slate-800">
-                        <i class="fas fa-tshirt text-5xl text-emerald-300"></i>
-                    </div>
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Vêtements</span>
-                    <h3 class="font-bold text-lg text-white mt-1">Ensemble Tissu Traditionnel</h3>
-                    <p class="text-xs text-slate-400 mt-1 mb-4">Cousu à la main par nos maîtres tailleurs locaux.</p>
-                </div>
-                <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                    <div>
-                        <span class="text-[10px] text-slate-400 block">Prix</span>
-                        <span class="font-black text-lg text-white">20 000 FCFA</span>
-                    </div>
-                    <button onclick="commanderWA('Ensemble Tissu Traditionnel', '20 000 FCFA')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition">
-                        Commander
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- MODALE "DEVENIR VENDEUR" -->
-    <div id="modalVendeur" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-[#0F172A] border border-slate-800 w-full max-w-lg rounded-3xl p-6 relative glow-violet">
-            <button onclick="fermerModalVendeur()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg">
-                <i class="fas fa-times"></i>
-            </button>
-
-            <h3 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
-                <i class="fas fa-store text-violet-400"></i> Rejoindre WiseMarket
-            </h3>
-            <p class="text-xs text-slate-400 mb-4">Exposez vos articles et recevez des commandes directement de clients togolais.</p>
-
-            <!-- AVERTISSEMENT SÉCURITÉ / CNI -->
-            <div class="bg-amber-500/10 border border-amber-500/20 text-amber-300 p-3 rounded-2xl mb-5 flex items-start gap-2.5 text-[11px] leading-relaxed">
-                <i class="fas fa-shield-alt text-amber-400 text-sm mt-0.5"></i>
-                <div>
-                    <strong class="font-bold text-amber-200">Sécurité & Vérification :</strong><br>
-                    Une pièce d'identité valide (CNI ou Permis de conduire) vous sera demandée par message pour valider l'ouverture de votre boutique.
-                </div>
-            </div>
-
-            <form onsubmit="envoyerDemandeVendeur(event)" class="space-y-4 text-xs">
-                <div>
-                    <label class="block text-slate-300 mb-1 font-semibold">Nom de votre Boutique / Artisan</label>
-                    <input type="text" id="vendeurNom" required placeholder="Ex: Maison du Parfum, Artiste Koffi..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
-                </div>
-
-                <div>
-                    <label class="block text-slate-300 mb-1 font-semibold">Votre Numéro WhatsApp</label>
-                    <input type="tel" id="vendeurTel" required placeholder="Ex: +228 97 81 73 76" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
-                </div>
-
-                <div>
-                    <label class="block text-slate-300 mb-1 font-semibold">Catégorie d'articles</label>
-                    <select id="vendeurCategorie" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
-                        <option value="Parfums">Parfums & Beauté</option>
-                        <option value="Mode">Mode & Vêtements</option>
-                        <option value="Portraits">Portraits & Tableaux Sur-Mesure</option>
-                        <option value="Autre">Autre produit</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-slate-300 mb-1 font-semibold">Description courte de ce que vous vendez</label>
-                    <textarea id="vendeurDesc" rows="3" required placeholder="Décrivez vos produits et vos prix moyens..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500"></textarea>
-                </div>
-
-                <button type="submit" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-violet-600/30">
-                    <i class="fab fa-whatsapp mr-2 text-sm"></i> Envoyer ma candidature
-                </button>
-            </form>
-        </div>
+  <main>
+    <h2>Produits disponibles</h2>
+    <!-- Emplacement où les produits seront affichés -->
+    <div id="liste-produits">
+      <p>Chargement des produits...</p>
     </div>
+  </main>
 
-    <!-- JAVASCRIPT -->
-    <script>
-        const MON_NUMERO_WHATSAPP = "22897817376"; 
+  <script>
+    // Tes paramètres Supabase configurés
+    const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
+    const SUPABASE_KEY = "Sb_publishable_HEYqdUqe0zfTb1AodGsxeQ_Fv__b0tF";
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Commander un produit
-        function commanderWA(nomProduit, prix, estSurMesure = false) {
-            let message = `Bonjour WiseMarket ! 👋\nJe souhaite commander le produit suivant :\n\n📌 *Article* : ${nomProduit}\n💰 *Prix* : ${prix}`;
-            
-            if (estSurMesure) {
-                const inputPhoto = document.getElementById('photoInput');
-                if (inputPhoto && inputPhoto.files.length > 0) {
-                    message += `\n📸 *Photo* : J'ai sélectionné une photo sur le site et je vous l'envoie ci-joint.`;
-                } else {
-                    message += `\n🎨 *Portrait* : Je vais vous envoyer la photo directement dans ce chat.`;
-                }
-            }
+    // Fonction pour charger et afficher la liste des produits
+    async function chargerProduits() {
+      const { data: produits, error } = await supabase
+        .from('produits')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-            const url = `https://wa.me/${MON_NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
-        }
+      const conteneur = document.getElementById('liste-produits');
 
-        // Gestion de la modale Vendeur
-        function ouvrirModalVendeur() {
-            document.getElementById('modalVendeur').classList.remove('hidden');
-        }
+      if (error) {
+        conteneur.innerHTML = "<p>Erreur lors du chargement des produits.</p>";
+        console.error("Erreur Supabase:", error);
+        return;
+      }
 
-        function fermerModalVendeur() {
-            document.getElementById('modalVendeur').classList.add('hidden');
-        }
+      if (!produits || produits.length === 0) {
+        conteneur.innerHTML = "<p>Aucun produit disponible pour le moment.</p>";
+        return;
+      }
 
-        // Soumission du formulaire vendeur
-        function envoyerDemandeVendeur(event) {
-            event.preventDefault();
-            const nom = document.getElementById('vendeurNom').value;
-            const tel = document.getElementById('vendeurTel').value;
-            const cat = document.getElementById('vendeurCategorie').value;
-            const desc = document.getElementById('vendeurDesc').value;
+      // Vider le conteneur avant d'ajouter la liste
+      conteneur.innerHTML = "";
 
-            const message = `Bonjour WiseMarket ! 🏪\nJe souhaite devenir vendeur sur la plateforme.\n\n👤 *Boutique/Nom* : ${nom}\n📱 *WhatsApp* : ${tel}\n🏷️ *Catégorie* : ${cat}\n📝 *Description* : ${desc}`;
+      // Afficher chaque produit
+      produits.forEach(produit => {
+        const carteProduit = document.createElement('div');
+        carteProduit.innerHTML = `
+          <div>
+            <img src="${produit.image_url}" alt="${produit.titre}" style="max-width: 200px; display: block;" />
+            <h3>${produit.titre}</h3>
+            <p><strong>Prix :</strong> ${produit.prix} FCFA</p>
+            <p><strong>Catégorie :</strong> ${produit.categorie || 'Non spécifiée'}</p>
+            <p><strong>Vendeur :</strong> ${produit.vendeur_nom || 'Anonyme'}</p>
+            <p>${produit.description || ''}</p>
+          </div>
+          <hr />
+        `;
+        conteneur.appendChild(carteProduit);
+      });
+    }
 
-            const url = `https://wa.me/${MON_NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
-            fermerModalVendeur();
-        }
-    </script>
-
+    // Lancer la récupération dès le chargement de la page
+    chargerProduits();
+  </script>
 </body>
 </html>
