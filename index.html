@@ -21,33 +21,27 @@
         }
     </style>
 
-    <!-- SCRIPT DE LA MODALE PLACÉ TOUT EN HAUT POUR UN DÉCLENCHEMENT IMMÉDIAT -->
     <script>
         function ouvrirModalVendeur() {
             var modal = document.getElementById('modalVendeur');
-            if (modal) {
-                modal.style.display = 'flex';
-            }
+            if (modal) modal.style.display = 'flex';
         }
 
         function fermerModalVendeur() {
             var modal = document.getElementById('modalVendeur');
-            if (modal) {
-                modal.style.display = 'none';
-            }
+            if (modal) modal.style.display = 'none';
         }
     </script>
 </head>
 <body class="bg-[#090D16] text-slate-100 font-sans min-h-screen pb-20 selection:bg-violet-500 selection:text-white">
 
-    <!-- NAVBAR PROPRE ET BIEN ALIGNÉE -->
+    <!-- NAVBAR -->
     <header class="border-b border-slate-800/80 bg-[#090D16]/90 backdrop-blur-md sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-3.5 flex items-center justify-between">
             <a href="index.html" class="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-1.5">
                 <span class="bg-gradient-to-r from-violet-400 via-indigo-300 to-emerald-400 text-transparent bg-clip-text">Wise</span>Market
             </a>
 
-            <!-- BOUTON AVEC SUPPORT TACTILE OPTIMISÉ POUR MOBILE -->
             <button type="button" onclick="ouvrirModalVendeur()" ontouchstart="ouvrirModalVendeur()" class="text-xs sm:text-sm font-semibold text-white bg-violet-600 hover:bg-violet-500 transition px-4 py-2.5 rounded-xl border border-violet-500/40 flex items-center gap-2 shadow-lg shadow-violet-600/30 cursor-pointer active:scale-95">
                 <i class="fas fa-store text-violet-200"></i> Espace Vendeur
             </button>
@@ -128,7 +122,7 @@
                         <span class="text-[10px] text-slate-400 block">Prix à partir de</span>
                         <span class="font-black text-base text-emerald-400">5 000 FCFA</span>
                     </div>
-                    <button onclick="commanderWA('Portrait Dessiné Personnalisé', '5 000 FCFA', true)" class="bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-lg shadow-violet-600/30">
+                    <button type="button" onclick="commanderWA('Portrait Dessiné Personnalisé', '5 000 FCFA', true)" class="bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-lg shadow-violet-600/30 cursor-pointer">
                         Commander
                     </button>
                 </div>
@@ -149,7 +143,7 @@
                         <span class="text-[10px] text-slate-400 block">Prix</span>
                         <span class="font-black text-base text-white">4 500 FCFA</span>
                     </div>
-                    <button onclick="commanderWA('Parfum De Luxe (50ml)', '4 500 FCFA')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition">
+                    <button type="button" onclick="commanderWA('Parfum De Luxe (50ml)', '4 500 FCFA')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition cursor-pointer">
                         Commander
                     </button>
                 </div>
@@ -170,7 +164,7 @@
                         <span class="text-[10px] text-slate-400 block">Prix</span>
                         <span class="font-black text-base text-white">8 500 FCFA</span>
                     </div>
-                    <button onclick="commanderWA('Ensemble Tissu Traditionnel', '8 500 FCFA')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition">
+                    <button type="button" onclick="commanderWA('Ensemble Tissu Traditionnel', '8 500 FCFA')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition cursor-pointer">
                         Commander
                     </button>
                 </div>
@@ -179,7 +173,7 @@
         </div>
     </section>
 
-    <!-- SECTION DES PRODUITS PUBLIÉS PAR LES VENDEURS -->
+    <!-- PRODUITS SUPABASE -->
     <section class="max-w-7xl mx-auto px-5 py-6 border-t border-slate-800/60">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-base sm:text-lg font-bold flex items-center gap-2">
@@ -194,7 +188,7 @@
         </div>
     </section>
 
-    <!-- FENÊTRE POP-UP ESPACE VENDEUR (STYLE DISPLAY BLOC GARANTI) -->
+    <!-- FENÊTRE POP-UP ESPACE VENDEUR -->
     <div id="modalVendeur" onclick="if(event.target === this) fermerModalVendeur();" style="display: none;" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[9999] items-center justify-center p-4">
         <div class="bg-[#0F172A] border border-slate-800 w-full max-w-lg rounded-3xl p-6 relative glow-violet max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="fermerModalVendeur()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg p-2">
@@ -206,11 +200,11 @@
             </h3>
             <p class="text-xs text-slate-400 mb-4">Rejoignez notre réseau ou ajoutez un nouvel article à votre boutique.</p>
 
-            <!-- BOUTON EXCLUSIF POUR LES VENDEURS DÉJÀ INSCRITS -->
+            <!-- ESPACE VENDEUR DÉJÀ VALIDÉ -->
             <div class="bg-violet-950/40 border border-violet-500/30 p-3.5 rounded-2xl mb-5 flex items-center justify-between">
                 <div>
-                    <h4 class="text-xs font-bold text-violet-200">Déjà vendeur ?</h4>
-                    <p class="text-[10px] text-slate-400">Ajoutez rapidement un produit sur le site.</p>
+                    <h4 class="text-xs font-bold text-violet-200">Déjà vendeur approuvé ?</h4>
+                    <p class="text-[10px] text-slate-400">Ajoutez un produit sur le site.</p>
                 </div>
                 <a href="ajouterproduit.html" class="bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
                     <i class="fas fa-plus"></i> Publier un produit
@@ -223,15 +217,21 @@
                     <i class="fas fa-shield-alt text-amber-400 text-sm mt-0.5"></i>
                     <div>
                         <strong class="font-bold text-amber-200">Offre 1er mois GRATUIT :</strong><br>
-                        Pour des raisons de sécurité, une photo de votre pièce d'identité (CNI, Permis ou Passeport) vous sera demandée sur WhatsApp.
+                        Une photo de votre pièce d'identité (CNI, Permis ou Passeport) vous sera demandée sur WhatsApp pour valider votre compte.
                     </div>
                 </div>
             </div>
 
+            <!-- FORMULAIRE AVEC CHAMPS BIEN SÉPARÉS -->
             <form onsubmit="envoyerDemandeVendeur(event)" class="space-y-3.5 text-xs">
                 <div>
-                    <label class="block text-slate-300 mb-1 font-semibold">Nom & Prénom / Nom de la Boutique</label>
-                    <input type="text" id="vendeurNom" required placeholder="Ex: Boutique Awa, Artiste Koffi..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
+                    <label class="block text-slate-300 mb-1 font-semibold">Nom & Prénom du Gérant</label>
+                    <input type="text" id="vendeurNom" required placeholder="Ex: Yao Koffi" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 mb-1 font-semibold">Nom de la Boutique / Marque</label>
+                    <input type="text" id="vendeurBoutique" required placeholder="Ex: Boutique Awa Elegance" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
                 </div>
 
                 <div>
@@ -251,33 +251,19 @@
 
                 <div>
                     <label class="block text-slate-300 mb-1 font-semibold">Description courte</label>
-                    <textarea id="vendeurDesc" rows="2.5" required placeholder="Présentez vos articles en quelques mots..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500"></textarea>
+                    <textarea id="vendeurDesc" rows="2 font-normal" required placeholder="Présentez ce que vous vendez..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500"></textarea>
                 </div>
 
-                <button type="submit" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-violet-600/30">
+                <button type="submit" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-violet-600/30 cursor-pointer">
                     <i class="fab fa-whatsapp mr-2 text-sm"></i> Soumettre ma candidature
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT DU SITE (COMMANDES WA & SUPABASE) -->
+    <!-- SCRIPTS ENVOI WHATSAPP DIRECT SANS BUG -->
     <script>
         const MON_NUMERO_WHATSAPP = "22897817376"; 
-
-        function envoyerDemandeVendeur(event) {
-            event.preventDefault();
-            const nom = document.getElementById('vendeurNom').value;
-            const tel = document.getElementById('vendeurTel').value;
-            const cat = document.getElementById('vendeurCategorie').value;
-            const desc = document.getElementById('vendeurDesc').value;
-
-            const message = `Bonjour WiseMarket ! 🏪\nJe souhaite devenir vendeur sur la plateforme (Offre 1er mois gratuit).\n\n👤 *Nom / Boutique* : ${nom}\n📱 *WhatsApp* : ${tel}\n🏷️ *Catégorie* : ${cat}\n📝 *Description* : ${desc}`;
-
-            const url = `https://wa.me/${MON_NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
-            fermerModalVendeur();
-        }
 
         function commanderWA(nomProduit, prix, estSurMesure = false) {
             let message = `Bonjour WiseMarket ! 👋\nJe souhaite commander l'article suivant :\n\n📌 *Article* : ${nomProduit}\n💰 *Prix* : ${prix}`;
@@ -285,14 +271,29 @@
             if (estSurMesure) {
                 const inputPhoto = document.getElementById('photoInput');
                 if (inputPhoto && inputPhoto.files.length > 0) {
-                    message += `\n📸 *Photo* : J'ai joint ma photo sur le site et je vous l'envoie ci-joint.`;
+                    message += `\n📸 *Photo* : J'ai sélectionné une photo à dessiner.`;
                 } else {
-                    message += `\n🎨 *Portrait* : Je vais vous envoyer la photo à dessiner directement ici.`;
+                    message += `\n🎨 *Portrait* : Je vais vous envoyer la photo à dessiner directement ici sur WhatsApp.`;
                 }
             }
 
             const url = `https://wa.me/${MON_NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
+            window.location.href = url;
+        }
+
+        function envoyerDemandeVendeur(event) {
+            event.preventDefault();
+            const nom = document.getElementById('vendeurNom').value;
+            const boutique = document.getElementById('vendeurBoutique').value;
+            const tel = document.getElementById('vendeurTel').value;
+            const cat = document.getElementById('vendeurCategorie').value;
+            const desc = document.getElementById('vendeurDesc').value;
+
+            const message = `Bonjour WiseMarket ! 🏪\nJe souhaite devenir vendeur sur la plateforme (Offre 1er mois gratuit).\n\n👤 *Gérant* : ${nom}\n🏢 *Boutique* : ${boutique}\n📱 *WhatsApp* : ${tel}\n🏷️ *Catégorie* : ${cat}\n📝 *Description* : ${desc}`;
+
+            const url = `https://wa.me/${MON_NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
+            window.location.href = url;
+            fermerModalVendeur();
         }
 
         // CHARGEMENT SUPABASE
@@ -326,6 +327,4 @@
                                 <div class="w-full h-48 rounded-2xl mb-3 overflow-hidden border border-slate-800/80 relative">
                                     <img src="${produit.image_url}" alt="${produit.titre}" class="w-full h-full object-cover">
                                 </div>
-                                <span class="text-[10px] font-semibold text-violet-400 uppercase tracking-wider">${produit.categorie || 'Article'}</span>
-                                <h3 class="font-bold text-base text-white mt-0.5">${produit.titre}</h3>
-                                <p class="text-xs text-slate-400 mt-1 mb-2">${produit.description ||
+                                <span class="text-[10px] font-semibold text-violet-400
