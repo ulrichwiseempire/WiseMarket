@@ -1,108 +1,148 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ajouter un produit - WiseMarket</title>
-  <!-- Chargement du script Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto; background-color: #f4f4f9; }
-    h2 { text-align: center; color: #333; }
-    form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    label { font-weight: bold; display: block; margin-top: 10px; }
-    input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-    button { width: 100%; background-color: #28a745; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; margin-top: 15px; cursor: pointer; }
-    button:hover { background-color: #218838; }
-    .back-link { display: block; text-align: center; margin-top: 15px; color: #007bff; text-decoration: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un produit - WiseMarket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="bg-[#090D16] text-slate-100 font-sans min-h-screen p-4 sm:p-8">
 
-  <h2>➕ Ajouter un nouveau produit</h2>
+    <div class="max-w-xl mx-auto bg-[#0F172A] border border-slate-800 rounded-3xl p-6 shadow-2xl">
+        <a href="index.html" class="inline-flex items-center gap-2 text-violet-400 hover:text-violet-300 text-xs font-bold mb-6">
+            <i class="fas fa-arrow-left"></i> Retour à l'accueil
+        </a>
 
-  <form id="formProduit">
-    <label for="titre">Titre du produit :</label>
-    <input type="text" id="titre" placeholder="Ex: Chaussures Nike" required />
+        <h1 class="text-xl font-black text-white mb-1">Publier un nouveau produit</h1>
+        <p class="text-xs text-slate-400 mb-6">Remplissez les informations ci-dessous pour ajouter votre article sur la plateforme.</p>
 
-    <label for="prix">Prix (FCFA) :</label>
-    <input type="number" id="prix" placeholder="Ex: 15000" required />
+        <form id="produitForm" onsubmit="publierProduit(event)" class="space-y-4 text-xs">
+            <div>
+                <label class="block text-slate-300 mb-1 font-semibold">Titre / Nom du produit *</label>
+                <input type="text" id="nom" required placeholder="Ex: Parfum De Luxe 50ml" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
+            </div>
 
-    <label for="categorie">Catégorie :</label>
-    <input type="text" id="categorie" placeholder="Ex: Vêtements, Électronique..." required />
+            <div>
+                <label class="block text-slate-300 mb-1 font-semibold">Prix (en FCFA) *</label>
+                <input type="text" id="prix" required placeholder="Ex: 5000 FCFA" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
+            </div>
 
-    <label for="description">Description :</label>
-    <textarea id="description" rows="3" placeholder="Description de l'article..."></textarea>
+            <div>
+                <label class="block text-slate-300 mb-1 font-semibold">Catégorie *</label>
+                <select id="categorie" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
+                    <option value="Mode">Mode & Vêtements</option>
+                    <option value="Beauté">Parfums & Beauté</option>
+                    <option value="Portraits">Portraits & Sur-Mesure</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
 
-    <label for="vendeur_nom">Nom du vendeur :</label>
-    <input type="text" id="vendeur_nom" placeholder="Votre nom ou prénom" required />
+            <div>
+                <label class="block text-slate-300 mb-1 font-semibold">Description *</label>
+                <textarea id="description" rows="3" required placeholder="Description détaillée du produit..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500"></textarea>
+            </div>
 
-    <label for="imageFile">Photo du produit (Galerie) :</label>
-    <input type="file" id="imageFile" accept="image/*" required />
+            <div>
+                <label class="block text-slate-300 mb-1 font-semibold">Nom de votre Boutique / Vendeur *</label>
+                <input type="text" id="vendeur" required placeholder="Ex: Cécile" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500">
+            </div>
 
-    <button type="button" onclick="ajouterProduit()">Publier le produit</button>
-  </form>
+            <div>
+                <label class="block text-slate-300 mb-1 font-semibold">Photo du produit *</label>
+                <input type="file" id="imageFile" accept="image/*" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-violet-600 file:text-white">
+            </div>
 
-  <a href="index.html" class="back-link">⬅️ Retour à l'accueil</a>
+            <button type="submit" id="btnSubmit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-emerald-600/30 cursor-pointer text-sm mt-4">
+                Publier le produit
+            </button>
+        </form>
 
-  <script>
-    // Tes paramètres Supabase configurés
-    const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-    const SUPABASE_KEY = "Sb_publishable_HEYqdUqe0zfTb1AodGsxeQ_Fv__b0tF";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        <div id="statusMessage" class="hidden mt-4 p-3 rounded-xl text-center text-xs font-bold"></div>
+    </div>
 
-    async function ajouterProduit() {
-      const fileInput = document.getElementById('imageFile');
-      const file = fileInput.files[0];
+    <script>
+        // CONFIGURATION SUPABASE (Mets tes propres accès ici)
+        const SUPABASE_URL = "https://TON_PROJET.supabase.co";
+        const SUPABASE_KEY = "TA_CLE_ANON_KEY";
 
-      if (!file) {
-        alert("Veuillez sélectionner une photo depuis votre galerie !");
-        return;
-      }
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      // Nom unique pour l'image
-      const fileName = `${Date.now()}_${file.name}`;
+        async function publierProduit(e) {
+            e.preventDefault();
 
-      // 1. Envoi de la photo vers le bucket "produits-images"
-      const { data: uploadData, error: uploadError } = await supabase
-        .storage
-        .from('produits-images')
-        .upload(fileName, file);
+            const btn = document.getElementById('btnSubmit');
+            const status = document.getElementById('statusMessage');
 
-      if (uploadError) {
-        alert("Erreur lors de l'envoi de la photo : " + uploadError.message);
-        return;
-      }
+            btn.disabled = true;
+            btn.innerText = "Publication en cours...";
+            status.className = "mt-4 p-3 rounded-xl text-center text-xs font-bold bg-violet-500/20 text-violet-300 block";
+            status.innerText = "Envoi de l'image et publication...";
 
-      // 2. Récupération de l'URL publique de l'image
-      const { data: urlData } = supabase
-        .storage
-        .from('produits-images')
-        .getPublicUrl(fileName);
+            try {
+                const nom = document.getElementById('nom').value;
+                const prix = document.getElementById('prix').value;
+                const categorie = document.getElementById('categorie').value;
+                const description = document.getElementById('description').value;
+                const vendeur = document.getElementById('vendeur').value;
+                const fileInput = document.getElementById('imageFile');
 
-      const imageUrl = urlData.publicUrl;
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    alert("Veuillez sélectionner une image.");
+                    btn.disabled = false;
+                    btn.innerText = "Publier le produit";
+                    return;
+                }
 
-      // 3. Enregistrement dans la table "produits"
-      const { error: insertError } = await supabase
-        .from('produits')
-        .insert([
-          {
-            titre: document.getElementById('titre').value,
-            prix: document.getElementById('prix').value,
-            categorie: document.getElementById('categorie').value,
-            description: document.getElementById('description').value,
-            image_url: imageUrl,
-            vendeur_nom: document.getElementById('vendeur_nom').value
-          }
-        ]);
+                const file = fileInput.files[0];
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+                const filePath = `produits/${fileName}`;
 
-      if (insertError) {
-        alert("Erreur d'enregistrement : " + insertError.message);
-      } else {
-        alert("Produit et photo publiés avec succès ! 🚀");
-        window.location.href = "index.html";
-      }
-    }
-  </script>
+                // 1. Upload de la photo dans Supabase Storage (bucket "produits")
+                let { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('produits')
+                    .upload(filePath, file);
+
+                let imageUrl = "";
+                if (uploadError) {
+                    console.warn("Erreur image, fallback URL temporaire :", uploadError);
+                    imageUrl = "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80"; // Image par défaut si stockage non configuré
+                } else {
+                    const { data: urlData } = supabase.storage.from('produits').getPublicUrl(filePath);
+                    imageUrl = urlData.publicUrl;
+                }
+
+                // 2. Enregistrement dans la table "produits"
+                const { data, error } = await supabase
+                    .from('produits')
+                    .insert([
+                        {
+                            nom: nom,
+                            prix: prix,
+                            categorie: categorie,
+                            description: description,
+                            vendeur: vendeur,
+                            image_url: imageUrl
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                status.className = "mt-4 p-3 rounded-xl text-center text-xs font-bold bg-emerald-500/20 text-emerald-300 block";
+                status.innerText = "🎉 Produit publié avec succès sur WiseMarket !";
+                document.getElementById('produitForm').reset();
+
+            } catch (err) {
+                console.error("Erreur publication :", err);
+                status.className = "mt-4 p-3 rounded-xl text-center text-xs font-bold bg-red-500/20 text-red-300 block";
+                status.innerText = "Erreur lors de la publication : " + (err.message || "Vérifiez la connexion.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Publier le produit";
+            }
+        }
+    </script>
 </body>
 </html>
