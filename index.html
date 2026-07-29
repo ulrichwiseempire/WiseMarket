@@ -251,7 +251,7 @@
 
                 <div>
                     <label class="block text-slate-300 mb-1 font-semibold">Description courte</label>
-                    <textarea id="vendeurDesc" rows="2 font-normal" required placeholder="Présentez ce que vous vendez..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500"></textarea>
+                    <textarea id="vendeurDesc" rows="2" required placeholder="Présentez ce que vous vendez..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-violet-500"></textarea>
                 </div>
 
                 <button type="submit" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-violet-600/30 cursor-pointer">
@@ -291,7 +291,7 @@
 
             const message = `Bonjour WiseMarket ! 🏪\nJe souhaite devenir vendeur sur la plateforme (Offre 1er mois gratuit).\n\n👤 *Gérant* : ${nom}\n🏢 *Boutique* : ${boutique}\n📱 *WhatsApp* : ${tel}\n🏷️ *Catégorie* : ${cat}\n📝 *Description* : ${desc}`;
 
-            const url = `https://wa.me/${0022897817376}?text=${encodeURIComponent(message)}`;
+            const url = `https://wa.me/${MON_NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
             window.location.href = url;
             fermerModalVendeur();
         }
@@ -327,4 +327,4 @@
                                 <div class="w-full h-48 rounded-2xl mb-3 overflow-hidden border border-slate-800/80 relative">
                                     <img src="${produit.image_url}" alt="${produit.titre}" class="w-full h-full object-cover">
                                 </div>
-                                <span class="text-[10px] font-semibold text-violet-400
+                                <span class="text-[10px] font-semibold text-violet-400 uppercase t
