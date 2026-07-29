@@ -29,11 +29,11 @@
                 <span class="bg-gradient-to-r from-violet-400 via-indigo-300 to-emerald-400 text-transparent bg-clip-text">Wise</span>Market
             </a>
 
-            <div class="flex items-center gap-2 sm:gap-3">
-                <a href="ajouterproduit.html" class="text-xs sm:text-sm font-semibold text-white bg-violet-600 hover:bg-violet-500 transition px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-lg shadow-violet-600/30">
-                    <i class="fas fa-plus"></i> <span class="hidden sm:inline">Ajouter un produit</span><span class="sm:hidden">Vendre</span>
+            <div class="flex items-center gap-3">
+                <a href="ajouterproduit.html" class="text-xs sm:text-sm font-semibold text-white bg-violet-600 hover:bg-violet-500 transition px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-violet-600/30">
+                    <i class="fas fa-plus"></i> Ajouter un produit
                 </a>
-                <button onclick="ouvrirModalVendeur()" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition bg-slate-800/60 px-3.5 py-2 rounded-xl border border-slate-700/50 flex items-center gap-1.5">
+                <button type="button" onclick="ouvrirModalVendeur()" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition bg-slate-800/60 hover:bg-slate-800 px-4 py-2.5 rounded-xl border border-slate-700/50 flex items-center gap-2 cursor-pointer">
                     <i class="fas fa-store text-violet-400"></i> Devenir Vendeur
                 </button>
             </div>
@@ -165,7 +165,7 @@
         </div>
     </section>
 
-    <!-- SECTION DES PRODUITS PUBLIÉS PAR LES VENDEURS VIA SUPABASE -->
+    <!-- SECTION DES PRODUITS PUBLIÉS PAR LES VENDEURS -->
     <section class="max-w-7xl mx-auto px-5 py-8 border-t border-slate-800/60">
         <div class="flex items-center justify-between mb-8">
             <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2">
@@ -181,9 +181,9 @@
     </section>
 
     <!-- MODALE "DEVENIR VENDEUR" -->
-    <div id="modalVendeur" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-[#0F172A] border border-slate-800 w-full max-w-lg rounded-3xl p-6 relative glow-violet">
-            <button onclick="fermerModalVendeur()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg">
+    <div id="modalVendeur" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#0F172A] border border-slate-800 w-full max-w-lg rounded-3xl p-6 relative glow-violet my-auto">
+            <button type="button" onclick="fermerModalVendeur()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg p-2">
                 <i class="fas fa-times"></i>
             </button>
 
@@ -237,18 +237,15 @@
     <script>
         const MON_NUMERO_WHATSAPP = "22897817376"; 
 
-        // CONFIGURATION SUPABASE
-        const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-        const SUPABASE_KEY = "Sb_publishable_HEYqdUqe0zfTb1AodGsxeQ_Fv__b0tF";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // OUVRIR & FERMER LA MODALE VENDEUR
+        // GESTION IMPÉRATIVE DE LA MODALE
         function ouvrirModalVendeur() {
-            document.getElementById('modalVendeur').classList.remove('hidden');
+            const el = document.getElementById('modalVendeur');
+            if (el) el.classList.remove('hidden');
         }
 
         function fermerModalVendeur() {
-            document.getElementById('modalVendeur').classList.add('hidden');
+            const el = document.getElementById('modalVendeur');
+            if (el) el.classList.add('hidden');
         }
 
         function envoyerDemandeVendeur(event) {
@@ -281,46 +278,46 @@
             window.open(url, '_blank');
         }
 
-        // CHARGER LES PRODUITS SUPABASE
-        async function chargerProduits() {
-            const conteneur = document.getElementById('liste-produits');
+        // CHARGEMENT SUPABASE SÉCURISÉ
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
+                const SUPABASE_KEY = "Sb_publishable_HEYqdUqe0zfTb1AodGsxeQ_Fv__b0tF";
+                
+                if (window.supabase) {
+                    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    const conteneur = document.getElementById('liste-produits');
 
-            const { data: produits, error } = await supabase
-                .from('produits')
-                .select('*')
-                .order('created_at', { ascending: false });
+                    const { data: produits, error } = await supabaseClient
+                        .from('produits')
+                        .select('*')
+                        .order('created_at', { ascending: false });
 
-            if (error) {
-                conteneur.innerHTML = `<div class="col-span-full text-center py-6 text-rose-400 text-sm">Erreur lors de la récupération des produits.</div>`;
-                return;
-            }
+                    if (error || !produits || produits.length === 0) {
+                        conteneur.innerHTML = `<div class="col-span-full text-center py-6 text-slate-500 text-sm">Aucun nouveau produit vendeur publié pour l'instant.</div>`;
+                        return;
+                    }
 
-            if (!produits || produits.length === 0) {
-                conteneur.innerHTML = `<div class="col-span-full text-center py-6 text-slate-500 text-sm">Aucun produit vendeur publié pour l'instant.</div>`;
-                return;
-            }
+                    conteneur.innerHTML = "";
 
-            conteneur.innerHTML = "";
+                    produits.forEach(produit => {
+                        const carte = document.createElement('div');
+                        carte.className = "glass-card rounded-3xl p-5 flex flex-col justify-between hover:border-violet-500/40 transition duration-300";
 
-            produits.forEach(produit => {
-                const carte = document.createElement('div');
-                carte.className = "glass-card rounded-3xl p-5 flex flex-col justify-between hover:border-violet-500/40 transition duration-300";
+                        carte.innerHTML = `
+                            <div>
+                                <div class="w-full h-52 rounded-2xl mb-4 overflow-hidden border border-slate-800/80 relative">
+                                    <img src="${produit.image_url}" alt="${produit.titre}" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+                                </div>
+                                <span class="text-[11px] font-semibold text-violet-400 uppercase tracking-wider">${produit.categorie || 'Article'}</span>
+                                <h3 class="font-bold text-lg text-white mt-1">${produit.titre}</h3>
+                                <p class="text-xs text-slate-400 mt-1 mb-2">${produit.description || ''}</p>
+                                <p class="text-[11px] text-slate-500 mb-4"><i class="fas fa-store mr-1 text-slate-400"></i> Par : <span class="text-slate-300 font-medium">${produit.vendeur_nom || 'Artisan'}</span></p>
+                            </div>
 
-                carte.innerHTML = `
-                    <div>
-                        <div class="w-full h-52 rounded-2xl mb-4 overflow-hidden border border-slate-800/80 relative">
-                            <img src="${produit.image_url}" alt="${produit.titre}" class="w-full h-full object-cover hover:scale-105 transition duration-500">
-                        </div>
-                        <span class="text-[11px] font-semibold text-violet-400 uppercase tracking-wider">${produit.categorie || 'Article'}</span>
-                        <h3 class="font-bold text-lg text-white mt-1">${produit.titre}</h3>
-                        <p class="text-xs text-slate-400 mt-1 mb-2">${produit.description || ''}</p>
-                        <p class="text-[11px] text-slate-500 mb-4"><i class="fas fa-store mr-1 text-slate-400"></i> Par : <span class="text-slate-300 font-medium">${produit.vendeur_nom || 'Artisan'}</span></p>
-                    </div>
-
-                    <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] text-slate-400 block">Prix</span>
-                            <span class="font-black text-lg text-emerald-400">${produit.prix} FCFA</span>
-                        </div>
-                        <button onclick="commanderWA('${produit.titre.replace(/'/g, "\\'")}', '${produit.prix} FCFA')" class="bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-lg shadow-violet-600/30">
-                         
+                            <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">Prix</span>
+                                    <span class="font-black text-lg text-emerald-400">${produit.prix} FCFA</span>
+                                </div>
+                                <button onclick="commanderWA('${produit.titre.replace(/'/g, "\
