@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- SDK Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         .glow-violet {
             box-shadow: 0 0 25px rgba(139, 92, 246, 0.25);
@@ -19,6 +20,23 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
     </style>
+
+    <!-- SCRIPT DE LA MODALE PLACÉ TOUT EN HAUT POUR UN DÉCLENCHEMENT IMMÉDIAT -->
+    <script>
+        function ouvrirModalVendeur() {
+            var modal = document.getElementById('modalVendeur');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function fermerModalVendeur() {
+            var modal = document.getElementById('modalVendeur');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
 </head>
 <body class="bg-[#090D16] text-slate-100 font-sans min-h-screen pb-20 selection:bg-violet-500 selection:text-white">
 
@@ -29,8 +47,8 @@
                 <span class="bg-gradient-to-r from-violet-400 via-indigo-300 to-emerald-400 text-transparent bg-clip-text">Wise</span>Market
             </a>
 
-            <!-- Un seul bouton principal clair pour les visiteurs -->
-            <button type="button" onclick="ouvrirModalVendeur()" class="text-xs sm:text-sm font-semibold text-white bg-violet-600 hover:bg-violet-500 transition px-4 py-2.5 rounded-xl border border-violet-500/40 flex items-center gap-2 shadow-lg shadow-violet-600/30 cursor-pointer">
+            <!-- BOUTON AVEC SUPPORT TACTILE OPTIMISÉ POUR MOBILE -->
+            <button type="button" onclick="ouvrirModalVendeur()" ontouchstart="ouvrirModalVendeur()" class="text-xs sm:text-sm font-semibold text-white bg-violet-600 hover:bg-violet-500 transition px-4 py-2.5 rounded-xl border border-violet-500/40 flex items-center gap-2 shadow-lg shadow-violet-600/30 cursor-pointer active:scale-95">
                 <i class="fas fa-store text-violet-200"></i> Espace Vendeur
             </button>
         </div>
@@ -79,7 +97,7 @@
         </div>
     </section>
 
-    <!-- GALERIE DE DÉMONSTRATION (EXEMPLAIRES AVEC PRIX ACCESSIBLES) -->
+    <!-- GALERIE DE DÉMONSTRATION -->
     <section class="max-w-7xl mx-auto px-5 py-6">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-base sm:text-lg font-bold flex items-center gap-2">
@@ -89,7 +107,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            <!-- Produit 1 : Portrait sur-mesure avec bouton d'envoi de photo -->
+            <!-- Produit 1 : Portrait sur-mesure -->
             <div class="glass-card rounded-3xl p-5 border border-violet-500/30 glow-violet flex flex-col justify-between relative overflow-hidden">
                 <span class="absolute top-4 right-4 bg-emerald-500 text-black font-black text-[10px] px-2.5 py-1 rounded-full uppercase z-10">Sur-Mesure</span>
                 <div>
@@ -176,8 +194,8 @@
         </div>
     </section>
 
-    <!-- MODALE ESPACE VENDEUR (POP-UP GARANTIE SANS BUGS) -->
-    <div id="modalVendeur" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden z-[999] flex items-center justify-center p-4">
+    <!-- FENÊTRE POP-UP ESPACE VENDEUR (STYLE DISPLAY BLOC GARANTI) -->
+    <div id="modalVendeur" onclick="if(event.target === this) fermerModalVendeur();" style="display: none;" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[9999] items-center justify-center p-4">
         <div class="bg-[#0F172A] border border-slate-800 w-full max-w-lg rounded-3xl p-6 relative glow-violet max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="fermerModalVendeur()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg p-2">
                 <i class="fas fa-times"></i>
@@ -243,18 +261,9 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT GÉRANT LES MODALES ET SUPABASE -->
+    <!-- SCRIPT DU SITE (COMMANDES WA & SUPABASE) -->
     <script>
         const MON_NUMERO_WHATSAPP = "22897817376"; 
-
-        // OUVERTURE / FERMETURE SÉCURISÉES DE LA POP-UP
-        function ouvrirModalVendeur() {
-            document.getElementById('modalVendeur').classList.remove('hidden');
-        }
-
-        function fermerModalVendeur() {
-            document.getElementById('modalVendeur').classList.add('hidden');
-        }
 
         function envoyerDemandeVendeur(event) {
             event.preventDefault();
@@ -286,7 +295,7 @@
             window.open(url, '_blank');
         }
 
-        // CHARGEMENT DES NOUVEAUX PRODUITS
+        // CHARGEMENT SUPABASE
         window.addEventListener('load', async () => {
             try {
                 const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
@@ -319,6 +328,4 @@
                                 </div>
                                 <span class="text-[10px] font-semibold text-violet-400 uppercase tracking-wider">${produit.categorie || 'Article'}</span>
                                 <h3 class="font-bold text-base text-white mt-0.5">${produit.titre}</h3>
-                                <p class="text-xs text-slate-400 mt-1 mb-2">${produit.description || ''}</p>
-                                <p class="text-[10px] text-slate-500 mb-3"><i class="fas fa-store mr-1 text-slate-400"></i> Par : <span class="text-slate-300 font-medium">${produit.vendeur_nom || 'Vendeur'}</span></p>
-                     
+                                <p class="text-xs text-slate-400 mt-1 mb-2">${produit.description ||
