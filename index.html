@@ -78,9 +78,15 @@
                 <span class="bg-gradient-to-r from-violet-400 via-indigo-300 to-emerald-400 text-transparent bg-clip-text">Wise</span>Market
             </a>
 
-            <button type="button" onclick="ouvrirModalVendeur()" class="text-xs sm:text-sm font-semibold text-white bg-violet-600 hover:bg-violet-500 transition px-4 py-2.5 rounded-xl border border-violet-500/40 flex items-center gap-2 shadow-lg shadow-violet-600/30 cursor-pointer active:scale-95">
-                <i class="fas fa-store text-violet-200"></i> Espace Vendeur
-            </button>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="ouvrirMaBoutique()" class="text-xs sm:text-sm font-semibold text-white bg-slate-800 hover:bg-slate-700 transition px-3.5 py-2.5 rounded-xl border border-slate-700 flex items-center gap-2 cursor-pointer active:scale-95">
+                    <i class="fas fa-store text-violet-400"></i> Ma Boutique
+                </button>
+
+                <button type="button" onclick="ouvrirModalVendeur()" class="text-xs sm:text-sm font-semibold text-white bg-violet-600 hover:bg-violet-500 transition px-4 py-2.5 rounded-xl border border-violet-500/40 flex items-center gap-2 shadow-lg shadow-violet-600/30 cursor-pointer active:scale-95">
+                    <i class="fas fa-store text-violet-200"></i> Espace Vendeur
+                </button>
+            </div>
         </div>
     </header>
 
@@ -294,6 +300,19 @@
             </form>
         </div>
     </div>
+
+    <!-- SCRIPT ACCÈS BOUTIQUE -->
+    <script>
+        function ouvrirMaBoutique() {
+            let nomBoutique = localStorage.getItem('wm_vendeur_nom');
+            if (!nomBoutique) {
+                nomBoutique = prompt("Entrez le nom de votre boutique :");
+            }
+            if (nomBoutique) {
+                window.location.href = `boutique.html?vendeur=${encodeURIComponent(nomBoutique)}`;
+            }
+        }
+    </script>
 
 </body>
     </html>
