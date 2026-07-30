@@ -108,6 +108,12 @@
       border-radius: 6px;
       cursor: pointer;
     }
+    .custom-note {
+      font-size: 0.75rem;
+      color: #a855f7;
+      font-weight: 600;
+      margin: 4px 0 8px 0;
+    }
   </style>
 </head>
 <body>
@@ -152,7 +158,7 @@
   <section class="hero">
     <div class="badge">🟢 🇹🇬 La vitrine du savoir-faire togolais</div>
     <h1>Découvrez des créations <span>uniques & faites pour vous</span></h1>
-    <p>Commandez vos vêtements, téléphones, parfums ou articles réalisés par nos artisans locaux.</p>
+    <p>Commandez vos vêtements, téléphones, bijoux ou articles réalisés par nos artisans locaux.</p>
     
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="Que recherchez-vous ?">
@@ -183,10 +189,8 @@
       <button class="cat-btn active" onclick="filtrerCategorie('tous', event)">✨ Tous</button>
       <button class="cat-btn" onclick="filtrerCategorie('mode', event)">👔 Mode & Sape</button>
       <button class="cat-btn" onclick="filtrerCategorie('electronique', event)">📱 Tech & Gadgets</button>
-      <button class="cat-btn" onclick="filtrerCategorie('parfums', event)">✨ Parfums</button>
-      <button class="cat-btn" onclick="filtrerCategorie('restauration', event)">🍲 Nourriture</button>
-      <button class="cat-btn" onclick="filtrerCategorie('sur-mesure', event)">🎨 Sur-mesure</button>
-      <button class="cat-btn" onclick="filtrerCategorie('divers', event)">📦 Autre / Divers</button>
+      <button class="cat-btn" onclick="filtrerCategorie('bijoux', event)">💎 Bijoux & Montres</button>
+      <button class="cat-btn" onclick="filtrerCategorie('sur-mesure', event)">🎨 Sur-mesure & Déco</button>
     </div>
   </section>
 
@@ -195,59 +199,188 @@
     <h2>À la une</h2>
     <div id="productGrid" class="products-grid">
       
-      <!-- Produit 1 : Mode -->
+      <!-- PRODUITS MODE -->
       <div class="product-card" data-cat="mode">
-        <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500" alt="T-Shirt Pagne Uniwax">
+        <img src="images/1000625028.jpg" alt="Ensemble Hoodie Grey Nike">
         <div class="product-info">
           <span class="badge-cat">👔 Mode</span>
-          <h3>T-Shirt Style Pagne Uniwax</h3>
-          <p class="vendeur-name">Boutique Partenaire</p>
+          <h3>Ensemble Sweat Hoodie & Jogging Oversize</h3>
+          <p class="vendeur-name">Boutique Streetwear</p>
+          <p class="custom-note">✨ Modèle de Démonstration</p>
           <div class="price-row">
-            <span class="price">5 000 FCFA</span>
-            <button class="btn-commander" onclick="commanderProduit('T-Shirt Style Pagne Uniwax', '5000')">Commander</button>
+            <span class="price">Sur devis</span>
+            <button class="btn-commander" onclick="commanderProduit('Ensemble Sweat Hoodie & Jogging Oversize')">Demander un devis</button>
           </div>
         </div>
       </div>
 
-      <!-- Produit 2 : Sur-mesure (Tableau Personnalisé) -->
-      <div class="product-card" data-cat="sur-mesure">
-        <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500" alt="Tableau Portrait Sur-Mesure">
-        <div class="product-info">
-          <span class="badge-cat">🎨 Sur-mesure</span>
-          <h3>Tableau Portrait Personnalisé (Peinture)</h3>
-          <p class="vendeur-name">Artisanat Local</p>
-          <p class="custom-note">📸 Envoie ta photo après commande</p>
-          <div class="price-row">
-            <span class="price">3 000 FCFA</span>
-            <button class="btn-commander" onclick="commanderTableau('Tableau Portrait Personnalisé', '3000')">Commander</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produit 3 : Parfums -->
-      <div class="product-card" data-cat="parfums">
-        <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=500" alt="Parfum De Luxe 50ml">
-        <div class="product-info">
-          <span class="badge-cat">✨ Parfums</span>
-          <h3>Parfum De Luxe Oud 50ml</h3>
-          <p class="vendeur-name">Boutique Partenaire</p>
-          <div class="price-row">
-            <span class="price">12 000 FCFA</span>
-            <button class="btn-commander" onclick="commanderProduit('Parfum De Luxe Oud 50ml', '12000')">Commander</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produit 4 : Tech -->
+      <!-- PRODUITS TECH & GADGETS -->
       <div class="product-card" data-cat="electronique">
-        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" alt="Casque Bluetooth Pro">
+        <img src="images/1000625095.jpg" alt="iPhone 17 Pro">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
-          <h3>Casque Bluetooth Sans Fil Pro</h3>
-          <p class="vendeur-name">Boutique Partenaire</p>
+          <h3>iPhone 17 Pro Max Flagship</h3>
+          <p class="vendeur-name">GSM Partner Togo</p>
+          <p class="custom-note">✨ Modèle de Démonstration</p>
           <div class="price-row">
-            <span class="price">15 000 FCFA</span>
-            <button class="btn-commander" onclick="commanderProduit('Casque Bluetooth Sans Fil Pro', '15000')">Commander</button>
+            <span class="price">Prix selon version</span>
+            <button class="btn-commander" onclick="commanderProduit('iPhone 17 Pro Max')">Demander un devis</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="electronique">
+        <img src="images/1000625096.jpg" alt="Tecno Camon 40 Pro">
+        <div class="product-info">
+          <span class="badge-cat">📱 Tech</span>
+          <h3>Tecno Camon 40 Pro (256Go / 16Go RAM)</h3>
+          <p class="vendeur-name">Tech Partner Togo</p>
+          <p class="custom-note">✨ Modèle de Démonstration</p>
+          <div class="price-row">
+            <span class="price">Prix selon stock</span>
+            <button class="btn-commander" onclick="commanderProduit('Tecno Camon 40 Pro')">Demander un devis</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="electronique">
+        <img src="images/1000625097.jpg" alt="Tecno Camon Écran Incurvé">
+        <div class="product-info">
+          <span class="badge-cat">📱 Tech</span>
+          <h3>Tecno Camon Écran Incurvé AMOLED Vert</h3>
+          <p class="vendeur-name">Tech Partner Togo</p>
+          <p class="custom-note">✨ Modèle de Démonstration</p>
+          <div class="price-row">
+            <span class="price">Prix selon stock</span>
+            <button class="btn-commander" onclick="commanderProduit('Tecno Camon Écran Incurvé AMOLED')">Demander un devis</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="electronique">
+        <img src="images/1000625098.jpg" alt="Infinix 5G Flagship">
+        <div class="product-info">
+          <span class="badge-cat">📱 Tech</span>
+          <h3>Infinix Series Flagship 5G (Titanium Gold)</h3>
+          <p class="vendeur-name">GSM Store Togo</p>
+          <p class="custom-note">✨ Modèle de Démonstration</p>
+          <div class="price-row">
+            <span class="price">Prix selon stock</span>
+            <button class="btn-commander" onclick="commanderProduit('Infinix Series Flagship 5G')">Demander un devis</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="electronique">
+        <img src="images/1000625008.jpg" alt="Casque Beats Wireless">
+        <div class="product-info">
+          <span class="badge-cat">📱 Tech</span>
+          <h3>Casque Audio Wireless Edition Noir & Or</h3>
+          <p class="vendeur-name">Audio Store Togo</p>
+          <p class="custom-note">✨ Modèle de Démonstration</p>
+          <div class="price-row">
+            <span class="price">Sur devis</span>
+            <button class="btn-commander" onclick="commanderProduit('Casque Audio Wireless Noir & Or')">Demander un devis</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="electronique">
+        <img src="images/1000625007.jpg" alt="Casque Studio Pro">
+        <div class="product-info">
+          <span class="badge-cat">📱 Tech</span>
+          <h3>Casque Audio Hi-Fi Studio Pro Isolation</h3>
+          <p class="vendeur-name">Audio Store Togo</p>
+          <p class="custom-note">✨ Modèle de Démonstration</p>
+          <div class="price-row">
+            <span class="price">Sur devis</span>
+            <button class="btn-commander" onclick="commanderProduit('Casque Audio Hi-Fi Studio Pro')">Demander un devis</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="electronique">
+        <img src="images/1000625104.jpg" alt="PC Portable HP Envy">
+        <div class="product-info">
+          <span class="badge-cat">📱 Tech</span>
+          <h3>PC Portable HP Envy Ultrabook Convertible Slim</h3>
+          <p class="vendeur-name">Informatique Express</p>
+          <p class="custom-note">✨ Modèle de Démonstration</p>
+          <div class="price-row">
+            <span class="price">Sur devis</span>
+            <button class="btn-commander" onclick="commanderProduit('PC Portable HP Envy Ultrabook Slim')">Demander un devis</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUITS BIJOUX & HORLOGERIE -->
+      <div class="product-card" data-cat="bijoux">
+        <img src="images/1000625100.jpg" alt="Collection Montres Dorées">
+        <div class="product-info">
+          <span class="badge-cat">💎 Bijoux</span>
+          <h3>Collection Montres Homme Acier Doré Luxe</h3>
+          <p class="vendeur-name">Elegance Watch Togo</p>
+          <p class="custom-note">✨ Modèle de Démonstration</p>
+          <div class="price-row">
+            <span class="price">Sur devis</span>
+            <button class="btn-commander" onclick="commanderProduit('Collection Montres Homme Acier Doré Luxe')">Demander un devis</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="bijoux">
+        <img src="images/1000625101.jpg" alt="Coffret Montre Casio Argent">
+        <div class="product-info">
+          <span class="badge-cat">💎 Bijoux</span>
+          <h3>Coffret Cadeau Homme (Montre Argent + Bijoux)</h3>
+          <p class="vendeur-name">Premium Gift Lomé</p>
+          <p class="custom-note">✨ Idée Cadeau / Sur-mesure</p>
+          <div class="price-row">
+            <span class="price">Sur devis</span>
+            <button class="btn-commander" onclick="commanderProduit('Coffret Cadeau Homme (Montre Argent + Bijoux)')">Demander un devis</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="bijoux">
+        <img src="images/1000625102.jpg" alt="Parure Montre Papillon Rose Gold">
+        <div class="product-info">
+          <span class="badge-cat">💎 Bijoux</span>
+          <h3>Parure Montre Papillon & Bracelet Strass Rose Gold</h3>
+          <p class="vendeur-name">Glamour Jewels</p>
+          <p class="custom-note">✨ Idée Cadeau / Démo</p>
+          <div class="price-row">
+            <span class="price">Sur devis</span>
+            <button class="btn-commander" onclick="commanderProduit('Parure Montre Papillon Rose Gold')">Demander un devis</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="bijoux">
+        <img src="images/1000625103.jpg" alt="Coffret Anne Klein Femme">
+        <div class="product-info">
+          <span class="badge-cat">💎 Bijoux</span>
+          <h3>Coffret Montre Anne Klein & Bracelets Trèfle</h3>
+          <p class="vendeur-name">Lux'Store Lomé</p>
+          <p class="custom-note">✨ Idée Cadeau / Démo</p>
+          <div class="price-row">
+            <span class="price">Sur devis</span>
+            <button class="btn-commander" onclick="commanderProduit('Coffret Montre Anne Klein & Bracelets Trèfle')">Demander un devis</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUITS SUR-MESURE / DÉCO -->
+      <div class="product-card" data-cat="sur-mesure">
+        <img src="images/1000625094.jpg" alt="Tableau Photo Multi-cadres">
+        <div class="product-info">
+          <span class="badge-cat">🎨 Sur-mesure</span>
+          <h3>Tableau Mural Multi-Photos Personnalisé</h3>
+          <p class="vendeur-name">Studio Photo Partner</p>
+          <p class="custom-note">📸 Envoie tes photos après commande</p>
+          <div class="price-row">
+            <span class="price">Sur devis</span>
+            <button class="btn-commander" onclick="commanderProduit('Tableau Mural Multi-Photos Personnalisé')">Demander un devis</button>
           </div>
         </div>
       </div>
@@ -263,7 +396,7 @@
     <a href="https://wa.me/22872119966" target="_blank" class="btn-support"><i class="fa-brands fa-whatsapp"></i> +228 72 11 99 66</a>
   </section>
 
-  <!-- PIED DE PAGE (FOOTER) SANS ESPACE ADMIN -->
+  <!-- PIED DE PAGE (FOOTER) -->
   <footer class="footer-pro">
     <div class="footer-grid">
       <div class="footer-col">
@@ -376,18 +509,11 @@
       });
     }
 
-    // Écoute de la barre de recherche en temps réel
     document.getElementById('searchInput').addEventListener('input', filtrerProduits);
 
-    // Commande WhatsApp standard
-    function commanderProduit(nom, prix) {
-      const text = `Bonjour ! Je souhaite commander le produit suivant sur WiseMarket :%0A- *Produit* : ${encodeURIComponent(nom)}%0A- *Prix* : ${prix} FCFA`;
-      window.open(`https://wa.me/22872119966?text=${text}`, '_blank');
-    }
-
-    // Commande sur-mesure (Tableau)
-    function commanderTableau(nom, prix) {
-      const text = `Bonjour ! Je souhaite commander un *${encodeURIComponent(nom)}* sur-mesure sur WiseMarket.%0A- *Prix* : ${prix} FCFA%0A%0A🎨 *Note* : Je souhaite vous envoyer ma photo pour la réalisation.`;
+    // Commande WhatsApp (Sur devis)
+    function commanderProduit(nom) {
+      const text = `Bonjour WiseMarket ! Je souhaite avoir des informations et demander un devis pour le produit suivant :%0A- *Produit* : ${encodeURIComponent(nom)}`;
       window.open(`https://wa.me/22872119966?text=${text}`, '_blank');
     }
 
@@ -401,31 +527,4 @@
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
       if (text !== '') {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'msg sent';
-        msgDiv.textContent = text;
-        document.getElementById('chatMessages').appendChild(msgDiv);
-        input.value = '';
-        
-        // Faux message automatique en attendant la connexion complète à Firebase
-        setTimeout(() => {
-          const autoReply = document.createElement('div');
-          autoReply.className = 'msg received';
-          autoReply.textContent = "Merci pour votre message. Le vendeur vous répondra sous peu !";
-          document.getElementById('chatMessages').appendChild(autoReply);
-          document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-        }, 1000);
-      }
-    }
-
-    // Activation PWA (Service Worker)
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('PWA Service Worker actif !'))
-          .catch(err => console.log('Erreur Service Worker PWA :', err));
-      });
-    }
-  </script>
-</body>
-</html>
+        const msgDiv = docu
