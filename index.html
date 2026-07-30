@@ -238,7 +238,7 @@
   <section class="products-section">
     <h2>À la une</h2>
     <div id="productGrid" class="products-grid">
-      <!-- Les produits de Supabase seront chargés ici dynamiquement -->
+      <!-- Les produits de Supabase ou les 10 images de démo seront chargés ici -->
     </div>
   </section>
 
@@ -310,7 +310,7 @@
   <script>
     // Configuration Supabase
     const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eYLzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     function toggleSidebar() {
@@ -375,6 +375,7 @@
       }
     }
 
+    // Affichage complet des 10 images (photo2.jpg à photo11.jpg)
     function afficherProduitsDemo() {
       const grid = document.getElementById('productGrid');
       grid.innerHTML = `
@@ -387,6 +388,33 @@
             <div class="price-row"><span class="price">Sur devis</span></div>
           </div>
         </div>
+        <div class="product-card" data-cat="mode">
+          <img src="./photo3.jpg" alt="Veste Blazer & Pantalon Sur-Mesure" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+          <div class="product-info">
+            <span class="badge-cat">👔 Mode</span>
+            <h3>Veste Blazer & Pantalon Sur-Mesure</h3>
+            <p class="vendeur-name">Atelier de Sape Lomé</p>
+            <div class="price-row"><span class="price">Sur devis</span></div>
+          </div>
+        </div>
+        <div class="product-card" data-cat="mode">
+          <img src="./photo4.jpg" alt="Robe Traditionnelle Wax & Soie" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+          <div class="product-info">
+            <span class="badge-cat">👔 Mode</span>
+            <h3>Robe Traditionnelle Wax & Soie</h3>
+            <p class="vendeur-name">Créations Africaines</p>
+            <div class="price-row"><span class="price">Sur devis</span></div>
+          </div>
+        </div>
+        <div class="product-card" data-cat="electronique">
+          <img src="./photo5.jpg" alt="Smartphone Nova Pro 128 Go" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+          <div class="product-info">
+            <span class="badge-cat">📱 Tech</span>
+            <h3>Smartphone Nova Pro 128 Go</h3>
+            <p class="vendeur-name">Digital Shop Togo</p>
+            <div class="price-row"><span class="price">Sur devis</span></div>
+          </div>
+        </div>
         <div class="product-card" data-cat="electronique">
           <img src="./photo6.jpg" alt="Casque Audio Pro Studio" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
           <div class="product-info">
@@ -396,12 +424,48 @@
             <div class="price-row"><span class="price">Sur devis</span></div>
           </div>
         </div>
+        <div class="product-card" data-cat="chaussures">
+          <img src="./photo7.jpg" alt="Baskets Urban Sneakers Cuir" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+          <div class="product-info">
+            <span class="badge-cat">👟 Chaussures</span>
+            <h3>Baskets Urban Sneakers Cuir</h3>
+            <p class="vendeur-name">Kicks Togo</p>
+            <div class="price-row"><span class="price">Sur devis</span></div>
+          </div>
+        </div>
         <div class="product-card" data-cat="restauration">
           <img src="./photo8.jpg" alt="Plat Attiéké Poisson Grillé" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
           <div class="product-info">
             <span class="badge-cat">🍲 Nourriture</span>
             <h3>Plat Attiéké Poisson Grillé</h3>
             <p class="vendeur-name">Délices du Togo</p>
+            <div class="price-row"><span class="price">Sur devis</span></div>
+          </div>
+        </div>
+        <div class="product-card" data-cat="chaussures">
+          <img src="./photo9.jpg" alt="Sandales Artisanales Cuir" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+          <div class="product-info">
+            <span class="badge-cat">👟 Chaussures</span>
+            <h3>Sandales Artisanales Cuir</h3>
+            <p class="vendeur-name">Artisanat Lomé</p>
+            <div class="price-row"><span class="price">Sur devis</span></div>
+          </div>
+        </div>
+        <div class="product-card" data-cat="electronique">
+          <img src="./photo10.jpg" alt="Ecouteurs Sans Fil Bluetooth" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+          <div class="product-info">
+            <span class="badge-cat">📱 Tech</span>
+            <h3>Ecouteurs Sans Fil Bluetooth</h3>
+            <p class="vendeur-name">HighTech Express</p>
+            <div class="price-row"><span class="price">Sur devis</span></div>
+          </div>
+        </div>
+        <div class="product-card" data-cat="restauration">
+          <img src="./photo11.jpg" alt="Jus Naturels Artisanaux 50cl" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+          <div class="product-info">
+            <span class="badge-cat">🍲 Nourriture</span>
+            <h3>Jus Naturels Artisanaux 50cl</h3>
+            <p class="vendeur-name">Bio Saveurs Togo</p>
             <div class="price-row"><span class="price">Sur devis</span></div>
           </div>
         </div>
@@ -461,6 +525,26 @@
         
         setTimeout(() => {
           const autoReply = document.createElement('div');
+          autoReply.className document.getElementById('searchInput').addEventListener('input', filtrerProduits);
+
+    // Mini-Chat
+    function toggleChat() {
+      const box = document.getElementById('chatBox');
+      box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function envoyerMessageChat() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (text !== '') {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'msg sent';
+        msgDiv.textContent = text;
+        document.getElementById('chatMessages').appendChild(msgDiv);
+        input.value = '';
+        
+        setTimeout(() => {
+          const autoReply = document.createElement('div');
           autoReply.className = 'msg received';
           autoReply.textContent = "Message bien reçu par le vendeur !";
           document.getElementById('chatMessages').appendChild(autoReply);
@@ -480,5 +564,4 @@
     });
   </script>
 </body>
-      </html>
-      
+</html>
