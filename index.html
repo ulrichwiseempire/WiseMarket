@@ -13,6 +13,9 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- SDK Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <style>
     /* Style pour le widget chat acheteur/vendeur */
     .chat-widget-btn {
@@ -231,141 +234,11 @@
     </div>
   </section>
 
-  <!-- LISTE DES PRODUITS DE DEMONSTRATION -->
+  <!-- LISTE DES PRODUITS -->
   <section class="products-section">
     <h2>À la une</h2>
     <div id="productGrid" class="products-grid">
-      
-      <!-- Produit 1 -->
-      <div class="product-card" data-cat="mode">
-        <img src="./photo2.jpg" alt="Ensemble Chic Pull & Chemise" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-        <div class="product-info">
-          <span class="badge-cat">👔 Mode</span>
-          <h3>Ensemble Chic Pull & Chemise</h3>
-          <p class="vendeur-name">Boutique Mode Chic</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produit 2 -->
-      <div class="product-card" data-cat="mode">
-        <img src="./photo3.jpg" alt="Ensemble Veste Safari Noir" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-        <div class="product-info">
-          <span class="badge-cat">👔 Mode</span>
-          <h3>Ensemble Veste Safari Noir</h3>
-          <p class="vendeur-name">Atelier de Couture Togo</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produit 3 -->
-      <div class="product-card" data-cat="electronique">
-        <img src="./photo6.jpg" alt="Casque Audio Pro Studio" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-        <div class="product-info">
-          <span class="badge-cat">📱 Tech</span>
-          <h3>Casque Audio Pro Studio</h3>
-          <p class="vendeur-name">Tech Store Lomé</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produit 4 -->
-      <div class="product-card" data-cat="electronique">
-        <img src="./photo5.jpg" alt="Casque Beats Wireless Noir/Or" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-        <div class="product-info">
-          <span class="badge-cat">📱 Tech</span>
-          <h3>Casque Beats Wireless Noir/Or</h3>
-          <p class="vendeur-name">Tech Store Lomé</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produit 5 -->
-      <div class="product-card" data-cat="chaussures">
-        <img src="./photo4.jpg" alt="Mules Luxe en Daim Noir" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-        <div class="product-info">
-          <span class="badge-cat">👟 Chaussures</span>
-          <h3>Mules Luxe en Daim Noir</h3>
-          <p class="vendeur-name">Chaussures & Co</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produit 6 -->
-      <div class="product-card" data-cat="mode">
-        <img src="./photo7.jpg" alt="Ensemble Jogging Nike Gris" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-        <div class="product-info">
-          <span class="badge-cat">👔 Mode</span>
-          <h3>Ensemble Jogging Nike Gris</h3>
-          <p class="vendeur-name">Streetwear Togo</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produit 7 -->
-      <div class="product-card" data-cat="restauration">
-        <img src="./photo8.jpg" alt="Plat Attiéké Poisson Grillé" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-        <div class="product-info">
-          <span class="badge-cat">🍲 Nourriture</span>
-          <h3>Plat Attiéké Poisson Grillé</h3>
-          <p class="vendeur-name">Délices du Togo</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produit 8 -->
-      <div class="product-card" data-cat="restauration">
-        <img src="./photo9.jpg" alt="Plat Spaghetti aux Saucisses" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-        <div class="product-info">
-          <span class="badge-cat">🍲 Nourriture</span>
-          <h3>Plat Spaghetti aux Saucisses</h3>
-          <p class="vendeur-name">Fast Food Express</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produit 9 -->
-      <div class="product-card" data-cat="electronique">
-        <img src="./photo10.jpg" alt="Tecno Camon 40 Pro" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-        <div class="product-info">
-          <span class="badge-cat">📱 Tech</span>
-          <h3>Tecno Camon 40 Pro (256Go)</h3>
-          <p class="vendeur-name">HighTech Market</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produit 10 -->
-      <div class="product-card" data-cat="electronique">
-        <img src="./photo11.jpg" alt="iPhone 17 Pro" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-        <div class="product-info">
-          <span class="badge-cat">📱 Tech</span>
-          <h3>iPhone 17 Pro</h3>
-          <p class="vendeur-name">Apple Store Lomé</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-          </div>
-        </div>
-      </div>
-
+      <!-- Les produits de Supabase seront chargés ici dynamiquement -->
     </div>
   </section>
 
@@ -416,7 +289,7 @@
     </div>
   </footer>
 
-  <!-- BOUTON ET FENÊTRE MINI-CHAT EN DIRECT (ACHETEUR/VENDEUR) -->
+  <!-- BOUTON ET FENÊTRE MINI-CHAT EN DIRECT -->
   <button class="chat-widget-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i></button>
 
   <div id="chatBox" class="chat-box">
@@ -433,8 +306,13 @@
     </div>
   </div>
 
-  <!-- SCRIPT LOGIQUE -->
+  <!-- SCRIPT LOGIQUE & SUPABASE -->
   <script>
+    // Configuration Supabase
+    const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eYLzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
       document.getElementById('overlay').classList.toggle('active');
@@ -458,6 +336,78 @@
       }
     }
 
+    // Chargement dynamique des produits depuis Supabase
+    async function chargerProduits() {
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = "<p style='color:#9ca3af; grid-column: 1/-1; text-align:center;'>Chargement des articles...</p>";
+
+      try {
+        const { data: produits, error } = await db.from('produits').select('*').order('created_at', { ascending: false });
+
+        if (error || !produits || produits.length === 0) {
+          afficherProduitsDemo();
+          return;
+        }
+
+        grid.innerHTML = "";
+        produits.forEach(p => {
+          const catClean = (p.categorie || 'mode').toLowerCase();
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          card.setAttribute('data-cat', catClean);
+          
+          card.innerHTML = `
+            <img src="${p.image_url || 'https://via.placeholder.com/300x200?text=Image+Introuvable'}" alt="${p.titre || 'Produit'}" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+            <div class="product-info">
+              <span class="badge-cat">${p.categorie || 'Général'}</span>
+              <h3>${p.titre || 'Sans titre'}</h3>
+              <p class="vendeur-name">${p.nom_boutique || 'Boutique'}</p>
+              <div class="price-row">
+                <span class="price">${p.prix ? p.prix + ' FCFA' : 'Sur devis'}</span>
+              </div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Erreur de chargement :", err);
+        afficherProduitsDemo();
+      }
+    }
+
+    function afficherProduitsDemo() {
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = `
+        <div class="product-card" data-cat="mode">
+          <img src="./photo2.jpg" alt="Ensemble Chic Pull & Chemise" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+          <div class="product-info">
+            <span class="badge-cat">👔 Mode</span>
+            <h3>Ensemble Chic Pull & Chemise</h3>
+            <p class="vendeur-name">Boutique Mode Chic</p>
+            <div class="price-row"><span class="price">Sur devis</span></div>
+          </div>
+        </div>
+        <div class="product-card" data-cat="electronique">
+          <img src="./photo6.jpg" alt="Casque Audio Pro Studio" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+          <div class="product-info">
+            <span class="badge-cat">📱 Tech</span>
+            <h3>Casque Audio Pro Studio</h3>
+            <p class="vendeur-name">Tech Store Lomé</p>
+            <div class="price-row"><span class="price">Sur devis</span></div>
+          </div>
+        </div>
+        <div class="product-card" data-cat="restauration">
+          <img src="./photo8.jpg" alt="Plat Attiéké Poisson Grillé" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+          <div class="product-info">
+            <span class="badge-cat">🍲 Nourriture</span>
+            <h3>Plat Attiéké Poisson Grillé</h3>
+            <p class="vendeur-name">Délices du Togo</p>
+            <div class="price-row"><span class="price">Sur devis</span></div>
+          </div>
+        </div>
+      `;
+    }
+
     function filtrerCategorie(categorie, event) {
       const cards = document.querySelectorAll('.product-card');
       const buttons = document.querySelectorAll('.cat-btn');
@@ -468,7 +418,8 @@
       }
 
       cards.forEach(card => {
-        if (categorie === 'tous' || card.getAttribute('data-cat') === categorie) {
+        const cat = card.getAttribute('data-cat');
+        if (categorie === 'tous' || cat === categorie) {
           card.style.display = 'block';
         } else {
           card.style.display = 'none';
@@ -518,14 +469,16 @@
       }
     }
 
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
+    // Démarrage
+    window.addEventListener('DOMContentLoaded', () => {
+      chargerProduits();
+      if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
           .then(reg => console.log('PWA Service Worker actif !'))
           .catch(err => console.log('Erreur Service Worker PWA :', err));
-      });
-    }
+      }
+    });
   </script>
 </body>
-          </html>
-  
+      </html>
+      
