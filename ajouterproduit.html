@@ -92,9 +92,9 @@
     </main>
 
     <script>
-        // Identifiants Supabase
+        // Identifiants Supabase réinitialisés
         const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eYLzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let fileSelectionne = null;
@@ -102,11 +102,11 @@
         const imgPreview = document.getElementById('imagePreview');
         const previewContainer = document.getElementById('imagePreviewContainer');
 
-        // Pré-remplissage du nom de la boutique si sauvegardé dans le navigateur
+        // Pré-remplissage des identifiants sauvegardés dans le navigateur
         const nomSauvegarde = localStorage.getItem('maBoutiqueNom') || localStorage.getItem('wm_vendeur_nom');
-        if (nomSauvegarde) {
-            document.getElementById('vendeurNom').value = nomSauvegarde;
-        }
+        const codeSauvegarde = localStorage.getItem('maBoutiqueCode') || localStorage.getItem('wm_vendeur_code');
+        if (nomSauvegarde) document.getElementById('vendeurNom').value = nomSauvegarde;
+        if (codeSauvegarde) document.getElementById('vendeurCode').value = codeSauvegarde;
 
         fileInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
@@ -156,18 +156,20 @@
             const description = document.getElementById('produitDesc').value.trim();
 
             try {
-                // 1. Vérification du vendeur et de son mot de passe
+                // 1. Vérification du vendeur
                 const { data: vData, error: vErr } = await db
                     .from('vendeurs')
                     .select('*')
                     .eq('nom_boutique', vendeur)
-                    .single();
+                    .maybeSingle();
 
                 if (vErr || !vData) {
                     throw new Error("Boutique introuvable. Veuillez d'abord vous inscrire.");
                 }
 
-                if (vData.code_secret !== code) {
+                // Vérification souple du mot de passe (code_secu ou code_secret)
+                const codeBDD = vData.code_secu || vData.code_secret;
+                if (codeBDD && codeBDD !== code) {
                     throw new Error("Mot de passe secret incorrect !");
                 }
 
@@ -181,7 +183,7 @@
                     image_url = await compresserPhoto(fileSelectionne);
                 }
 
-                // 3. Insertion de l'article dans la base de données
+                // 3. Insertion de l'article dans Supabase
                 const { error: pErr } = await db
                     .from('produits')
                     .insert([{ 
@@ -205,7 +207,7 @@
             } catch (err) {
                 console.error("Erreur:", err);
                 msg.className = "text-xs text-center font-bold p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 block";
-                msg.innerText = err.message || "Erreur de connexion.";
+                msg.innerText = err.message || "Erreur lors de la publication.";
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-paper-plane"></i> Réessayer`;
             }
