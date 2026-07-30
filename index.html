@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .glow-violet { box-shadow: 0 0 25px rgba(139, 92, 246, 0.15); }
-        .product-img { height: 220px; width: 100%; object-fit: cover; }
+        .product-img { height: 220px; width: 100%; object-fit: cover; cursor: pointer; }
     </style>
 </head>
 <body class="bg-[#090D16] text-slate-100 font-sans min-h-screen flex flex-col justify-between">
@@ -24,9 +24,11 @@
             <div class="flex items-center gap-2.5">
                 <button onclick="toggleNotifications()" class="relative w-9 h-9 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center text-slate-300 hover:text-amber-400 transition">
                     <i class="fas fa-bell"></i>
+                    <span id="badgeNotif" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">1</span>
                 </button>
 
-                <a href="maboutique.html" class="bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-violet-600/20">
+                <!-- BOUTON MA BOUTIQUE -> RENVOIE SUR BOUTIQUE.HTML -->
+                <a href="boutique.html" class="bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-violet-600/20">
                     <i class="fas fa-store"></i> <span>Ma Boutique</span>
                 </a>
 
@@ -45,10 +47,12 @@
             </h3>
             <button onclick="toggleNotifications()" class="text-slate-400 text-xs hover:text-white"><i class="fas fa-times"></i></button>
         </div>
-        <div class="text-xs text-slate-400 text-center py-4">Aucune nouvelle notification.</div>
+        <div id="contenuNotif" class="text-xs text-slate-400 text-center py-4">
+            Aucune nouvelle notification.
+        </div>
     </div>
 
-    <!-- MENU LATÉRAL (BURGER MENU CLEAN) -->
+    <!-- MENU LATÉRAL -->
     <div id="sideMenu" class="fixed inset-y-0 right-0 w-72 bg-[#0F172A] border-l border-slate-800 z-50 transform translate-x-full transition-transform duration-300 p-5 flex flex-col justify-between">
         <div class="space-y-6">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -66,15 +70,16 @@
                 </a>
 
                 <a href="connexion.html" class="flex items-center gap-3 text-violet-300 hover:text-white text-sm font-bold p-2.5 rounded-xl bg-violet-600/20 border border-violet-500/30">
-                    <i class="fas fa-sign-in-alt w-5 text-violet-400"></i> Se Connecter (Vendeur)
-                </a>
-                
-                <a href="maboutique.html" class="flex items-center gap-3 text-slate-300 hover:text-violet-400 text-sm font-medium p-2.5 rounded-xl hover:bg-slate-800/50">
-                    <i class="fas fa-store w-5 text-violet-400"></i> Ma Boutique / Mes Articles
+                    <i class="fas fa-sign-in-alt w-5 text-violet-400"></i> Se Connecter
                 </a>
 
+                <!-- TOUS LES FOSSIERS ASSOCIÉS EXACTEMENT -->
                 <a href="creerboutique.html" class="flex items-center gap-3 text-emerald-400 hover:text-emerald-300 text-sm font-bold p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                     <i class="fas fa-plus-circle w-5"></i> Créer une Boutique
+                </a>
+
+                <a href="ajouterproduit.html" class="flex items-center gap-3 text-blue-400 hover:text-blue-300 text-sm font-bold p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                    <i class="fas fa-box-open w-5"></i> Ajouter un Produit
                 </a>
             </nav>
         </div>
@@ -116,6 +121,11 @@
             <p class="text-xs text-slate-400 text-center col-span-full py-12">Chargement du catalogue en cours...</p>
         </div>
     </main>
+
+    <!-- MODAL ZOOM IMAGE -->
+    <div id="modalZoom" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4 cursor-pointer" onclick="fermerZoom()">
+        <img id="imgZoom" src="" class="max-w-full max-h-full object-contain rounded-2xl shadow-2xl">
+    </div>
 
     <!-- MODAL DU CHAT ET PASSAGE DE COMMANDE -->
     <div id="modalChat" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -245,7 +255,7 @@
                 <div class="bg-[#0F172A] border border-slate-800 rounded-3xl overflow-hidden flex flex-col justify-between hover:border-slate-700 transition shadow-lg">
                     <div>
                         <div class="relative bg-black/30">
-                            <img src="${p.image_url || 'https://via.placeholder.com/300'}" alt="${p.titre}" class="product-img">
+                            <img src="${p.image_url || 'https://via.placeholder.com/300'}" alt="${p.titre}" class="product-img" onclick="zoomerImage('${p.image_url || 'https://via.placeholder.com/300'}')">
                             <span class="absolute top-3 left-3 bg-violet-600/90 text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
                                 ${p.categorie || 'Article'}
                             </span>
@@ -267,6 +277,15 @@
             `).join('');
         }
 
+        function zoomerImage(src) {
+            document.getElementById('imgZoom').src = src;
+            document.getElementById('modalZoom').classList.remove('hidden');
+        }
+
+        function fermerZoom() {
+            document.getElementById('modalZoom').classList.add('hidden');
+        }
+
         function filtrerProduits() {
             const query = document.getElementById('inputRecherche').value.toLowerCase();
             const filtres = tousLesProduits.filter(p => p.titre.toLowerCase().includes(query));
@@ -274,10 +293,21 @@
         }
 
         function ouvrirChat(idProduit) {
-            produitActuel = tousLesProduits.find(p => p.id === idProduit);
-            if (!produitActuel) return;
-            document.getElementById('chatNomBoutique').textContent = produitActuel.nom_boutique || 'Vendeur WiseMarket';
-            document.getElementById('chatNomProduit').textContent = produitActuel.titre;
+            if (tousLesProduits && tousLesProduits.length > 0) {
+                produitActuel = tousLesProduits.find(p => String(p.id) === String(idProduit));
+            }
+            if (produitActuel) {
+                document.getElementById('chatNomBoutique').textContent = produitActuel.nom_boutique || 'Vendeur WiseMarket';
+                document.getElementById('chatNomProduit').textContent = produitActuel.titre;
+
+                // NOTIFICATION DYNAMIQUE
+                const badge = document.getElementById('badgeNotif');
+                const boxNotif = document.getElementById('contenuNotif');
+                if (badge && boxNotif) {
+                    badge.classList.remove('hidden');
+                    boxNotif.innerHTML = `<div class="p-2 bg-violet-900/30 border border-violet-500/30 rounded-xl text-left"><p class="text-white font-bold">Discussion Ouverte</p><p class="text-[11px] text-slate-300">Vous avez démarré une session pour ${produitActuel.titre}.</p></div>`;
+                }
+            }
             document.getElementById('modalChat').classList.remove('hidden');
         }
 
@@ -285,14 +315,14 @@
         function ouvrirFormulaireCommande() { document.getElementById('modalFormCommande').classList.remove('hidden'); }
         function fermerFormCommande() { document.getElementById('modalFormCommande').classList.add('hidden'); }
 
-        function envoyerMessageChat() {
-            const input = document.getElementById('inputMessageChat');
-            const msg = input.value.trim();
-            if (!msg) return;
-            const box = document.getElementById('chatMessages');
-            box.innerHTML += `<div class="flex justify-end"><div class="bg-violet-600 text-white rounded-2xl p-2.5 max-w-[80%]"><p>${msg}</p></div></div>`;
-            input.value = '';
-            box.scrollTop = box.scrollHeight;
+         function envoyerMessageChat() {
+    const input = document.getElementById('inputMessageChat');
+    const msg = input.value.trim();
+    if (!msg) return;
+    const box = document.getElementById('chatMessages');
+    box.innerHTML += `<div class="flex justify-end"><div class="bg-violet-600 text-white rounded-2xl p-2.5 max-w-[80%]"><p>${msg}</p></div></div>`;
+    input.value = '';
+    box.scrollTop = box.scrollHeight;
         }
 
                 function envoyerImageChat(input) {
@@ -300,7 +330,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const box = document.getElementById('chatMessages');
-                    box.innerHTML += `<div class="flex justify-end"><div class="bg-violet-600 text-white rounded-2xl p-1.5 max-w-[80%]"><img src="${e.target.result}" class="rounded-xl max-h-40 object-cover"></div></div>`;
+                    box.innerHTML += `<div class="flex justify-end"><div class="bg-violet-600 text-white rounded-2xl p-1.5 max-w-[80%]"><img src="${e.target.result}" class="rounded-xl max-h-40 object-cover cursor-pointer" onclick="zoomerImage('${e.target.result}')"></div></div>`;
                     box.scrollTop = box.scrollHeight;
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -318,7 +348,6 @@
             const moyen = document.getElementById('cmdMoyenPaiement').value;
 
             try {
-                // INTEGRATION SUPABASE DANS TABLE COMMANDES
                 const { error } = await db.from('commandes').insert([{
                     code_commande: codeCommande,
                     nom_client: nom,
