@@ -69,8 +69,8 @@
                 <!-- Champ Choisir Photo Galerie -->
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Photo de l'article *</label>
-                    <div class="relative border-2 border-dashed border-slate-800 hover:border-violet-500/50 rounded-xl p-4 bg-[#090D16] text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[110px]" onclick="document.getElementById('fileInput').click()">
-                        <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="previewImage(event)">
+                    <label for="fileInput" class="relative border-2 border-dashed border-slate-800 hover:border-violet-500/50 rounded-xl p-4 bg-[#090D16] text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[110px] w-full">
+                        <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="compressAndPreview(event)">
                         
                         <div id="uploadPlaceholder" class="flex flex-col items-center gap-1.5">
                             <i class="fas fa-cloud-upload-alt text-2xl text-violet-400"></i>
@@ -79,12 +79,12 @@
                         </div>
 
                         <div id="imagePreviewContainer" class="hidden flex flex-col items-center gap-2">
-                            <img id="imagePreview" src="" alt="Aperçu" class="h-24 object-cover rounded-lg border border-slate-700">
+                            <img id="imagePreview" src="" alt="Aperçu" class="h-28 object-cover rounded-lg border border-slate-700">
                             <span class="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
-                                <i class="fas fa-check-circle"></i> Photo sélectionnée
+                                <i class="fas fa-check-circle"></i> Photo chargée et optimisée
                             </span>
                         </div>
-                    </div>
+                    </label>
                 </div>
 
                 <div>
@@ -109,23 +109,45 @@
 
         let imageBase64 = "";
 
-        // Auto-remplir le nom s'il est déjà mémorisé
+        // Auto-remplir le nom de la boutique si déjà enregistré
         const nomSauve = localStorage.getItem('wm_vendeur_nom');
         if (nomSauve) document.getElementById('vendeurNom').value = nomSauve;
 
-        // Fonction pour lire et afficher la photo sélectionnée dans la galerie
-        function previewImage(event) {
+        // Fonction pour compresser et charger l'image sans bug
+        function compressAndPreview(event) {
             const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imageBase64 = e.target.result;
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600; // Redimensionne la largeur max à 600px pour éviter la lourdeur
+                    const scale = MAX_WIDTH / img.width;
+                    
+                    if (scale < 1) {
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scale;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    // Compression en JPG à 70% de qualité
+                    imageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+                    // Afficher l'aperçu
                     document.getElementById('imagePreview').src = imageBase64;
                     document.getElementById('uploadPlaceholder').classList.add('hidden');
                     document.getElementById('imagePreviewContainer').classList.remove('hidden');
                 };
-                reader.readAsDataURL(file);
-            }
+            };
         }
 
         async function publierProduit(e) {
@@ -146,14 +168,12 @@
             const image_url = imageBase64 || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
 
             try {
-                // Enregistrement direct dans Supabase
                 const { data, error } = await supabase
                     .from('produits')
                     .insert([{ vendeur, nom, prix, categorie, image_url, description }]);
 
                 if (error) throw error;
 
-                // Mémoriser le nom de la boutique
                 localStorage.setItem('wm_vendeur_nom', vendeur);
 
                 msg.className = "text-xs text-center font-bold p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block";
@@ -173,5 +193,4 @@
         }
     </script>
 </body>
-                                                                     </html>
-                                                                     
+</html>
