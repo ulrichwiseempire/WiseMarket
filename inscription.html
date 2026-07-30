@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer une boutique - WiseMarket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glow-violet { box-shadow: 0 0 25px rgba(139, 92, 246, 0.15); }
+    </style>
+</head>
+<body class="bg-[#090D16] text-slate-100 font-sans min-h-screen">
+
+    <header class="border-b border-slate-800 bg-[#0F172A]/80 backdrop-blur-md sticky top-0 z-50 p-4">
+        <div class="max-w-xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="inline-flex items-center gap-2 text-violet-400 hover:text-violet-300 text-xs font-bold">
+                <i class="fas fa-arrow-left"></i> Accueil
+            </a>
+            <span class="text-xs font-black tracking-wider text-slate-400 uppercase">WiseMarket Togo</span>
+        </div>
+    </header>
+
+    <main class="max-w-xl mx-auto p-4 sm:p-6">
+        <div class="bg-[#0F172A] border border-slate-800 rounded-3xl p-6 sm:p-8 glow-violet">
+            
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-violet-600/20 border border-violet-500/30 mx-auto flex items-center justify-center text-violet-400 mb-3">
+                    <i class="fas fa-store text-xl"></i>
+                </div>
+                <h1 class="text-xl font-black text-white">Créer ma Boutique</h1>
+                <p class="text-xs text-slate-400 mt-1">Rejoignez WiseMarket et vendez vos articles en ligne</p>
+            </div>
+
+            <form id="formInscription" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Votre Nom & Prénom *</label>
+                    <input type="text" id="nomComplet" required placeholder="Ex: Koffi Mensah" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Nom de la boutique *</label>
+                    <input type="text" id="nomBoutique" required placeholder="Ex: Cécile Mode" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">WhatsApp *</label>
+                        <input type="tel" id="whatsapp" required placeholder="Ex: 90000000" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Ville / Quartier *</label>
+                        <input type="text" id="ville" required placeholder="Ex: Lomé - Agoè" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Catégorie Principale</label>
+                    <select id="categorie" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-3 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
+                        <option value="Mode">Mode & Vêtements</option>
+                        <option value="Électronique">Électronique & Phones</option>
+                        <option value="Beauté">Beauté & Cosmétique</option>
+                        <option value="Chaussures">Chaussures & Sacs</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Code secret boutique (Mot de passe) *</label>
+                    <input type="password" id="codeSecu" required placeholder="Créez un mot de passe" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
+                </div>
+
+                <div id="statusMessage" class="text-xs text-center font-bold hidden p-3 rounded-xl"></div>
+
+                <button type="submit" id="btnSubmit" class="w-full bg-violet-600 hover:bg-violet-500 text-white font-bold py-3.5 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-violet-600/20">
+                    <i class="fas fa-paper-plane"></i> Soumettre ma candidature
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center border-t border-slate-800/60 pt-4">
+                <p class="text-xs text-slate-400">Vous avez déjà une boutique ? <a href="ajouterproduit.html" class="text-violet-400 font-bold hover:underline">Publier un article</a></p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
+        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('formInscription').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('btnSubmit');
+            const msg = document.getElementById('statusMessage');
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Envoi en cours...`;
+            msg.classList.add('hidden');
+
+            const nom_complet = document.getElementById('nomComplet').value.trim();
+            const nom_boutique = document.getElementById('nomBoutique').value.trim();
+            const whatsapp = document.getElementById('whatsapp').value.trim();
+            const ville = document.getElementById('ville').value.trim();
+            const categorie = document.getElementById('categorie').value;
+            const code_secu = document.getElementById('codeSecu').value.trim();
+
+            try {
+                // Enregistrement du vendeur avec statut 'en_attente'
+                const { data, error } = await supabase
+                    .from('vendeurs')
+                    .insert([{ nom_complet, nom_boutique, whatsapp, ville, categorie, code_secu, statut: 'en_attente' }]);
+
+                if (error) {
+                    if (error.code === '23505') {
+                        throw new Error("Ce nom de boutique est déjà pris par un autre vendeur.");
+                    }
+                    throw error;
+                }
+
+                // Sauvegarde locale
+                localStorage.setItem('wm_vendeur_nom', nom_boutique);
+                localStorage.setItem('wm_vendeur_code', code_secu);
+
+                msg.className = "text-xs text-center font-bold p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block leading-relaxed";
+                msg.innerHTML = "✓ Candidature envoyée avec succès !<br><span class='text-slate-300 font-normal'>Votre boutique est en cours de validation par l'équipe WiseMarket.</span>";
+
+                document.getElementById('formInscription').reset();
+                btn.classList.add('hidden');
+
+            } catch (err) {
+                console.error("Erreur inscription:", err);
+                msg.className = "text-xs text-center font-bold p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 block";
+                msg.innerText = err.message || "Erreur lors de l'inscription. Veuillez réessayer.";
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-paper-plane"></i> Réessayer`;
+            }
+        });
+    </script>
+</body>
+  </html>
+  
