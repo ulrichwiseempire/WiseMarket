@@ -5,62 +5,89 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WiseMarket</title>
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#1e293b">
+  <meta name="theme-color" content="#0b0f19">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f4f6f9; color: #333; padding-bottom: 60px; }
-    
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #0b0f19; color: #f8fafc; padding-bottom: 70px; }
+
     /* Header */
-    header { background: #1e293b; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; sticky: top; top: 0; z-index: 100; }
-    .logo { font-size: 1.4rem; font-weight: bold; color: #38bdf8; }
-    .menu-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-    
-    /* Navigation latérale */
-    .sidebar { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background: #0f172a; color: white; transition: 0.3s; z-index: 200; padding: 20px; }
+    header { background: #0f172a; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #1e293b; }
+    .logo { font-size: 1.5rem; font-weight: 800; color: #ffffff; }
+    .logo span { color: #10b981; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .btn-ma-boutique { background: #1e293b; color: #ffffff; border: 1px solid #334155; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .menu-btn { background: none; border: none; color: white; font-size: 1.6rem; cursor: pointer; }
+
+    /* Sidebar Navigation */
+    .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: #0f172a; color: white; transition: 0.3s; z-index: 200; padding: 25px; border-right: 1px solid #1e293b; }
     .sidebar.open { left: 0; }
-    .sidebar ul { list-style: none; margin-top: 30px; }
+    .sidebar h3 { font-size: 1.4rem; color: #10b981; margin-bottom: 25px; }
+    .sidebar ul { list-style: none; }
     .sidebar li { margin: 20px 0; }
-    .sidebar a { color: white; text-decoration: none; font-size: 1.1rem; }
-    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 150; }
+    .sidebar a { color: #cbd5e1; text-decoration: none; font-size: 1.05rem; transition: 0.2s; }
+    .sidebar a:hover { color: #10b981; }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; z-index: 150; backdrop-filter: blur(4px); }
     .overlay.active { display: block; }
 
-    /* Recherche & Catégories */
-    .search-container { padding: 15px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .search-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
-    .categories { display: flex; gap: 10px; padding: 10px 15px; overflow-x: auto; background: white; }
-    .cat-btn { padding: 8px 15px; border: none; background: #e2e8f0; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 0.9rem; }
-    .cat-btn.active { background: #0284c7; color: white; }
+    /* Search Container */
+    .search-container { padding: 15px 20px; }
+    .search-wrapper { position: relative; display: flex; align-items: center; }
+    .search-input { width: 100%; background: #1e293b; border: 1px solid #334155; color: white; padding: 14px 50px 14px 16px; border-radius: 12px; outline: none; font-size: 0.95rem; }
+    .search-input::placeholder { color: #64748b; }
+    .search-btn { position: absolute; right: 6px; background: #6366f1; color: white; border: none; width: 40px; height: 40px; border-radius: 8px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
 
-    /* Grille de Produits */
-    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
-    .product-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; flex-direction: column; justify-content: space-between; }
-    .product-img { width: 100%; height: 180px; object-fit: cover; }
-    .product-info { padding: 12px; }
-    .product-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 5px; color: #1e293b; }
-    .product-price { color: #16a34a; font-weight: bold; font-size: 1.05rem; margin-bottom: 10px; }
-    .action-btns { display: flex; flex-direction: column; gap: 5px; }
-    .btn { width: 100%; padding: 8px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; text-align: center; text-decoration: none; }
-    .btn-pay { background: #16a34a; color: white; }
+    /* Stats Section */
+    .stats-card { background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border: 1px solid #312e81; margin: 10px 20px 20px 20px; padding: 18px; border-radius: 16px; display: flex; justify-content: space-around; text-align: center; }
+    .stat-item h4 { font-size: 1.3rem; font-weight: 800; color: #818cf8; }
+    .stat-item p { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
+
+    /* Categories */
+    .section-title { font-size: 1.2rem; font-weight: 700; padding: 0 20px; margin-bottom: 12px; }
+    .categories { display: flex; gap: 10px; padding: 0 20px 20px 20px; overflow-x: auto; }
+    .cat-btn { padding: 10px 18px; border: 1px solid #334155; background: #1e293b; color: #94a3b8; border-radius: 25px; cursor: pointer; white-space: nowrap; font-size: 0.88rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .cat-btn.active { background: #6366f1; color: white; border-color: #6366f1; }
+
+    /* Products Grid */
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 0 20px; }
+    .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
+    .img-container { width: 100%; height: 170px; background-color: #0f172a; overflow: hidden; position: relative; }
+    .product-img { width: 100%; height: 100%; object-fit: cover; }
+    .product-info { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
+    .product-title { font-size: 0.9rem; font-weight: 600; color: #f8fafc; margin-bottom: 6px; line-height: 1.3; }
+    .product-price { color: #10b981; font-weight: 700; font-size: 1rem; margin-bottom: 12px; }
+    .action-btns { display: flex; flex-direction: column; gap: 6px; }
+    .btn { width: 100%; padding: 8px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.8rem; text-align: center; }
+    .btn-pay { background: #10b981; color: white; }
     .btn-wa { background: #25d366; color: white; }
 
-    /* Widget Chat & Support */
-    .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 99; }
-    .chat-toggle { background: #0284c7; color: white; width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-    .chat-box { display: none; flex-direction: column; position: fixed; bottom: 80px; right: 20px; width: 300px; height: 380px; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden; z-index: 100; }
-    .chat-header { background: #0284c7; color: white; padding: 10px; font-weight: bold; }
-    .chat-messages { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-    .msg { max-width: 80%; padding: 8px 12px; border-radius: 10px; font-size: 0.85rem; }
-    .msg.sent { background: #e0f2fe; align-self: flex-end; }
-    .msg.received { background: #f1f5f9; align-self: flex-start; }
-    .chat-input-area { display: flex; padding: 8px; border-top: 1px solid #ddd; }
-    .chat-input { flex: 1; border: 1px solid #ddd; padding: 6px; border-radius: 4px; outline: none; }
-    .chat-send { background: #0284c7; color: white; border: none; padding: 6px 12px; margin-left: 5px; border-radius: 4px; cursor: pointer; }
+    /* Help Banner */
+    .help-card { background: linear-gradient(135deg, #1e1b4b 0%, #1e293b 100%); border: 1px solid #312e81; margin: 25px 20px; padding: 20px; border-radius: 18px; text-align: center; }
+    .help-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+    .help-card h3 { font-size: 1.1rem; color: white; margin-bottom: 6px; }
+    .help-card p { font-size: 0.82rem; color: #94a3b8; margin-bottom: 15px; }
+    .btn-support-wa { background: #f97316; color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+
+    /* Chat Button Floating */
+    .chat-floating { position: fixed; bottom: 20px; right: 20px; background: #6366f1; color: white; width: 55px; height: 55px; border-radius: 50%; border: none; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); z-index: 99; display: flex; align-items: center; justify-content: center; }
+    
+    /* Chat Box */
+    .chat-box { display: none; flex-direction: column; position: fixed; bottom: 85px; right: 20px; width: 310px; height: 390px; background: #0f172a; border: 1px solid #334155; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; z-index: 100; }
+    .chat-header { background: #1e293b; color: white; padding: 14px; font-weight: bold; border-bottom: 1px solid #334155; }
+    .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 80%; padding: 9px 13px; border-radius: 12px; font-size: 0.85rem; }
+    .msg.sent { background: #6366f1; color: white; align-self: flex-end; }
+    .msg.received { background: #1e293b; color: #cbd5e1; align-self: flex-start; }
+    .chat-input-area { display: flex; padding: 10px; border-top: 1px solid #334155; background: #0f172a; }
+    .chat-input { flex: 1; background: #1e293b; border: 1px solid #334155; color: white; padding: 8px 12px; border-radius: 8px; outline: none; font-size: 0.85rem; }
+    .chat-send { background: #6366f1; color: white; border: none; padding: 8px 14px; margin-left: 6px; border-radius: 8px; cursor: pointer; font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar / Menu -->
+  <!-- Sidebar Overlay -->
   <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+  
+  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <h3>WiseMarket</h3>
     <ul>
@@ -71,177 +98,250 @@
     </ul>
   </div>
 
-  <!-- En-tête -->
+  <!-- Header -->
   <header>
-    <div class="logo">WiseMarket</div>
-    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    <div class="logo">Wise<span>Market</span></div>
+    <div class="header-actions">
+      <button class="btn-ma-boutique" onclick="ouvrirMaBoutique()">🛍️ Ma Boutique</button>
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    </div>
   </header>
 
-  <!-- Recherche -->
+  <!-- Search Bar -->
   <div class="search-container">
-    <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un produit...">
+    <div class="search-wrapper">
+      <input type="text" id="searchInput" class="search-input" placeholder="Que recherchez-vous ?">
+      <button class="search-btn">🔍</button>
+    </div>
   </div>
 
-  <!-- Filtres par catégorie -->
+  <!-- Stats Counter Banner -->
+  <div class="stats-card">
+    <div class="stat-item">
+      <h4>1.2K+</h4>
+      <p>Vendeurs</p>
+    </div>
+    <div class="stat-item">
+      <h4>5.5K+</h4>
+      <p>Produits</p>
+    </div>
+    <div class="stat-item">
+      <h4>99%</h4>
+      <p>Satisfaits</p>
+    </div>
+  </div>
+
+  <!-- Categories -->
+  <div class="section-title">Catégories</div>
   <div class="categories">
-    <button class="cat-btn active" onclick="filtrerCategorie('tous', event)">Tous</button>
-    <button class="cat-btn" onclick="filtrerCategorie('vetements', event)">Vêtements</button>
-    <button class="cat-btn" onclick="filtrerCategorie('chaussures', event)">Chaussures</button>
-    <button class="cat-btn" onclick="filtrerCategorie('electronique', event)">Électronique</button>
-    <button class="cat-btn" onclick="filtrerCategorie('nourriture', event)">Nourriture</button>
+    <button class="cat-btn active" onclick="filtrerCategorie('tous', event)">✨ Tous</button>
+    <button class="cat-btn" onclick="filtrerCategorie('vetements', event)">👔 Mode & Sape</button>
+    <button class="cat-btn" onclick="filtrerCategorie('electronique', event)">📱 Tech & Gadgets</button>
+    <button class="cat-btn" onclick="filtrerCategorie('chaussures', event)">👟 Chaussures</button>
+    <button class="cat-btn" onclick="filtrerCategorie('nourriture', event)">🍔 Resto & Food</button>
   </div>
 
-  <!-- Catalogue produits -->
+  <!-- Products Title -->
+  <div class="section-title">À la une</div>
+
+  <!-- Products Grid -->
   <main class="products-grid">
 
     <!-- Produit 1 -->
     <div class="product-card" data-cat="vetements">
-      <img src="1000624998_2.jpg" class="product-img" alt="Ensemble Pull & Chemise">
+      <div class="img-container">
+        <img src="./1000624998_2.jpg" class="product-img" alt="Ensemble Pull & Chemise">
+      </div>
       <div class="product-info">
-        <div class="product-title">Ensemble Chic Pull & Chemise</div>
-        <div class="product-price">Sur Devis</div>
+        <div>
+          <div class="product-title">Ensemble Chic Pull & Chemise</div>
+          <div class="product-price">Sur Devis</div>
+        </div>
         <div class="action-btns">
           <button class="btn btn-pay" onclick="payerGateway('Ensemble Chic Pull & Chemise')">Payer (Mobile Money)</button>
-          <button class="btn btn-wa" onclick="commanderProduit('Ensemble Chic Pull & Chemise')">Commander via WhatsApp</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Ensemble Chic Pull & Chemise')">Commander WhatsApp</button>
         </div>
       </div>
     </div>
 
     <!-- Produit 2 -->
     <div class="product-card" data-cat="vetements">
-      <img src="1000624999_2.jpg" class="product-img" alt="Veste Safari & Pantalon">
+      <div class="img-container">
+        <img src="./1000624999_2.jpg" class="product-img" alt="Veste Safari Noir">
+      </div>
       <div class="product-info">
-        <div class="product-title">Ensemble Veste Safari Noir</div>
-        <div class="product-price">Sur Devis</div>
+        <div>
+          <div class="product-title">Ensemble Veste Safari Noir</div>
+          <div class="product-price">Sur Devis</div>
+        </div>
         <div class="action-btns">
           <button class="btn btn-pay" onclick="payerGateway('Ensemble Veste Safari Noir')">Payer (Mobile Money)</button>
-          <button class="btn btn-wa" onclick="commanderProduit('Ensemble Veste Safari Noir')">Commander via WhatsApp</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Ensemble Veste Safari Noir')">Commander WhatsApp</button>
         </div>
       </div>
     </div>
 
     <!-- Produit 3 -->
     <div class="product-card" data-cat="electronique">
-      <img src="1000625007_2.jpg" class="product-img" alt="Casque Audio Pro">
+      <div class="img-container">
+        <img src="./1000625007_2.jpg" class="product-img" alt="Casque Audio Pro Studio">
+      </div>
       <div class="product-info">
-        <div class="product-title">Casque Audio Pro Studio</div>
-        <div class="product-price">Sur Devis</div>
+        <div>
+          <div class="product-title">Casque Audio Pro Studio</div>
+          <div class="product-price">Sur Devis</div>
+        </div>
         <div class="action-btns">
           <button class="btn btn-pay" onclick="payerGateway('Casque Audio Pro Studio')">Payer (Mobile Money)</button>
-          <button class="btn btn-wa" onclick="commanderProduit('Casque Audio Pro Studio')">Commander via WhatsApp</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Casque Audio Pro Studio')">Commander WhatsApp</button>
         </div>
       </div>
     </div>
 
     <!-- Produit 4 -->
     <div class="product-card" data-cat="electronique">
-      <img src="1000625008_2.jpg" class="product-img" alt="Casque Beats Wireless">
+      <div class="img-container">
+        <img src="./1000625008_2.jpg" class="product-img" alt="Casque Beats Wireless">
+      </div>
       <div class="product-info">
-        <div class="product-title">Casque Beats Wireless Noir/Or</div>
-        <div class="product-price">Sur Devis</div>
+        <div>
+          <div class="product-title">Casque Beats Wireless Noir/Or</div>
+          <div class="product-price">Sur Devis</div>
+        </div>
         <div class="action-btns">
           <button class="btn btn-pay" onclick="payerGateway('Casque Beats Wireless Noir/Or')">Payer (Mobile Money)</button>
-          <button class="btn btn-wa" onclick="commanderProduit('Casque Beats Wireless Noir/Or')">Commander via WhatsApp</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Casque Beats Wireless Noir/Or')">Commander WhatsApp</button>
         </div>
       </div>
     </div>
 
     <!-- Produit 5 -->
     <div class="product-card" data-cat="chaussures">
-      <img src="1000625000_2.jpg" class="product-img" alt="Mules Daim Noir">
+      <div class="img-container">
+        <img src="./1000625000_2.jpg" class="product-img" alt="Mules Daim Noir">
+      </div>
       <div class="product-info">
-        <div class="product-title">Mules Luxe en Daim Noir</div>
-        <div class="product-price">Sur Devis</div>
+        <div>
+          <div class="product-title">Mules Luxe en Daim Noir</div>
+          <div class="product-price">Sur Devis</div>
+        </div>
         <div class="action-btns">
           <button class="btn btn-pay" onclick="payerGateway('Mules Luxe en Daim Noir')">Payer (Mobile Money)</button>
-          <button class="btn btn-wa" onclick="commanderProduit('Mules Luxe en Daim Noir')">Commander via WhatsApp</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Mules Luxe en Daim Noir')">Commander WhatsApp</button>
         </div>
       </div>
     </div>
 
     <!-- Produit 6 -->
     <div class="product-card" data-cat="vetements">
-      <img src="1000625028_2.jpg" class="product-img" alt="Ensemble Jogging Nike">
+      <div class="img-container">
+        <img src="./1000625028_2.jpg" class="product-img" alt="Ensemble Jogging Nike">
+      </div>
       <div class="product-info">
-        <div class="product-title">Ensemble Jogging Nike Gris</div>
-        <div class="product-price">Sur Devis</div>
+        <div>
+          <div class="product-title">Ensemble Jogging Nike Gris</div>
+          <div class="product-price">Sur Devis</div>
+        </div>
         <div class="action-btns">
           <button class="btn btn-pay" onclick="payerGateway('Ensemble Jogging Nike Gris')">Payer (Mobile Money)</button>
-          <button class="btn btn-wa" onclick="commanderProduit('Ensemble Jogging Nike Gris')">Commander via WhatsApp</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Ensemble Jogging Nike Gris')">Commander WhatsApp</button>
         </div>
       </div>
     </div>
 
     <!-- Produit 7 -->
     <div class="product-card" data-cat="nourriture">
-      <img src="1000625029.jpg" class="product-img" alt="Plat Attiéké Poisson">
+      <div class="img-container">
+        <img src="./1000625029.jpg" class="product-img" alt="Plat Attiéké Poisson">
+      </div>
       <div class="product-info">
-        <div class="product-title">Plat Attiéké Poisson Grillé & Bananes</div>
-        <div class="product-price">Sur Devis</div>
+        <div>
+          <div class="product-title">Plat Attiéké Poisson Grillé</div>
+          <div class="product-price">Sur Devis</div>
+        </div>
         <div class="action-btns">
           <button class="btn btn-pay" onclick="payerGateway('Plat Attiéké Poisson Grillé')">Payer (Mobile Money)</button>
-          <button class="btn btn-wa" onclick="commanderProduit('Plat Attiéké Poisson Grillé')">Commander via WhatsApp</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Plat Attiéké Poisson Grillé')">Commander WhatsApp</button>
         </div>
       </div>
     </div>
 
     <!-- Produit 8 -->
     <div class="product-card" data-cat="nourriture">
-      <img src="1000625036.jpg" class="product-img" alt="Spaghetti Saucisse">
+      <div class="img-container">
+        <img src="./1000625036.jpg" class="product-img" alt="Spaghetti Saucisse">
+      </div>
       <div class="product-info">
-        <div class="product-title">Plat Spaghetti aux Saucisses</div>
-        <div class="product-price">Sur Devis</div>
+        <div>
+          <div class="product-title">Plat Spaghetti Saucisses</div>
+          <div class="product-price">Sur Devis</div>
+        </div>
         <div class="action-btns">
           <button class="btn btn-pay" onclick="payerGateway('Plat Spaghetti aux Saucisses')">Payer (Mobile Money)</button>
-          <button class="btn btn-wa" onclick="commanderProduit('Plat Spaghetti aux Saucisses')">Commander via WhatsApp</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Plat Spaghetti aux Saucisses')">Commander WhatsApp</button>
         </div>
       </div>
     </div>
 
     <!-- Produit 9 -->
     <div class="product-card" data-cat="electronique">
-      <img src="1000625096_2.jpg" class="product-img" alt="Tecno Camon 40 Pro">
+      <div class="img-container">
+        <img src="./1000625096_2.jpg" class="product-img" alt="Tecno Camon 40 Pro">
+      </div>
       <div class="product-info">
-        <div class="product-title">Tecno Camon 40 Pro (256Go)</div>
-        <div class="product-price">Sur Devis</div>
+        <div>
+          <div class="product-title">Tecno Camon 40 Pro (256Go)</div>
+          <div class="product-price">Sur Devis</div>
+        </div>
         <div class="action-btns">
           <button class="btn btn-pay" onclick="payerGateway('Tecno Camon 40 Pro')">Payer (Mobile Money)</button>
-          <button class="btn btn-wa" onclick="commanderProduit('Tecno Camon 40 Pro')">Commander via WhatsApp</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Tecno Camon 40 Pro')">Commander WhatsApp</button>
         </div>
       </div>
     </div>
 
     <!-- Produit 10 -->
     <div class="product-card" data-cat="electronique">
-      <img src="1000625095_2.jpg" class="product-img" alt="iPhone 17 Pro">
+      <div class="img-container">
+        <img src="./1000625095_2.jpg" class="product-img" alt="iPhone 17 Pro">
+      </div>
       <div class="product-info">
-        <div class="product-title">iPhone 17 Pro</div>
-        <div class="product-price">Sur Devis</div>
+        <div>
+          <div class="product-title">iPhone 17 Pro</div>
+          <div class="product-price">Sur Devis</div>
+        </div>
         <div class="action-btns">
           <button class="btn btn-pay" onclick="payerGateway('iPhone 17 Pro')">Payer (Mobile Money)</button>
-          <button class="btn btn-wa" onclick="commanderProduit('iPhone 17 Pro')">Commander via WhatsApp</button>
+          <button class="btn btn-wa" onclick="commanderProduit('iPhone 17 Pro')">Commander WhatsApp</button>
         </div>
       </div>
     </div>
 
   </main>
 
-  <!-- Chat / Support Client -->
-  <div class="chat-widget">
-    <button class="chat-toggle" onclick="toggleChat()">💬</button>
-    <div class="chat-box" id="chatBox">
-      <div class="chat-header">Support WiseMarket</div>
-      <div class="chat-messages" id="chatMessages">
-        <div class="msg received">Bonjour ! Comment pouvons-nous vous aider aujourd'hui ?</div>
-      </div>
-      <div class="chat-input-area">
-        <input type="text" id="chatInput" class="chat-input" placeholder="Votre message...">
-        <button class="chat-send" onclick="envoyerMessageChat()">Envoyer</button>
-      </div>
+  <!-- Help Section -->
+  <div class="help-card">
+    <span class="help-icon">🎧</span>
+    <h3>Une question ou un besoin d'aide ?</h3>
+    <p>Notre équipe est à votre disposition par WhatsApp et par Email.</p>
+    <a href="https://wa.me/22872119966" target="_blank" class="btn-support-wa">💬 +228 72 11 99 66</a>
+  </div>
+
+  <!-- Floating Chat Button -->
+  <button class="chat-floating" onclick="toggleChat()">💬</button>
+
+  <!-- Chat Box -->
+  <div class="chat-box" id="chatBox">
+    <div class="chat-header">Support WiseMarket</div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg received">Bonjour ! Comment pouvons-nous vous aider aujourd'hui ?</div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Votre message...">
+      <button class="chat-send" onclick="envoyerMessageChat()">Envoyer</button>
     </div>
   </div>
 
-  <!-- SCRIPT LOGIQUE & FONCTIONNALITÉS -->
   <script>
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
@@ -255,7 +355,7 @@
       if (!maBoutique) {
         seConnecterBoutique();
       } else {
-        alert("Connexion à la boutique : " + maBoutique);
+        alert("Connexion à votre espace : " + maBoutique);
       }
     }
 
@@ -267,7 +367,6 @@
       }
     }
 
-    // Filtrage dynamique des produits par catégorie
     function filtrerCategorie(categorie, event) {
       const cards = document.querySelectorAll('.product-card');
       const buttons = document.querySelectorAll('.cat-btn');
@@ -286,7 +385,6 @@
       });
     }
 
-    // Recherche dynamique
     function filtrerProduits() {
       const queryInput = document.getElementById('searchInput');
       if (!queryInput) return;
@@ -308,21 +406,18 @@
       searchInputEl.addEventListener('input', filtrerProduits);
     }
 
-    // Option 1 : Commande via WhatsApp (Pour préserver l'anonymat / négociation)
     function commanderProduit(nom) {
-      const text = `Bonjour WiseMarket ! Je souhaite commander le produit :%0A- *Produit* : ${encodeURIComponent(nom)}`;
+      const text = `Bonjour WiseMarket ! Je souhaite commander : ${encodeURIComponent(nom)}`;
       window.open(`https://wa.me/22872119966?text=${text}`, '_blank');
     }
 
-    // Option 2 : Gateway Paiement Direct (Flooz / TMoney / Yas / Carte)
     function payerGateway(nomProduit) {
-      let moyen = prompt(`Paiement sécurisé pour : ${nomProduit}\n\nChoisissez votre moyen de paiement :\n1. TMoney / Flooz / Yas\n2. Carte Bancaire\n\nEntrez 1 ou 2 :`);
+      let moyen = prompt(`Paiement sécurisé pour : ${nomProduit}\n\n1. TMoney / Flooz / Yas\n2. Carte Bancaire\n\nEntrez 1 ou 2 :`);
       if (moyen === '1' || moyen === '2') {
-        alert("Redirection vers la passerelle de paiement sécurisée Mobile Money (Flooz/TMoney/Yas)...");
+        alert("Redirection vers la passerelle de paiement Mobile Money...");
       }
     }
 
-    // Widget Chat
     function toggleChat() {
       const box = document.getElementById('chatBox');
       if (box) {
@@ -330,37 +425,4 @@
       }
     }
 
-    function envoyerMessageChat() {
-      const input = document.getElementById('chatInput');
-      if (!input) return;
-      const text = input.value.trim();
-      if (text !== '') {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'msg sent';
-        msgDiv.textContent = text;
-        document.getElementById('chatMessages').appendChild(msgDiv);
-        input.value = '';
-        
-        setTimeout(() => {
-          const autoReply = document.createElement('div');
-          autoReply.className = 'msg received';
-          autoReply.textContent = "Merci pour votre message. Notre équipe/vendeur vous répondra sous peu !";
-          document.getElementById('chatMessages').appendChild(autoReply);
-          const chatMsgs = document.getElementById('chatMessages');
-          if (chatMsgs) chatMsgs.scrollTop = chatMsgs.scrollHeight;
-        }, 1000);
-      }
-    }
-
-    // Activation PWA (Service Worker)
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('PWA Service Worker actif !'))
-          .catch(err => console.log('Erreur Service Worker PWA :', err));
-      });
-    }
-  </script>
-</body>
-            </html>
-  
+    function envoyerMessageChat() 
