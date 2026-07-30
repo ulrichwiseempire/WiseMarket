@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter un Produit - WiseMarket</title>
+    <title>Publier un produit - WiseMarket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -29,24 +29,24 @@
                 <div class="w-12 h-12 rounded-2xl bg-violet-600/20 border border-violet-500/30 mx-auto flex items-center justify-center text-violet-400 mb-3">
                     <i class="fas fa-plus text-xl"></i>
                 </div>
-                <h1 class="text-xl font-black text-white">Nouveau Produit</h1>
-                <p class="text-xs text-slate-400 mt-1">Publiez votre article en quelques secondes</p>
+                <h1 class="text-xl font-black text-white">Publier un Article</h1>
+                <p class="text-xs text-slate-400 mt-1">Espace réservé aux vendeurs certifiés</p>
             </div>
 
             <form id="formAjoutProduit" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">Nom de la boutique *</label>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Nom de votre boutique *</label>
                     <input type="text" id="vendeurNom" required placeholder="Ex: Cécile Mode" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">Code secret boutique *</label>
-                    <input type="password" id="vendeurCode" required placeholder="Votre mot de passe secret" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Mot de passe boutique *</label>
+                    <input type="password" id="vendeurCode" required placeholder="Votre code secret" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Nom de l'article *</label>
-                    <input type="text" id="produitNom" required placeholder="Ex: Robe de soirée Soie" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
+                    <input type="text" id="produitNom" required placeholder="Ex: Robe de soirée" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -67,15 +67,11 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">Photo de l'article *</label>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Photo de l'article</label>
                     <div class="bg-[#090D16] border-2 border-dashed border-slate-800 rounded-xl p-4 text-center">
                         <input type="file" id="fileInput" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-violet-600 file:text-white hover:file:bg-violet-500 cursor-pointer">
-                        
                         <div id="imagePreviewContainer" class="hidden mt-4 flex flex-col items-center gap-2">
                             <img id="imagePreview" src="" alt="Aperçu" class="h-36 object-cover rounded-xl border border-violet-500/50 shadow-md">
-                            <span class="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
-                                <i class="fas fa-check-circle"></i> Photo sélectionnée !
-                            </span>
                         </div>
                     </div>
                 </div>
@@ -96,7 +92,7 @@
 
     <script>
         const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let fileSelectionne = null;
@@ -104,12 +100,8 @@
         const imgPreview = document.getElementById('imagePreview');
         const previewContainer = document.getElementById('imagePreviewContainer');
 
-        // Pré-remplir si le nom et le code existent déjà dans le navigateur
         if (localStorage.getItem('wm_vendeur_nom')) {
             document.getElementById('vendeurNom').value = localStorage.getItem('wm_vendeur_nom');
-        }
-        if (localStorage.getItem('wm_vendeur_code')) {
-            document.getElementById('vendeurCode').value = localStorage.getItem('wm_vendeur_code');
         }
 
         fileInput.addEventListener('change', function (e) {
@@ -130,13 +122,13 @@
                     img.src = event.target.result;
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 500;
+                        const MAX_WIDTH = 400;
                         const scale = MAX_WIDTH / img.width;
                         canvas.width = scale < 1 ? MAX_WIDTH : img.width;
                         canvas.height = scale < 1 ? img.height * scale : img.height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.6));
+                        resolve(canvas.toDataURL('image/jpeg', 0.5));
                     };
                 };
             });
@@ -149,7 +141,7 @@
             const msg = document.getElementById('statusMessage');
 
             btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Publication en cours...`;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Vérification...`;
             msg.classList.add('hidden');
 
             const vendeur = document.getElementById('vendeurNom').value.trim();
@@ -158,24 +150,39 @@
             const prix = document.getElementById('produitPrix').value.trim();
             const categorie = document.getElementById('produitCategorie').value;
             const description = document.getElementById('produitDesc').value.trim();
-            
-            let image_url = 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
 
             try {
+                // 1. Vérification du vendeur et de son mot de passe
+                const { data: vData, error: vErr } = await supabase
+                    .from('vendeurs')
+                    .select('*')
+                    .eq('nom_boutique', vendeur)
+                    .single();
+
+                if (vErr || !vData) {
+                    throw new Error("Boutique introuvable. Veuillez d'abord vous inscrire.");
+                }
+
+                if (vData.code_secu !== code) {
+                    throw new Error("Mot de passe secret incorrect !");
+                }
+
+                if (vData.statut !== 'valide') {
+                    throw new Error("⏳ Votre boutique est en cours de vérification par l'administrateur WiseMarket.");
+                }
+
+                // 2. Traitement de la photo
+                let image_url = 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
                 if (fileSelectionne) {
                     image_url = await compresserPhoto(fileSelectionne);
                 }
 
-                // 1. Enregistrement sécurisé : on stocke le code avec le produit (ou on vérifie la table des codes)
-                const { error } = await supabase
+                // 3. Publication de l'article
+                const { error: pErr } = await supabase
                     .from('produits')
                     .insert([{ vendeur, code_secu: code, nom, prix, categorie, image_url, description }]);
 
-                if (error) throw error;
-
-                // Sauvegarde locale des accès du vendeur
-                localStorage.setItem('wm_vendeur_nom', vendeur);
-                localStorage.setItem('wm_vendeur_code', code);
+                if (pErr) throw pErr;
 
                 msg.className = "text-xs text-center font-bold p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block";
                 msg.innerText = "✓ Article publié avec succès ! Redirection...";
@@ -185,9 +192,9 @@
                 }, 1000);
 
             } catch (err) {
-                console.error("Erreur publication:", err);
+                console.error("Erreur:", err);
                 msg.className = "text-xs text-center font-bold p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 block";
-                msg.innerText = "Erreur lors de la publication. Vérifiez vos champs.";
+                msg.innerText = err.message || "Erreur de connexion.";
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-paper-plane"></i> Réessayer`;
             }
