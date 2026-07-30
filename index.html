@@ -1,547 +1,301 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WiseMarket — La marketplace du Togo</title>
-
-  <!-- Icône du site et PWA -->
-  <link rel="icon" type="image/png" href="logo1.png">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#111827">
-
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- SDK Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  <style>
-    /* Style pour le widget chat acheteur/vendeur */
-    .chat-widget-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #6366f1;
-      color: white;
-      border: none;
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      cursor: pointer;
-      z-index: 1000;
-      font-size: 1.4rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .chat-box {
-      display: none;
-      position: fixed;
-      bottom: 85px;
-      right: 20px;
-      width: 320px;
-      max-width: 90vw;
-      height: 420px;
-      background: #111827;
-      border: 1px solid #1f2937;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-      z-index: 1000;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .chat-header {
-      background: #1f2937;
-      padding: 12px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #fff;
-      font-weight: bold;
-      border-bottom: 1px solid #374151;
-    }
-    .chat-messages {
-      flex: 1;
-      padding: 12px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .msg {
-      max-width: 80%;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      line-height: 1.3;
-    }
-    .msg.sent {
-      align-self: flex-end;
-      background: #6366f1;
-      color: #fff;
-    }
-    .msg.received {
-      align-self: flex-start;
-      background: #1f2937;
-      color: #d1d5db;
-    }
-    .chat-input-area {
-      display: flex;
-      padding: 10px;
-      background: #1f2937;
-      gap: 6px;
-    }
-    .chat-input-area input {
-      flex: 1;
-      padding: 8px 12px;
-      background: #111827;
-      border: 1px solid #374151;
-      border-radius: 6px;
-      color: #fff;
-      outline: none;
-    }
-    .chat-input-area button {
-      background: #10b981;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    /* Formatage des images des produits */
-    .product-card img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-    }
-
-    /* Style du bouton WhatsApp support */
-    .btn-contact-whatsapp {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: #25D366;
-      color: white;
-      text-decoration: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 1rem;
-      margin-top: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-    .btn-contact-whatsapp:hover {
-      background: #1eb857;
-    }
-
-    .btn-ajouter-prod {
-      display: block;
-      width: 100%;
-      background: rgba(99, 102, 241, 0.15);
-      color: #8b5cf6;
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      padding: 10px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: bold;
-      margin-bottom: 8px;
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiseMarket - Achetez & Vendez en toute sécurité</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glow-violet { box-shadow: 0 0 25px rgba(139, 92, 246, 0.15); }
+        .product-img { height: 200px; width: 100%; object-fit: cover; }
+    </style>
 </head>
-<body>
+<body class="bg-[#090D16] text-slate-100 font-sans min-h-screen flex flex-col justify-between">
 
-  <!-- EN-TÊTE FIXE -->
-  <header class="navbar">
-    <div class="logo">Wise <span>Market</span></div>
-    
-    <div class="header-actions">
-      <button class="btn-boutique" onclick="ouvrirMaBoutique()">🛍️ Ma Boutique</button>
-      <button class="btn-burger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-    </div>
-  </header>
+    <!-- HEADER / NAVIGATION -->
+    <header class="border-b border-slate-800 bg-[#0F172A]/90 backdrop-blur-md sticky top-0 z-40 p-4">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="text-lg font-black text-white tracking-wider flex items-center gap-2">
+                Wise<span class="text-emerald-400">Market</span>
+            </a>
 
-  <!-- MENU LATÉRAL (SIDEBAR) -->
-  <div id="sidebar" class="sidebar">
-    <div class="sidebar-header">
-      <div class="logo">Wise <span>Market</span></div>
-      <button class="btn-close" onclick="toggleSidebar()">&times;</button>
-    </div>
-    
-    <ul class="sidebar-links">
-      <li><a href="index.html"><i class="fa-solid fa-house"></i> Accueil</a></li>
-      <li><a href="#categories" onclick="toggleSidebar()"><i class="fa-solid fa-layer-group"></i> Catégories</a></li>
-      <li><a href="https://wa.me/22872119966" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp: +228 72 11 99 66</a></li>
-      <li><a href="mailto:ulrichwiseempire1@gmail.com"><i class="fa-solid fa-envelope"></i> Contact Email</a></li>
-    </ul>
+            <div class="flex items-center gap-3">
+                <a href="ajouterproduit.html" class="bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-violet-600/20">
+                    <i class="fas fa-store"></i> <span>Ma Boutique</span>
+                </a>
 
-    <div class="sidebar-auth">
-      <a href="ajouterproduit.html" class="btn-ajouter-prod"><i class="fa-solid fa-plus"></i> Publier un article</a>
-      <button class="btn-connexion" onclick="seConnecterBoutique()">Connexion Boutique</button>
-      <a href="inscription.html" class="btn-vendre">Créer ma boutique</a>
-    </div>
-
-    <div class="sidebar-footer">
-      <p>🇹🇬 WiseMarket — La marketplace du Togo</p>
-    </div>
-  </div>
-  <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
-
-  <!-- HERO SECTION -->
-  <section class="hero">
-    <div class="badge">🟢 🇹🇬 La vitrine du savoir-faire togolais</div>
-    <h1>Découvrez des créations <span>uniques & faites pour vous</span></h1>
-    <p>Commandez vos vêtements, téléphones, chaussures ou plats préparés par nos vendeurs locaux.</p>
-    
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Que recherchez-vous ?">
-      <button onclick="filtrerProduits()"><i class="fa-solid fa-magnifying-glass"></i></button>
-    </div>
-  </section>
-
-  <!-- STATISTIQUES -->
-  <section class="stats-container">
-    <div class="stat-card">
-      <h3>1.2K+</h3>
-      <p>Vendeurs</p>
-    </div>
-    <div class="stat-card">
-      <h3>5.5K+</h3>
-      <p>Produits</p>
-    </div>
-    <div class="stat-card">
-      <h3>99%</h3>
-      <p>Satisfaits</p>
-    </div>
-  </section>
-
-  <!-- CATÉGORIES -->
-  <section class="categories-section" id="categories">
-    <h2>Catégories</h2>
-    <div class="categories-grid">
-      <button class="cat-btn active" onclick="filtrerCategorie('tous', event)">✨ Tous</button>
-      <button class="cat-btn" onclick="filtrerCategorie('mode', event)">👔 Mode & Sape</button>
-      <button class="cat-btn" onclick="filtrerCategorie('electronique', event)">📱 Tech & Gadgets</button>
-      <button class="cat-btn" onclick="filtrerCategorie('chaussures', event)">👟 Chaussures</button>
-      <button class="cat-btn" onclick="filtrerCategorie('restauration', event)">🍲 Nourriture</button>
-    </div>
-  </section>
-
-  <!-- LISTE DES PRODUITS -->
-  <section class="products-section">
-    <h2>À la une</h2>
-    <div id="productGrid" class="products-grid">
-      <!-- Les 10 produits sont insérés en secours par défaut pour garantir l'affichage direct -->
-    </div>
-  </section>
-
-  <!-- BANNIÈRE SUPPORT (LIEN WHATSAPP DIRECT) -->
-  <section class="support-banner">
-    <div class="support-icon"><i class="fa-solid fa-headset"></i></div>
-    <h3>Une question ou un besoin d'aide ?</h3>
-    <p>Notre équipe administrative est joignable directement sur WhatsApp.</p>
-    <a href="https://wa.me/22872119966" target="_blank" class="btn-contact-whatsapp">
-      <i class="fa-brands fa-whatsapp"></i> Discuter sur WhatsApp (+228 72 11 99 66)
-    </a>
-  </section>
-
-  <!-- PIED DE PAGE -->
-  <footer class="footer-pro">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <h3>Wise <span>Market</span></h3>
-        <p>Achetez local, soutenez nos entrepreneurs et faites-vous livrer en toute sécurité au Togo.</p>
-      </div>
-      <div class="footer-col">
-        <h4>ACHETER</h4>
-        <ul>
-          <li><a href="#categories">Toutes les catégories</a></li>
-          <li><a href="#">Offres du moment</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>VENDEURS</h4>
-        <ul>
-          <li><a href="inscription.html">Devenir vendeur</a></li>
-          <li><a href="#" onclick="seConnecterBoutique()">Connexion boutique</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>CONTACT</h4>
-        <ul>
-          <li><a href="https://wa.me/22872119966" target="_blank"><i class="fa-brands fa-whatsapp"></i> +228 72 11 99 66</a></li>
-          <li><a href="mailto:ulrichwiseempire1@gmail.com"><i class="fa-solid fa-envelope"></i> ulrichwiseempire1@gmail.com</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="footer-bottom">
-      <p>© 2026 WiseMarket — Tous droits réservés</p>
-      <p class="togo-badge">🇹🇬 Fait avec fierté au Togo</p>
-      <p class="payments">Flooz | T-Money</p>
-    </div>
-  </footer>
-
-  <!-- BOUTON ET FENÊTRE MINI-CHAT EN DIRECT -->
-  <button class="chat-widget-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i></button>
-
-  <div id="chatBox" class="chat-box">
-    <div class="chat-header">
-      <span id="chatTitle">💬 Discussion sur l'article</span>
-      <button onclick="toggleChat()" style="background:none; border:none; color:white; cursor:pointer; font-size: 1.2rem;">&times;</button>
-    </div>
-    <div id="chatMessages" class="chat-messages">
-      <div class="msg received">Bonjour ! Ce chat sert à poser des questions directement au vendeur du produit.</div>
-    </div>
-    <div class="chat-input-area">
-      <input type="text" id="chatInput" placeholder="Écrivez votre message...">
-      <button onclick="envoyerMessageChat()"><i class="fa-solid fa-paper-plane"></i></button>
-    </div>
-  </div>
-
-  <!-- SCRIPT LOGIQUE -->
-  <script>
-    // Configuration Supabase
-    const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
-    
-    let db = null;
-    if (window.supabase) {
-      db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
-
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('overlay').classList.toggle('active');
-    }
-
-    function ouvrirMaBoutique() {
-      let maBoutique = localStorage.getItem('maBoutiqueNom');
-      if (!maBoutique) {
-        seConnecterBoutique();
-      } else {
-        window.location.href = `boutique.html?vendeur=${encodeURIComponent(maBoutique)}`;
-      }
-    }
-
-    function seConnecterBoutique() {
-      let nomBoutique = prompt("Entrez le nom exact de votre boutique pour vous connecter :");
-      if (nomBoutique && nomBoutique.trim() !== "") {
-        localStorage.setItem('maBoutiqueNom', nomBoutique.trim());
-        alert("Connexion réussie à la boutique : " + nomBoutique.trim());
-        window.location.href = `boutique.html?vendeur=${encodeURIComponent(nomBoutique.trim())}`;
-      }
-    }
-
-    // Affichage des 10 images locales (photo2.jpg à photo11.jpg)
-    function afficherProduitsDemo() {
-      const grid = document.getElementById('productGrid');
-      grid.innerHTML = `
-        <div class="product-card" data-cat="mode">
-          <img src="./photo2.jpg" alt="Ensemble Chic Pull & Chemise" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-          <div class="product-info">
-            <span class="badge-cat">👔 Mode</span>
-            <h3>Ensemble Chic Pull & Chemise</h3>
-            <p class="vendeur-name">Boutique Mode Chic</p>
-            <div class="price-row"><span class="price">Sur devis</span></div>
-          </div>
+                <!-- BOUTON MENU BURGER (3 BARRES) -->
+                <button onclick="toggleMenu()" class="w-9 h-9 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center text-slate-300 hover:text-white">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
         </div>
-        <div class="product-card" data-cat="mode">
-          <img src="./photo3.jpg" alt="Veste Blazer & Pantalon Sur-Mesure" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-          <div class="product-info">
-            <span class="badge-cat">👔 Mode</span>
-            <h3>Veste Blazer & Pantalon Sur-Mesure</h3>
-            <p class="vendeur-name">Atelier de Sape Lomé</p>
-            <div class="price-row"><span class="price">Sur devis</span></div>
-          </div>
+    </header>
+
+    <!-- MENU LATÉRAL (BURGER MENU) -->
+    <div id="sideMenu" class="fixed inset-y-0 right-0 w-72 bg-[#0F172A] border-l border-slate-800 z-50 transform translate-x-full transition-transform duration-300 p-5 flex flex-col justify-between">
+        <div class="space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <h2 class="text-sm font-bold text-white">Menu Navigation</h2>
+                <button onclick="toggleMenu()" class="text-slate-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+            </div>
+
+            <nav class="space-y-3">
+                <a href="index.html" class="flex items-center gap-3 text-slate-300 hover:text-violet-400 text-sm font-medium p-2 rounded-lg hover:bg-slate-800/50">
+                    <i class="fas fa-home w-5"></i> Accueil
+                </a>
+                <a href="ajouterproduit.html" class="flex items-center gap-3 text-slate-300 hover:text-violet-400 text-sm font-medium p-2 rounded-lg hover:bg-slate-800/50">
+                    <i class="fas fa-plus-circle w-5"></i> Vendre un article
+                </a>
+                <a href="admin.html" class="flex items-center gap-3 text-slate-300 hover:text-violet-400 text-sm font-medium p-2 rounded-lg hover:bg-slate-800/50">
+                    <i class="fas fa-user-shield w-5"></i> Espace Admin
+                </a>
+            </nav>
         </div>
-        <div class="product-card" data-cat="mode">
-          <img src="./photo4.jpg" alt="Robe Traditionnelle Wax & Soie" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-          <div class="product-info">
-            <span class="badge-cat">👔 Mode</span>
-            <h3>Robe Traditionnelle Wax & Soie</h3>
-            <p class="vendeur-name">Créations Africaines</p>
-            <div class="price-row"><span class="price">Sur devis</span></div>
-          </div>
+
+        <!-- SERVICE CLIENT CLEAN WHATSAPP -->
+        <div class="border-t border-slate-800 pt-4 space-y-2">
+            <p class="text-[11px] text-slate-400 font-medium">Assistance & Support</p>
+            <a href="https://wa.me/22872119966?text=Bonjour%20WiseMarket,%20j'ai%20une%20question..." target="_blank" class="w-full bg-emerald-600/20 hover:bg-emerald-600 border border-emerald-500/30 text-emerald-300 hover:text-white text-xs font-bold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-2">
+                <i class="fab fa-whatsapp text-sm"></i> Service Client
+            </a>
+            <p class="text-[10px] text-slate-500 text-center">Paiements sécurisés & Support 24/7</p>
         </div>
-        <div class="product-card" data-cat="electronique">
-          <img src="./photo5.jpg" alt="Smartphone Nova Pro 128 Go" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-          <div class="product-info">
-            <span class="badge-cat">📱 Tech</span>
-            <h3>Smartphone Nova Pro 128 Go</h3>
-            <p class="vendeur-name">Digital Shop Togo</p>
-            <div class="price-row"><span class="price">Sur devis</span></div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="electronique">
-          <img src="./photo6.jpg" alt="Casque Audio Pro Studio" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-          <div class="product-info">
-            <span class="badge-cat">📱 Tech</span>
-            <h3>Casque Audio Pro Studio</h3>
-            <p class="vendeur-name">Tech Store Lomé</p>
-            <div class="price-row"><span class="price">Sur devis</span></div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="chaussures">
-          <img src="./photo7.jpg" alt="Baskets Urban Sneakers Cuir" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-          <div class="product-info">
-            <span class="badge-cat">👟 Chaussures</span>
-            <h3>Baskets Urban Sneakers Cuir</h3>
-            <p class="vendeur-name">Kicks Togo</p>
-            <div class="price-row"><span class="price">Sur devis</span></div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="restauration">
-          <img src="./photo8.jpg" alt="Plat Attiéké Poisson Grillé" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-          <div class="product-info">
-            <span class="badge-cat">🍲 Nourriture</span>
-            <h3>Plat Attiéké Poisson Grillé</h3>
-            <p class="vendeur-name">Délices du Togo</p>
-            <div class="price-row"><span class="price">Sur devis</span></div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="chaussures">
-          <img src="./photo9.jpg" alt="Sandales Artisanales Cuir" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-          <div class="product-info">
-            <span class="badge-cat">👟 Chaussures</span>
-            <h3>Sandales Artisanales Cuir</h3>
-            <p class="vendeur-name">Artisanat Lomé</p>
-            <div class="price-row"><span class="price">Sur devis</span></div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="electronique">
-          <img src="./photo10.jpg" alt="Ecouteurs Sans Fil Bluetooth" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-          <div class="product-info">
-            <span class="badge-cat">📱 Tech</span>
-            <h3>Ecouteurs Sans Fil Bluetooth</h3>
-            <p class="vendeur-name">HighTech Express</p>
-            <div class="price-row"><span class="price">Sur devis</span></div>
-          </div>
-        </div>
-        <div class="product-card" data-cat="restauration">
-          <img src="./photo11.jpg" alt="Jus Naturels Artisanaux 50cl" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-          <div class="product-info">
-            <span class="badge-cat">🍲 Nourriture</span>
-            <h3>Jus Naturels Artisanaux 50cl</h3>
-            <p class="vendeur-name">Bio Saveurs Togo</p>
-            <div class="price-row"><span class="price">Sur devis</span></div>
-          </div>
-        </div>
-      `;
-    }
+    </div>
 
-    async function chargerProduits() {
-      afficherProduitsDemo();
-
-      if (!db) return;
-
-      try {
-        const { data: produits, error } = await db.from('produits').select('*').order('created_at', { ascending: false });
-
-        if (!error && produits && produits.length > 0) {
-          const grid = document.getElementById('productGrid');
-          grid.innerHTML = "";
-          produits.forEach(p => {
-            const catClean = (p.categorie || 'mode').toLowerCase();
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.setAttribute('data-cat', catClean);
-            
-            card.innerHTML = `
-              <img src="${p.image_url || 'https://via.placeholder.com/300x200?text=Image+Introuvable'}" alt="${p.titre || 'Produit'}" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-              <div class="product-info">
-                <span class="badge-cat">${p.categorie || 'Général'}</span>
-                <h3>${p.titre || 'Sans titre'}</h3>
-                <p class="vendeur-name">${p.nom_boutique || 'Boutique'}</p>
-                <div class="price-row">
-                  <span class="price">${p.prix ? p.prix : 'Sur devis'}</span>
-                </div>
-              </div>
-            `;
-            grid.appendChild(card);
-          });
-        }
-      } catch (err) {
-        console.error("Supabase indisponible, affichage démo conservé:", err);
-      }
-    }
-
-    function filtrerCategorie(categorie, event) {
-      const cards = document.querySelectorAll('.product-card');
-      const buttons = document.querySelectorAll('.cat-btn');
-
-      buttons.forEach(btn => btn.classList.remove('active'));
-      if (event && event.target) {
-        event.target.classList.add('active');
-      }
-
-      cards.forEach(card => {
-        const cat = card.getAttribute('data-cat');
-        if (categorie === 'tous' || cat === categorie) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
-
-    function filtrerProduits() {
-      const query = document.getElementById('searchInput').value.toLowerCase().trim();
-      const cards = document.querySelectorAll('.product-card');
-      
-      cards.forEach(card => {
-        const title = card.querySelector('h3').textContent.toLowerCase();
-        if (title.includes(query)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
-
-        // Mini-Chat
-    function toggleChat() {
-      const box = document.getElementById('chatBox');
-      box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function envoyerMessageChat() {
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      if (text !== '') {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'msg sent';
-        msgDiv.textContent = text;
-        document.getElementById('chatMessages').appendChild(msgDiv);
-        input.value = '';
+    <!-- BANNIÈRE & AVERTISSEMENT SÉCURITÉ -->
+    <main class="max-w-4xl mx-auto p-4 sm:p-6 space-y-6 w-full flex-grow">
         
-        setTimeout(() => {
-          const autoReply = document.createElement('div');
-          autoReply.className = 'msg received';
-          autoReply.textContent = "Message bien reçu par le vendeur !";
-          document.getElementById('chatMessages').appendChild(autoReply);
-          document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-        }, 1000);
-      }
-    }
+        <div class="bg-gradient-to-r from-violet-900/40 to-slate-900 border border-violet-500/20 rounded-3xl p-6 glow-violet text-center space-y-3">
+            <h1 class="text-xl sm:text-2xl font-black text-white">Commandez en toute confiance</h1>
+            <p class="text-xs text-slate-300 max-w-md mx-auto">Toutes les transactions et discussions sont protégées. L'argent est bloqué et transféré au vendeur uniquement après réception garantie !</p>
+            
+            <div class="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] px-3 py-1.5 rounded-full mt-2">
+                <i class="fas fa-shield-alt"></i> Attention : Ne réalisez aucun paiement en dehors de WiseMarket.
+            </div>
+        </div>
 
-    window.addEventListener('DOMContentLoaded', () => {
-      chargerProduits();
-      document.getElementById('searchInput').addEventListener('input', filtrerProduits);
+        <!-- RECHERCHE & FILTRES -->
+        <div class="space-y-3">
+            <div class="relative">
+                <input type="text" id="inputRecherche" onkeyup="filtrerProduits()" placeholder="Que recherchez-vous ?" class="w-full bg-[#0F172A] border border-slate-800 rounded-2xl py-3 pl-4 pr-10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-violet-500">
+                <i class="fas fa-search absolute right-4 top-3.5 text-slate-500 text-xs"></i>
+            </div>
+        </div>
 
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('Service Worker actif'))
-          .catch(err => console.log('Erreur SW:', err));
-      }
-    });
-  </script>
+        <!-- TITRE ARTICLES -->
+        <div class="flex items-center justify-between">
+            <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                <i class="fas fa-fire text-amber-400"></i> Articles Récents
+            </h2>
+            <span id="compteurArticles" class="text-xs text-slate-400 font-semibold">0 article</span>
+        </div>
+
+        <!-- LISTE DYNAMIQUE DES PRODUITS (SUPABASE) -->
+        <div id="grilleProduits" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <p class="text-xs text-slate-400 text-center col-span-full py-12">Chargement du catalogue en cours...</p>
+        </div>
+
+    </main>
+
+    <!-- MODAL DU CHAT ET COMMANDE PRIVE -->
+    <div id="modalChat" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#0F172A] border border-slate-800 rounded-3xl w-full max-w-md h-[550px] flex flex-col justify-between overflow-hidden shadow-2xl">
+            
+            <!-- HEADER CHAT -->
+            <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-violet-600/30 border border-violet-500 flex items-center justify-center text-violet-400 font-bold text-xs">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div>
+                        <h3 id="chatNomBoutique" class="text-xs font-bold text-white">Discussion Vendeur</h3>
+                        <p id="chatNomProduit" class="text-[10px] text-slate-400">Article concerne</p>
+                    </div>
+                </div>
+                <button onclick="fermerChat()" class="text-slate-400 hover:text-white"><i class="fas fa-times"></i></button>
+            </div>
+
+            <!-- MESSAGES CONTAINER -->
+            <div id="chatMessages" class="p-4 flex-grow overflow-y-auto space-y-3 text-xs">
+                <div class="bg-violet-950/40 border border-violet-800/40 rounded-2xl p-3 text-[11px] text-violet-200">
+                    <p class="font-bold mb-1"><i class="fas fa-lock"></i> Chat Sécurisé WiseMarket</p>
+                    <p>Posez vos questions au vendeur ou envoyez une photo/modèle pour une commande personnalisée.</p>
+                </div>
+            </div>
+
+            <!-- ZONE DE SAISIE / UPLOAD PHOTO -->
+            <div class="p-3 border-t border-slate-800 bg-slate-900/50 space-y-2">
+                <div class="flex items-center gap-2">
+                    <label for="inputPhotoChat" class="cursor-pointer text-slate-400 hover:text-violet-400 p-2 bg-slate-800 rounded-xl border border-slate-700">
+                        <i class="fas fa-camera text-sm"></i>
+                        <input type="file" id="inputPhotoChat" accept="image/*" class="hidden" onchange="envoyerImageChat(this)">
+                    </label>
+                    <input type="text" id="inputMessageChat" placeholder="Écrire un message..." class="flex-grow bg-[#090D16] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-violet-500">
+                    <button onclick="envoyerMessageChat()" class="bg-violet-600 hover:bg-violet-500 text-white p-2 px-3 rounded-xl transition text-xs font-bold">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                
+                <button id="btnCommanderSecurise" onclick="initierPaiement()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2">
+                    <i class="fas fa-shield-alt"></i> Acheter & Bloquer l'argent
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-[#0F172A] py-6 text-center text-xs text-slate-500 space-y-2">
+        <p>© 2026 WiseMarket Togo. Tous droits réservés.</p>
+        <p class="text-[10px] text-slate-600">Paiement Garanti & Protection de l'acheteur</p>
+    </footer>
+
+    <script>
+        const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let tousLesProduits = [];
+        let produitActuel = null;
+
+        function toggleMenu() {
+            const menu = document.getElementById('sideMenu');
+            menu.classList.toggle('translate-x-full');
+        }
+
+        async function chargerProduits() {
+            const container = document.getElementById('grilleProduits');
+            const compteur = document.getElementById('compteurArticles');
+
+            try {
+                const { data: produits, error } = await db
+                    .from('produits')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                tousLesProduits = produits || [];
+                compteur.textContent = `${tousLesProduits.length} article${tousLesProduits.length > 1 ? 's' : ''}`;
+
+                if (tousLesProduits.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12 bg-[#0F172A] border border-slate-800 rounded-3xl p-6">
+                            <i class="fas fa-box-open text-3xl text-slate-600 mb-2"></i>
+                            <p class="text-xs text-slate-400">Aucun article publié pour le moment.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                afficherProduits(tousLesProduits);
+
+            } catch (err) {
+                console.error("Erreur produits:", err);
+                container.innerHTML = `<p class="text-xs text-red-400 text-center col-span-full py-8">Impossible de charger les produits.</p>`;
+            }
+        }
+
+        function afficherProduits(liste) {
+            const container = document.getElementById('grilleProduits');
+            
+            container.innerHTML = liste.map(p => `
+                <div class="bg-[#0F172A] border border-slate-800 rounded-3xl overflow-hidden flex flex-col justify-between hover:border-slate-700 transition shadow-lg">
+                    <div>
+                        <div class="relative bg-black/30">
+                            <img src="${p.image_url || 'https://via.placeholder.com/300'}" alt="${p.titre}" class="product-img">
+                            <span class="absolute top-3 left-3 bg-violet-600/90 text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
+                                ${p.categorie || 'Article'}
+                            </span>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <h3 class="text-sm font-bold text-white line-clamp-1">${p.titre}</h3>
+                            <p class="text-xs text-slate-400 line-clamp-2">${p.description || 'Pas de description.'}</p>
+                            
+                            <div class="flex items-center justify-between pt-2">
+                                <span class="text-base font-black text-emerald-400">${p.prix ? p.prix + ' FCFA' : 'Sur devis'}</span>
+                                <span class="text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700">
+                                    Dispo : ${p.quantite || 1}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <button onclick="ouvrirChat('${p.id}')" class="w-full bg-violet-600/20 hover:bg-violet-600 border border-violet-500/30 text-violet-300 hover:text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2">
+                            <i class="fas fa-comments"></i> Discuter / Commander
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filtrerProduits() {
+            const query = document.getElementById('inputRecherche').value.toLowerCase();
+            const filtres = tousLesProduits.filter(p => 
+                p.titre.toLowerCase().includes(query) || 
+                (p.description && p.description.toLowerCase().includes(query))
+            );
+            afficherProduits(filtres);
+        }
+
+        function ouvrirChat(idProduit) {
+            produitActuel = tousLesProduits.find(p => p.id === idProduit);
+            if (!produitActuel) return;
+
+            document.getElementById('chatNomBoutique').textContent = produitActuel.nom_boutique || 'Vendeur WiseMarket';
+            document.getElementById('chatNomProduit').textContent = produitActuel.titre;
+            document.getElementById('modalChat').classList.remove('hidden');
+        }
+
+        function fermerChat() {
+            document.getElementById('modalChat').classList.add('hidden');
+        }
+
+        function envoyerMessageChat() {
+            const input = document.getElementById('inputMessageChat');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const box = document.getElementById('chatMessages');
+            box.innerHTML += `
+                <div class="flex justify-end">
+                    <div class="bg-violet-600 text-white rounded-2xl rounded-tr-none p-2.5 max-w-[80%]">
+                        <p>${msg}</p>
+                    </div>
+                </div>
+            `;
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function envoyerImageChat(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const box = document.getElementById('chatMessages');
+                    box.innerHTML += `
+                        <div class="flex justify-end">
+                            <div class="bg-violet-600 text-white rounded-2xl rounded-tr-none p-1.5 max-w-[80%]">
+                                <img src="${e.target.result}" class="rounded-xl max-h-40 object-cover">
+                            </div>
+                        </div>
+                    `;
+                    box.scrollTop = box.scrollHeight;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function initierPaiement() {
+            if (!produitActuel) return;
+            alert(`Paiement Sécurisé WiseMarket :\n\nArticle : ${produitActuel.titre}\nMontant : ${produitActuel.prix} FCFA\n\nVos fonds seront bloqués en toute sécurité et débloqués au vendeur dès réception du colis.`);
+        }
+
+        document.addEventListener('DOMContentLoaded', chargerProduits);
+    </script>
 </body>
 </html>
