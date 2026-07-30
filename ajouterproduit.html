@@ -33,7 +33,7 @@
                 <p class="text-xs text-slate-400 mt-1">Publiez votre article en quelques secondes</p>
             </div>
 
-            <form id="formAjoutProduit" onsubmit="publierProduit(event)" class="space-y-4">
+            <form id="formAjoutProduit" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Nom de la boutique *</label>
                     <input type="text" id="vendeurNom" required placeholder="Ex: Cécile Mode" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
@@ -66,25 +66,26 @@
                     </div>
                 </div>
 
-                <!-- Champ Choisir Photo Galerie -->
+                <!-- Champ Sélection Galerie Sécurisé -->
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Photo de l'article *</label>
-                    <label for="fileInput" class="relative border-2 border-dashed border-slate-800 hover:border-violet-500/50 rounded-xl p-4 bg-[#090D16] text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[110px] w-full">
-                        <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="compressAndPreview(event)">
+                    <div id="dropZone" class="border-2 border-dashed border-slate-800 hover:border-violet-500 rounded-xl p-4 bg-[#090D16] text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[110px]">
                         
-                        <div id="uploadPlaceholder" class="flex flex-col items-center gap-1.5">
+                        <input type="file" id="fileInput" accept="image/*" class="hidden">
+                        
+                        <div id="uploadPlaceholder" class="flex flex-col items-center gap-1.5 pointer-events-none">
                             <i class="fas fa-cloud-upload-alt text-2xl text-violet-400"></i>
                             <span class="text-xs font-bold text-slate-300">Choisir une photo dans la galerie</span>
                             <span class="text-[10px] text-slate-500">Formats acceptés: PNG, JPG, JPEG</span>
                         </div>
 
-                        <div id="imagePreviewContainer" class="hidden flex flex-col items-center gap-2">
+                        <div id="imagePreviewContainer" class="hidden flex flex-col items-center gap-2 pointer-events-none">
                             <img id="imagePreview" src="" alt="Aperçu" class="h-28 object-cover rounded-lg border border-slate-700">
                             <span class="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
-                                <i class="fas fa-check-circle"></i> Photo chargée et optimisée
+                                <i class="fas fa-check-circle"></i> Photo prête à être publiée
                             </span>
                         </div>
-                    </label>
+                    </div>
                 </div>
 
                 <div>
@@ -109,48 +110,51 @@
 
         let imageBase64 = "";
 
-        // Auto-remplir le nom de la boutique si déjà enregistré
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        // Auto-remplir le nom de la boutique si déjà mémorisé
         const nomSauve = localStorage.getItem('wm_vendeur_nom');
         if (nomSauve) document.getElementById('vendeurNom').value = nomSauve;
 
-        // Fonction pour compresser et charger l'image sans bug
-        function compressAndPreview(event) {
-            const file = event.target.files[0];
+        // Clic sur la zone déclenche l'ouverture de la galerie
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // Traitement de l'image sélectionnée
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function (e) {
+            reader.onload = function (event) {
                 const img = new Image();
-                img.src = e.target.result;
                 img.onload = function () {
+                    // Compression simple et directe via Canvas
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 600; // Redimensionne la largeur max à 600px pour éviter la lourdeur
+                    const MAX_WIDTH = 500;
                     const scale = MAX_WIDTH / img.width;
-                    
-                    if (scale < 1) {
-                        canvas.width = MAX_WIDTH;
-                        canvas.height = img.height * scale;
-                    } else {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                    }
+
+                    canvas.width = scale < 1 ? MAX_WIDTH : img.width;
+                    canvas.height = scale < 1 ? img.height * scale : img.height;
 
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                    // Compression en JPG à 70% de qualité
-                    imageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    // Conversion finale en Data URL léger
+                    imageBase64 = canvas.toDataURL('image/jpeg', 0.6);
 
-                    // Afficher l'aperçu
+                    // Afficher la photo directement dans la zone d'aperçu
                     document.getElementById('imagePreview').src = imageBase64;
                     document.getElementById('uploadPlaceholder').classList.add('hidden');
                     document.getElementById('imagePreviewContainer').classList.remove('hidden');
                 };
+                img.src = event.target.result;
             };
-        }
+            reader.readAsDataURL(file);
+        });
 
-        async function publierProduit(e) {
+        // Envoi du formulaire
+        document.getElementById('formAjoutProduit').addEventListener('submit', async function (e) {
             e.preventDefault();
             
             const btn = document.getElementById('btnSubmit');
@@ -190,7 +194,7 @@
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-paper-plane"></i> Réessayer`;
             }
-        }
+        });
     </script>
 </body>
 </html>
