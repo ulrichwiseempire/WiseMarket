@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Créer ma boutique — WiseMarket</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .form-container {
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 25px;
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+    }
+    .form-container h2 { font-size: 1.4rem; margin-bottom: 8px; color: #fff; }
+    .form-container p { color: #9ca3af; font-size: 0.85rem; margin-bottom: 20px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #d1d5db; font-weight: 600; }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .btn-submit {
+      width: 100%;
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #818cf8;
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">Wise <span>Market</span></div>
+    <a href="index.html" class="btn-boutique">🏠 Accueil</a>
+  </header>
+
+  <main style="padding: 15px;">
+    <div class="form-container">
+      <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Retour à l'accueil</a>
+      
+      <h2>🏬 Créer votre boutique</h2>
+      <p>Remplissez le formulaire. Votre candidature sera transmise directement au support WhatsApp.</p>
+
+      <form onsubmit="soumettreBoutique(event)">
+        <div class="form-group">
+          <label>Nom de la boutique *</label>
+          <input type="text" id="nomBoutique" placeholder="Ex: Cécile Mode" required>
+        </div>
+
+        <div class="form-group">
+          <label>Nom & Prénom du propriétaire *</label>
+          <input type="text" id="nomProprio" placeholder="Ex: Koffi Mensah" required>
+        </div>
+
+        <div class="form-group">
+          <label>Numéro WhatsApp Vendeur *</label>
+          <input type="tel" id="telephone" placeholder="Ex: +228 90000000" required>
+        </div>
+
+        <div class="form-group">
+          <label>Catégorie principale *</label>
+          <select id="categorieBoutique" required>
+            <option value="">Choisissez une catégorie</option>
+            <option value="mode">👔 Mode & Sape</option>
+            <option value="electronique">📱 Tech & Gadgets</option>
+            <option value="parfums">✨ Parfums & Soins</option>
+            <option value="restauration">🍲 Nourriture & Resto</option>
+            <option value="sur-mesure">🎨 Sur-mesure & Art (Tableaux...)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Code secret boutique (4 chiffres) *</label>
+          <input type="password" id="codeSecret" maxlength="4" placeholder="Ex: 1234" required>
+        </div>
+
+        <button type="submit" class="btn-submit">🚀 Valider ma candidature</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    function soumettreBoutique(event) {
+      event.preventDefault();
+      
+      const nom = document.getElementById('nomBoutique').value.trim();
+      const proprio = document.getElementById('nomProprio').value.trim();
+      const tel = document.getElementById('telephone').value.trim();
+      const cat = document.getElementById('categorieBoutique').value;
+      const code = document.getElementById('codeSecret').value.trim();
+
+      if (nom && proprio && tel) {
+        localStorage.setItem('maBoutiqueNom', nom);
+        
+        const monNumero = "22872119966";
+        const text = `Bonjour Admin WiseMarket ! 🚀%0A%0AJe souhaite créer ma boutique :%0A- *Nom Boutique* : ${encodeURIComponent(nom)}%0A- *Propriétaire* : ${encodeURIComponent(proprio)}%0A- *WhatsApp Vendeur* : ${encodeURIComponent(tel)}%0A- *Catégorie* : ${encodeURIComponent(cat)}%0A- *Code Secret* : ${encodeURIComponent(code)}`;
+
+        alert("Redirection vers WhatsApp pour envoyer votre dossier de création !");
+        window.open(`https://wa.me/${monNumero}?text=${text}`, '_blank');
+        window.location.href = 'ajouterproduit.html';
+      }
+    }
+  </script>
+</body>
+</html>
+  
