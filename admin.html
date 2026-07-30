@@ -41,9 +41,9 @@
     </main>
 
     <script>
-        // Identifiants Supabase
+        // Clé API Supabase réinitialisée et valide
         const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eYLzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function chargerCandidatures() {
@@ -62,36 +62,39 @@
                     return;
                 }
 
-                container.innerHTML = vendeurs.map(v => `
-                    <div class="bg-[#0F172A] border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div class="space-y-1">
-                            <div class="flex items-center gap-2">
-                                <h3 class="text-sm font-bold text-white">${v.nom_boutique}</h3>
-                                ${v.statut === 'valide' 
-                                    ? '<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full">Validé</span>' 
-                                    : v.statut === 'refuse'
-                                    ? '<span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full">Refusé</span>'
-                                    : '<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full">En attente</span>'
-                                }
+                container.innerHTML = vendeurs.map(v => {
+                    const nomComplet = v.nom_prenom || v.nom_vendeur || v.nom || 'Non renseigné';
+                    return `
+                        <div class="bg-[#0F172A] border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-sm font-bold text-white">${v.nom_boutique}</h3>
+                                    ${v.statut === 'valide' 
+                                        ? '<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full">Validé</span>' 
+                                        : v.statut === 'refuse'
+                                        ? '<span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full">Refusé</span>'
+                                        : '<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full">En attente</span>'
+                                    }
+                                </div>
+                                <p class="text-xs text-slate-300">Responsable : <span class="font-bold text-slate-200">${nomComplet}</span></p>
+                                <p class="text-xs text-slate-400"><i class="fab fa-whatsapp text-emerald-400"></i> ${v.whatsapp || '-'} | <i class="fas fa-map-marker-alt text-violet-400"></i> ${v.ville || '-'} | <span class="text-slate-500">Catégorie: ${v.categorie || 'Autre'}</span></p>
                             </div>
-                            <p class="text-xs text-slate-300">Responsable : <span class="font-bold text-slate-200">${v.nom_prenom || 'Non renseigné'}</span></p>
-                            <p class="text-xs text-slate-400"><i class="fab fa-whatsapp text-emerald-400"></i> ${v.whatsapp} | <i class="fas fa-map-marker-alt text-violet-400"></i> ${v.ville} | <span class="text-slate-500">Catégorie: ${v.categorie || 'Autre'}</span></p>
-                        </div>
 
-                        <div class="flex items-center gap-2 border-t sm:border-t-0 border-slate-800 pt-3 sm:pt-0">
-                            ${v.statut !== 'valide' ? `
-                                <button onclick="changerStatut(${v.id}, 'valide')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
-                                    <i class="fas fa-check"></i> Valider
-                                </button>
-                            ` : ''}
-                            ${v.statut !== 'refuse' ? `
-                                <button onclick="changerStatut(${v.id}, 'refuse')" class="bg-red-600/20 hover:bg-red-600 border border-red-500/30 text-red-300 hover:text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
-                                    <i class="fas fa-times"></i> Refuser
-                                </button>
-                            ` : ''}
+                            <div class="flex items-center gap-2 border-t sm:border-t-0 border-slate-800 pt-3 sm:pt-0">
+                                ${v.statut !== 'valide' ? `
+                                    <button onclick="changerStatut('${v.id}', 'valide')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
+                                        <i class="fas fa-check"></i> Valider
+                                    </button>
+                                ` : ''}
+                                ${v.statut !== 'refuse' ? `
+                                    <button onclick="changerStatut('${v.id}', 'refuse')" class="bg-red-600/20 hover:bg-red-600 border border-red-500/30 text-red-300 hover:text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
+                                        <i class="fas fa-times"></i> Refuser
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
 
             } catch (err) {
                 console.error("Erreur admin:", err);
