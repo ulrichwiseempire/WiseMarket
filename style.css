@@ -247,8 +247,88 @@ body {
 .products-section h2 { font-size: 1.1rem; margin-bottom: 12px; }
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 15px;
+}
+
+/* Design des Cartes Produits (COMPLÉTÉ) */
+.product-card {
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.product-card:hover {
+  transform: translateY(-4px);
+  border-color: #374151;
+}
+.product-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background-color: #1f2937;
+}
+.product-info {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+}
+.badge-cat {
+  font-size: 0.72rem;
+  color: #818cf8;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: block;
+}
+.product-info h3 {
+  font-size: 0.9rem;
+  color: #fff;
+  margin: 4px 0;
+  line-height: 1.3;
+}
+.vendeur-name {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+.custom-note {
+  font-size: 0.72rem;
+  color: #10b981;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  gap: 6px;
+}
+.price {
+  font-weight: bold;
+  color: #10b981;
+  font-size: 0.9rem;
+}
+.btn-commander {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.btn-commander:hover {
+  background: #4f46e5;
 }
 
 /* Support */
@@ -307,4 +387,20 @@ body {
 }
 .togo-badge { color: #10b981; font-weight: bold; }
 .payments { font-weight: 500; color: #94a3b8; }
-  
+
+/* Adaptation Écran PC / Tablette (Responsive) */
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .product-card img {
+    height: 190px;
+  }
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+}
