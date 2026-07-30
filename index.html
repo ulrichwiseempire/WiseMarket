@@ -19,7 +19,7 @@
     </div>
   </header>
 
-  <!-- MENU LATÉRAL (SIDEBAR - STYLE WYLIA) -->
+  <!-- MENU LATÉRAL (SIDEBAR) -->
   <div id="sidebar" class="sidebar">
     <div class="sidebar-header">
       <div class="logo">Wise <span>Market</span></div>
@@ -29,13 +29,14 @@
     <ul class="sidebar-links">
       <li><a href="index.html"><i class="fa-solid fa-house"></i> Accueil</a></li>
       <li><a href="#categories" onclick="toggleSidebar()"><i class="fa-solid fa-layer-group"></i> Catégories</a></li>
-      <li><a href="https://wa.me/228XXXXXXXX" target="_blank"><i class="fa-solid fa-headset"></i> Support WhatsApp</a></li>
+      <li><a href="https://wa.me/22872119966" target="_blank"><i class="fa-brands fa-whatsapp"></i> Support WhatsApp</a></li>
+      <li><a href="mailto:ulrichwiseempire1@gmail.com"><i class="fa-solid fa-envelope"></i> Contact Email</a></li>
     </ul>
 
     <!-- ACTIONS ESPACE VENDEUR / CONNEXION -->
     <div class="sidebar-auth">
       <button class="btn-connexion" onclick="seConnecterBoutique()">Connexion Boutique</button>
-      <a href="ajouterproduit.html" class="btn-vendre">Créer ma boutique</a>
+      <a href="creerboutique.html" class="btn-vendre">Créer ma boutique</a>
     </div>
 
     <div class="sidebar-footer">
@@ -95,13 +96,13 @@
 
   <!-- BANNIÈRE SUPPORT -->
   <section class="support-banner">
-    <div class="support-icon"><i class="fa-solid fa-comments"></i></div>
+    <div class="support-icon"><i class="fa-solid fa-headset"></i></div>
     <h3>Une question ou un besoin d'aide ?</h3>
-    <p>Notre équipe locale est disponible sur WhatsApp pour vous accompagner.</p>
-    <a href="https://wa.me/228XXXXXXXX" target="_blank" class="btn-support">Nous contacter sur WhatsApp</a>
+    <p>Notre équipe est à votre disposition par WhatsApp et par Email.</p>
+    <a href="https://wa.me/22872119966" target="_blank" class="btn-support"><i class="fa-brands fa-whatsapp"></i> +228 72 11 99 66</a>
   </section>
 
-  <!-- PIED DE PAGE (FOOTER) CORRIGÉ -->
+  <!-- PIED DE PAGE (FOOTER) SANS ESPACE ADMIN -->
   <footer class="footer-pro">
     <div class="footer-grid">
       <div class="footer-col">
@@ -116,10 +117,17 @@
         </ul>
       </div>
       <div class="footer-col">
-        <h4>VENDRE</h4>
+        <h4>VENDEURS</h4>
         <ul>
-          <li><a href="ajouterproduit.html">Devenir vendeur</a></li>
-          <li><a href="admin.html">Espace Admin</a></li>
+          <li><a href="creerboutique.html">Devenir vendeur</a></li>
+          <li><a href="#" onclick="seConnecterBoutique()">Connexion boutique</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>CONTACT</h4>
+        <ul>
+          <li><a href="https://wa.me/22872119966" target="_blank">WhatsApp : +228 72 11 99 66</a></li>
+          <li><a href="mailto:ulrichwiseempire1@gmail.com">ulrichwiseempire1@gmail.com</a></li>
         </ul>
       </div>
     </div>
@@ -157,4 +165,5 @@
     }
   </script>
 </body>
-</html>
+        </html>
+        
