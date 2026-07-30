@@ -105,9 +105,10 @@
             const whatsapp = document.getElementById('whatsapp').value.trim();
             const ville = document.getElementById('ville').value.trim();
             const categorie = document.getElementById('categorie').value;
-            const code_secret = document.getElementById('codeSecu').value.trim();
+            const code_secu = document.getElementById('codeSecu').value.trim();
 
             try {
+                // Utilisation exacte du champ 'code_secu' présent dans Supabase
                 const { data, error } = await db
                     .from('vendeurs')
                     .insert([{ 
@@ -116,7 +117,7 @@
                         whatsapp, 
                         ville, 
                         categorie, 
-                        code_secret, 
+                        code_secu, 
                         statut: 'en_attente' 
                     }]);
 
@@ -129,7 +130,7 @@
 
                 // Sauvegarde locale des identifiants
                 localStorage.setItem('maBoutiqueNom', nom_boutique);
-                localStorage.setItem('maBoutiqueCode', code_secret);
+                localStorage.setItem('maBoutiqueCode', code_secu);
 
                 msg.className = "text-xs text-center font-bold p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block leading-relaxed";
                 msg.innerHTML = "✓ Candidature envoyée avec succès !<br><span class='text-slate-300 font-normal'>Votre boutique est en cours de validation par l'équipe WiseMarket.</span>";
@@ -147,5 +148,5 @@
         });
     </script>
 </body>
-                    </html>
-                
+    </html>
+    
