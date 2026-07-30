@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
-    /* Intégration du Mini-Chat et ajustements légers */
+    /* Style pour le widget chat acheteur/vendeur */
     .chat-widget-btn {
       position: fixed;
       bottom: 20px;
@@ -107,6 +107,35 @@
       border-radius: 6px;
       cursor: pointer;
     }
+
+    /* Formatage des images des produits */
+    .product-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    /* Style du bouton d'appel support */
+    .btn-contact-support {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #25D366; /* Vert WhatsApp / Contact pro */
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      margin-top: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .btn-contact-support:hover {
+      background: #1eb857;
+    }
   </style>
 </head>
 <body>
@@ -131,11 +160,10 @@
     <ul class="sidebar-links">
       <li><a href="index.html"><i class="fa-solid fa-house"></i> Accueil</a></li>
       <li><a href="#categories" onclick="toggleSidebar()"><i class="fa-solid fa-layer-group"></i> Catégories</a></li>
-      <li><a href="#" onclick="toggleChat(); toggleSidebar();"><i class="fa-solid fa-comments"></i> Support Client</a></li>
+      <li><a href="tel:+22872119966"><i class="fa-solid fa-phone"></i> +228 72 11 99 66</a></li>
       <li><a href="mailto:ulrichwiseempire1@gmail.com"><i class="fa-solid fa-envelope"></i> Contact Email</a></li>
     </ul>
 
-    <!-- ACTIONS ESPACE VENDEUR / CONNEXION -->
     <div class="sidebar-auth">
       <button class="btn-connexion" onclick="seConnecterBoutique()">Connexion Boutique</button>
       <a href="creerboutique.html" class="btn-vendre">Créer ma boutique</a>
@@ -187,147 +215,137 @@
     </div>
   </section>
 
-  <!-- LISTE DES PRODUITS (TES 10 PHOTOS) -->
+  <!-- LISTE DES PRODUITS DE DEMONSTRATION -->
   <section class="products-section">
     <h2>À la une</h2>
     <div id="productGrid" class="products-grid">
       
       <!-- Produit 1 -->
       <div class="product-card" data-cat="mode">
-        <img src="./1000624998_2.jpg" alt="Ensemble Chic Pull & Chemise">
+        <img src="./photo2.jpg" alt="Ensemble Chic Pull & Chemise" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">👔 Mode</span>
           <h3>Ensemble Chic Pull & Chemise</h3>
           <p class="vendeur-name">Boutique Mode Chic</p>
           <div class="price-row">
             <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="discuterArticle('Ensemble Chic Pull & Chemise')">Discuter avec le vendeur</button>
           </div>
         </div>
       </div>
 
       <!-- Produit 2 -->
       <div class="product-card" data-cat="mode">
-        <img src="./1000624999_2.jpg" alt="Ensemble Veste Safari Noir">
+        <img src="./photo3.jpg" alt="Ensemble Veste Safari Noir" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">👔 Mode</span>
           <h3>Ensemble Veste Safari Noir</h3>
           <p class="vendeur-name">Atelier de Couture Togo</p>
           <div class="price-row">
             <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="discuterArticle('Ensemble Veste Safari Noir')">Discuter avec le vendeur</button>
           </div>
         </div>
       </div>
 
       <!-- Produit 3 -->
       <div class="product-card" data-cat="electronique">
-        <img src="./1000625007_2.jpg" alt="Casque Audio Pro Studio">
+        <img src="./photo4.jpg" alt="Casque Audio Pro Studio" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>Casque Audio Pro Studio</h3>
           <p class="vendeur-name">Tech Store Lomé</p>
           <div class="price-row">
             <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="discuterArticle('Casque Audio Pro Studio')">Discuter avec le vendeur</button>
           </div>
         </div>
       </div>
 
       <!-- Produit 4 -->
       <div class="product-card" data-cat="electronique">
-        <img src="./1000625008_2.jpg" alt="Casque Beats Wireless Noir/Or">
+        <img src="./photo5.jpg" alt="Casque Beats Wireless Noir/Or" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>Casque Beats Wireless Noir/Or</h3>
           <p class="vendeur-name">Tech Store Lomé</p>
           <div class="price-row">
             <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="discuterArticle('Casque Beats Wireless Noir/Or')">Discuter avec le vendeur</button>
           </div>
         </div>
       </div>
 
       <!-- Produit 5 -->
       <div class="product-card" data-cat="chaussures">
-        <img src="./1000625000_2.jpg" alt="Mules Luxe en Daim Noir">
+        <img src="./photo6.jpg" alt="Mules Luxe en Daim Noir" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">👟 Chaussures</span>
           <h3>Mules Luxe en Daim Noir</h3>
           <p class="vendeur-name">Chaussures & Co</p>
           <div class="price-row">
             <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="discuterArticle('Mules Luxe en Daim Noir')">Discuter avec le vendeur</button>
           </div>
         </div>
       </div>
 
       <!-- Produit 6 -->
       <div class="product-card" data-cat="mode">
-        <img src="./1000625028_2.jpg" alt="Ensemble Jogging Nike Gris">
+        <img src="./photo7.jpg" alt="Ensemble Jogging Nike Gris" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">👔 Mode</span>
           <h3>Ensemble Jogging Nike Gris</h3>
           <p class="vendeur-name">Streetwear Togo</p>
           <div class="price-row">
             <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="discuterArticle('Ensemble Jogging Nike Gris')">Discuter avec le vendeur</button>
           </div>
         </div>
       </div>
 
       <!-- Produit 7 -->
       <div class="product-card" data-cat="restauration">
-        <img src="./1000625029.jpg" alt="Plat Attiéké Poisson Grillé">
+        <img src="./photo8.jpg" alt="Plat Attiéké Poisson Grillé" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">🍲 Nourriture</span>
           <h3>Plat Attiéké Poisson Grillé</h3>
           <p class="vendeur-name">Délices du Togo</p>
           <div class="price-row">
             <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="discuterArticle('Plat Attiéké Poisson Grillé')">Discuter avec le vendeur</button>
           </div>
         </div>
       </div>
 
       <!-- Produit 8 -->
       <div class="product-card" data-cat="restauration">
-        <img src="./1000625036.jpg" alt="Plat Spaghetti aux Saucisses">
+        <img src="./photo9.jpg" alt="Plat Spaghetti aux Saucisses" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">🍲 Nourriture</span>
           <h3>Plat Spaghetti aux Saucisses</h3>
           <p class="vendeur-name">Fast Food Express</p>
           <div class="price-row">
             <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="discuterArticle('Plat Spaghetti aux Saucisses')">Discuter avec le vendeur</button>
           </div>
         </div>
       </div>
 
       <!-- Produit 9 -->
       <div class="product-card" data-cat="electronique">
-        <img src="./1000625096_2.jpg" alt="Tecno Camon 40 Pro">
+        <img src="./photo10.jpg" alt="Tecno Camon 40 Pro" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>Tecno Camon 40 Pro (256Go)</h3>
           <p class="vendeur-name">HighTech Market</p>
           <div class="price-row">
             <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="discuterArticle('Tecno Camon 40 Pro')">Discuter avec le vendeur</button>
           </div>
         </div>
       </div>
 
       <!-- Produit 10 -->
       <div class="product-card" data-cat="electronique">
-        <img src="./1000625095_2.jpg" alt="iPhone 17 Pro">
+        <img src="./photo11.jpg" alt="iPhone 17 Pro" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>iPhone 17 Pro</h3>
           <p class="vendeur-name">Apple Store Lomé</p>
           <div class="price-row">
             <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="discuterArticle('iPhone 17 Pro')">Discuter avec le vendeur</button>
           </div>
         </div>
       </div>
@@ -335,15 +353,17 @@
     </div>
   </section>
 
-  <!-- BANNIÈRE SUPPORT -->
+  <!-- BANNIÈRE SUPPORT (MODIFIÉE AVEC TON NUMÉRO DIRECT) -->
   <section class="support-banner">
     <div class="support-icon"><i class="fa-solid fa-headset"></i></div>
     <h3>Une question ou un besoin d'aide ?</h3>
-    <p>Notre équipe est à votre disposition par le chat du site ou par e-mail.</p>
-    <button onclick="toggleChat()" class="btn-support" style="border:none; cursor:pointer;"><i class="fa-solid fa-comments"></i> Ouvrir le Chat en direct</button>
+    <p>Notre équipe administrative est joignable directement par téléphone ou WhatsApp.</p>
+    <a href="tel:+22872119966" class="btn-contact-support">
+      <i class="fa-solid fa-phone"></i> +228 72 11 99 66
+    </a>
   </section>
 
-  <!-- PIED DE PAGE -->
+  <!-- PIED DE PAGE (CONTACT MIS À JOUR) -->
   <footer class="footer-pro">
     <div class="footer-grid">
       <div class="footer-col">
@@ -367,7 +387,8 @@
       <div class="footer-col">
         <h4>CONTACT</h4>
         <ul>
-          <li><a href="mailto:ulrichwiseempire1@gmail.com">ulrichwiseempire1@gmail.com</a></li>
+          <li><a href="tel:+22872119966"><i class="fa-solid fa-phone"></i> +228 72 11 99 66</a></li>
+          <li><a href="mailto:ulrichwiseempire1@gmail.com"><i class="fa-solid fa-envelope"></i> ulrichwiseempire1@gmail.com</a></li>
         </ul>
       </div>
     </div>
@@ -379,16 +400,16 @@
     </div>
   </footer>
 
-  <!-- BOUTON ET FENÊTRE MINI-CHAT EN DIRECT -->
+  <!-- BOUTON ET FENÊTRE MINI-CHAT EN DIRECT (RÉSERVÉ ACHETEUR/VENDEUR) -->
   <button class="chat-widget-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i></button>
 
   <div id="chatBox" class="chat-box">
     <div class="chat-header">
-      <span id="chatTitle">💬 Chat en direct WiseMarket</span>
+      <span id="chatTitle">💬 Discussion sur l'article</span>
       <button onclick="toggleChat()" style="background:none; border:none; color:white; cursor:pointer; font-size: 1.2rem;">&times;</button>
     </div>
     <div id="chatMessages" class="chat-messages">
-      <div class="msg received">Bonjour ! Posez votre question au vendeur ou au support ici.</div>
+      <div class="msg received">Bonjour ! Ce chat sert à poser des questions directement au vendeur du produit.</div>
     </div>
     <div class="chat-input-area">
       <input type="text" id="chatInput" placeholder="Écrivez votre message...">
@@ -396,7 +417,7 @@
     </div>
   </div>
 
-  <!-- SCRIPT LOGIQUE & SERVICE WORKER PWA -->
+  <!-- SCRIPT LOGIQUE -->
   <script>
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
@@ -421,7 +442,6 @@
       }
     }
 
-    // Filtrage dynamique des produits par catégorie
     function filtrerCategorie(categorie, event) {
       const cards = document.querySelectorAll('.product-card');
       const buttons = document.querySelectorAll('.cat-btn');
@@ -440,7 +460,6 @@
       });
     }
 
-    // Filtrage par barre de recherche
     function filtrerProduits() {
       const query = document.getElementById('searchInput').value.toLowerCase().trim();
       const cards = document.querySelectorAll('.product-card');
@@ -457,28 +476,7 @@
 
     document.getElementById('searchInput').addEventListener('input', filtrerProduits);
 
-    // Ouvrir le chat directement pour discuter de l'article sur le site
-    function discuterArticle(nomArticle) {
-      const chatBox = document.getElementById('chatBox');
-      const chatMessages = document.getElementById('chatMessages');
-      
-      chatBox.style.display = 'flex';
-      
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'msg sent';
-      msgDiv.textContent = `Bonjour, je suis intéressé par l'article : ${nomArticle}`;
-      chatMessages.appendChild(msgDiv);
-      
-      setTimeout(() => {
-        const replyDiv = document.createElement('div');
-        replyDiv.className = 'msg received';
-        replyDiv.textContent = `Bonjour ! Merci de votre intérêt pour "${nomArticle}". Le vendeur a bien reçu votre message et va vous répondre sous peu.`;
-        chatMessages.appendChild(replyDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }, 800);
-    }
-
-    // Gestion du Mini-Chat
+    // Mini-Chat
     function toggleChat() {
       const box = document.getElementById('chatBox');
       box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
@@ -497,14 +495,13 @@
         setTimeout(() => {
           const autoReply = document.createElement('div');
           autoReply.className = 'msg received';
-          autoReply.textContent = "Message bien reçu ! Le vendeur va vous répondre directement sur le site.";
+          autoReply.textContent = "Message bien reçu par le vendeur !";
           document.getElementById('chatMessages').appendChild(autoReply);
           document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
         }, 1000);
       }
     }
 
-    // Activation PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -514,5 +511,5 @@
     }
   </script>
 </body>
-            </html>
-          
+  </html>
+  
