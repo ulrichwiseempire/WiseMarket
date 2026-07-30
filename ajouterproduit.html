@@ -66,9 +66,25 @@
                     </div>
                 </div>
 
+                <!-- Champ Choisir Photo Galerie -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">Lien de l'image (URL)</label>
-                    <input type="url" id="produitImage" placeholder="https://..." class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Photo de l'article *</label>
+                    <div class="relative border-2 border-dashed border-slate-800 hover:border-violet-500/50 rounded-xl p-4 bg-[#090D16] text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[110px]" onclick="document.getElementById('fileInput').click()">
+                        <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="previewImage(event)">
+                        
+                        <div id="uploadPlaceholder" class="flex flex-col items-center gap-1.5">
+                            <i class="fas fa-cloud-upload-alt text-2xl text-violet-400"></i>
+                            <span class="text-xs font-bold text-slate-300">Choisir une photo dans la galerie</span>
+                            <span class="text-[10px] text-slate-500">Formats acceptés: PNG, JPG, JPEG</span>
+                        </div>
+
+                        <div id="imagePreviewContainer" class="hidden flex flex-col items-center gap-2">
+                            <img id="imagePreview" src="" alt="Aperçu" class="h-24 object-cover rounded-lg border border-slate-700">
+                            <span class="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+                                <i class="fas fa-check-circle"></i> Photo sélectionnée
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <div>
@@ -91,9 +107,26 @@
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        let imageBase64 = "";
+
         // Auto-remplir le nom s'il est déjà mémorisé
         const nomSauve = localStorage.getItem('wm_vendeur_nom');
         if (nomSauve) document.getElementById('vendeurNom').value = nomSauve;
+
+        // Fonction pour lire et afficher la photo sélectionnée dans la galerie
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageBase64 = e.target.result;
+                    document.getElementById('imagePreview').src = imageBase64;
+                    document.getElementById('uploadPlaceholder').classList.add('hidden');
+                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
         async function publierProduit(e) {
             e.preventDefault();
@@ -109,18 +142,18 @@
             const nom = document.getElementById('produitNom').value.trim();
             const prix = document.getElementById('produitPrix').value.trim();
             const categorie = document.getElementById('produitCategorie').value;
-            const image_url = document.getElementById('produitImage').value.trim() || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
             const description = document.getElementById('produitDesc').value.trim();
+            const image_url = imageBase64 || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
 
             try {
-                // Sauvegarde dans la base Supabase
+                // Enregistrement direct dans Supabase
                 const { data, error } = await supabase
                     .from('produits')
                     .insert([{ vendeur, nom, prix, categorie, image_url, description }]);
 
                 if (error) throw error;
 
-                // Sauvegarder le nom en mémoire
+                // Mémoriser le nom de la boutique
                 localStorage.setItem('wm_vendeur_nom', vendeur);
 
                 msg.className = "text-xs text-center font-bold p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block";
@@ -133,11 +166,12 @@
             } catch (err) {
                 console.error("Erreur publication:", err);
                 msg.className = "text-xs text-center font-bold p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 block";
-                msg.innerText = "Erreur de connexion. Vérifiez vos données et réessayez.";
+                msg.innerText = "Erreur de connexion. Veuillez réessayer.";
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-paper-plane"></i> Réessayer`;
             }
         }
     </script>
 </body>
-</html>
+                                                                     </html>
+                                                                     
