@@ -16,7 +16,7 @@
     <header class="border-b border-slate-800 bg-[#0F172A]/80 backdrop-blur-md sticky top-0 z-50 p-4">
         <div class="max-w-xl mx-auto flex items-center justify-between">
             <a href="index.html" class="inline-flex items-center gap-2 text-violet-400 hover:text-violet-300 text-xs font-bold">
-                <i class="fas fa-arrow-left"></i> Annuler
+                <i class="fas fa-arrow-left"></i> Accueil
             </a>
             <span class="text-xs font-black tracking-wider text-slate-400 uppercase">WiseMarket Togo</span>
         </div>
@@ -41,7 +41,7 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Code secret boutique *</label>
-                    <input type="password" id="vendeurCode" required placeholder="Votre mot de passe" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
+                    <input type="password" id="vendeurCode" required placeholder="Votre mot de passe secret" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
                 </div>
 
                 <div>
@@ -96,17 +96,21 @@
 
     <script>
         const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let fileSelectionne = null;
-
         const fileInput = document.getElementById('fileInput');
         const imgPreview = document.getElementById('imagePreview');
         const previewContainer = document.getElementById('imagePreviewContainer');
 
-        const nomSauve = localStorage.getItem('wm_vendeur_nom');
-        if (nomSauve) document.getElementById('vendeurNom').value = nomSauve;
+        // Pré-remplir si le nom et le code existent déjà dans le navigateur
+        if (localStorage.getItem('wm_vendeur_nom')) {
+            document.getElementById('vendeurNom').value = localStorage.getItem('wm_vendeur_nom');
+        }
+        if (localStorage.getItem('wm_vendeur_code')) {
+            document.getElementById('vendeurCode').value = localStorage.getItem('wm_vendeur_code');
+        }
 
         fileInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
@@ -128,13 +132,10 @@
                         const canvas = document.createElement('canvas');
                         const MAX_WIDTH = 500;
                         const scale = MAX_WIDTH / img.width;
-
                         canvas.width = scale < 1 ? MAX_WIDTH : img.width;
                         canvas.height = scale < 1 ? img.height * scale : img.height;
-
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
                         resolve(canvas.toDataURL('image/jpeg', 0.6));
                     };
                 };
@@ -152,6 +153,7 @@
             msg.classList.add('hidden');
 
             const vendeur = document.getElementById('vendeurNom').value.trim();
+            const code = document.getElementById('vendeurCode').value.trim();
             const nom = document.getElementById('produitNom').value.trim();
             const prix = document.getElementById('produitPrix').value.trim();
             const categorie = document.getElementById('produitCategorie').value;
@@ -164,16 +166,19 @@
                     image_url = await compresserPhoto(fileSelectionne);
                 }
 
-                const { data, error } = await supabase
+                // 1. Enregistrement sécurisé : on stocke le code avec le produit (ou on vérifie la table des codes)
+                const { error } = await supabase
                     .from('produits')
-                    .insert([{ vendeur, nom, prix, categorie, image_url, description }]);
+                    .insert([{ vendeur, code_secu: code, nom, prix, categorie, image_url, description }]);
 
                 if (error) throw error;
 
+                // Sauvegarde locale des accès du vendeur
                 localStorage.setItem('wm_vendeur_nom', vendeur);
+                localStorage.setItem('wm_vendeur_code', code);
 
                 msg.className = "text-xs text-center font-bold p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block";
-                msg.innerText = "✓ Article publié ! Redirection vers votre vitrine...";
+                msg.innerText = "✓ Article publié avec succès ! Redirection...";
 
                 setTimeout(() => {
                     window.location.href = `boutique.html?vendeur=${encodeURIComponent(vendeur)}`;
@@ -182,7 +187,7 @@
             } catch (err) {
                 console.error("Erreur publication:", err);
                 msg.className = "text-xs text-center font-bold p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 block";
-                msg.innerText = "Erreur de connexion. Veuillez réessayer.";
+                msg.innerText = "Erreur lors de la publication. Vérifiez vos champs.";
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-paper-plane"></i> Réessayer`;
             }
