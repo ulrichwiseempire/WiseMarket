@@ -85,7 +85,6 @@
     </main>
 
     <script>
-        // Clé API Supabase réinitialisée sans altération de caractères
         const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -100,53 +99,58 @@
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Envoi en cours...`;
             msg.classList.add('hidden');
 
-            const nom_prenom = document.getElementById('nomComplet').value.trim();
-            const nom_boutique = document.getElementById('nomBoutique').value.trim();
+            const nomComplet = document.getElementById('nomComplet').value.trim();
+            const nomBoutique = document.getElementById('nomBoutique').value.trim();
             const whatsapp = document.getElementById('whatsapp').value.trim();
             const ville = document.getElementById('ville').value.trim();
             const categorie = document.getElementById('categorie').value;
-            const code_secu = document.getElementById('codeSecu').value.trim();
+            const codeSecu = document.getElementById('codeSecu').value.trim();
 
-            try {
-                // Utilisation exacte du champ 'code_secu' présent dans Supabase
-                const { data, error } = await db
-                    .from('vendeurs')
-                    .insert([{ 
-                        nom_prenom, 
-                        nom_boutique, 
-                        whatsapp, 
-                        ville, 
-                        categorie, 
-                        code_secu, 
-                        statut: 'en_attente' 
-                    }]);
+            // Liste de toutes les combinaisons possibles de colonnes
+            const payloads = [
+                { nom_vendeur: nomComplet, nom_boutique: nomBoutique, whatsapp, ville, categorie, code_secu: codeSecu, statut: 'en_attente' },
+                { nom: nomComplet, nom_boutique: nomBoutique, whatsapp, ville, categorie, code_secu: codeSecu, statut: 'en_attente' },
+                { nom_prenom: nomComplet, nom_boutique: nomBoutique, whatsapp, ville, categorie, code_secu: codeSecu, statut: 'en_attente' },
+                { nom_vendeur: nomComplet, nom_boutique: nomBoutique, whatsapp, ville, categorie, code_secret: codeSecu, statut: 'en_attente' },
+                { nom_boutique: nomBoutique, whatsapp, ville, categorie, code_secu: codeSecu, statut: 'en_attente' }
+            ];
 
-                if (error) {
-                    if (error.code === '23505') {
-                        throw new Error("Ce nom de boutique est déjà pris par un autre vendeur.");
-                    }
-                    throw error;
+            let succes = false;
+            let dernierErreurMsg = "";
+
+            for (const payload of payloads) {
+                const { error } = await db.from('vendeurs').insert([payload]);
+                
+                if (!error) {
+                    succes = true;
+                    break;
                 }
 
-                // Sauvegarde locale des identifiants
-                localStorage.setItem('maBoutiqueNom', nom_boutique);
-                localStorage.setItem('maBoutiqueCode', code_secu);
+                if (error.code === '23505') {
+                    dernierErreurMsg = "Ce nom de boutique est déjà pris par un autre vendeur.";
+                    break;
+                }
+
+                dernierErreurMsg = error.message;
+            }
+
+            if (succes) {
+                localStorage.setItem('maBoutiqueNom', nomBoutique);
+                localStorage.setItem('maBoutiqueCode', codeSecu);
 
                 msg.className = "text-xs text-center font-bold p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block leading-relaxed";
                 msg.innerHTML = "✓ Candidature envoyée avec succès !<br><span class='text-slate-300 font-normal'>Votre boutique est en cours de validation par l'équipe WiseMarket.</span>";
 
                 document.getElementById('formInscription').reset();
                 btn.classList.add('hidden');
-
-            } catch (err) {
-                console.error("Erreur inscription:", err);
+            } else {
+                console.error("Erreur inscription:", dernierErreurMsg);
                 msg.className = "text-xs text-center font-bold p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 block";
-                msg.innerText = err.message || "Erreur lors de l'inscription. Veuillez réessayer.";
+                msg.innerText = dernierErreurMsg || "Erreur lors de l'inscription. Veuillez réessayer.";
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-paper-plane"></i> Réessayer`;
             }
         });
     </script>
 </body>
-    </html>
-    
+</html>
