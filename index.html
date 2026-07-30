@@ -126,7 +126,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      background: #25D366; /* Vert WhatsApp */
+      background: #25D366;
       color: white;
       text-decoration: none;
       padding: 12px 24px;
@@ -238,7 +238,7 @@
   <section class="products-section">
     <h2>À la une</h2>
     <div id="productGrid" class="products-grid">
-      <!-- Les produits de Supabase ou les 10 images de démo seront chargés ici -->
+      <!-- Les 10 produits sont insérés en secours par défaut pour garantir l'affichage direct -->
     </div>
   </section>
 
@@ -306,12 +306,16 @@
     </div>
   </div>
 
-  <!-- SCRIPT LOGIQUE & SUPABASE -->
+  <!-- SCRIPT LOGIQUE -->
   <script>
     // Configuration Supabase
     const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    let db = null;
+    if (window.supabase) {
+      db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
 
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
@@ -336,46 +340,7 @@
       }
     }
 
-    // Chargement dynamique des produits depuis Supabase
-    async function chargerProduits() {
-      const grid = document.getElementById('productGrid');
-      grid.innerHTML = "<p style='color:#9ca3af; grid-column: 1/-1; text-align:center;'>Chargement des articles...</p>";
-
-      try {
-        const { data: produits, error } = await db.from('produits').select('*').order('created_at', { ascending: false });
-
-        if (error || !produits || produits.length === 0) {
-          afficherProduitsDemo();
-          return;
-        }
-
-        grid.innerHTML = "";
-        produits.forEach(p => {
-          const catClean = (p.categorie || 'mode').toLowerCase();
-          const card = document.createElement('div');
-          card.className = 'product-card';
-          card.setAttribute('data-cat', catClean);
-          
-          card.innerHTML = `
-            <img src="${p.image_url || 'https://via.placeholder.com/300x200?text=Image+Introuvable'}" alt="${p.titre || 'Produit'}" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
-            <div class="product-info">
-              <span class="badge-cat">${p.categorie || 'Général'}</span>
-              <h3>${p.titre || 'Sans titre'}</h3>
-              <p class="vendeur-name">${p.nom_boutique || 'Boutique'}</p>
-              <div class="price-row">
-                <span class="price">${p.prix ? p.prix + ' FCFA' : 'Sur devis'}</span>
-              </div>
-            </div>
-          `;
-          grid.appendChild(card);
-        });
-      } catch (err) {
-        console.error("Erreur de chargement :", err);
-        afficherProduitsDemo();
-      }
-    }
-
-    // Affichage complet des 10 images (photo2.jpg à photo11.jpg)
+    // Affichage des 10 images locales (photo2.jpg à photo11.jpg)
     function afficherProduitsDemo() {
       const grid = document.getElementById('productGrid');
       grid.innerHTML = `
@@ -472,6 +437,42 @@
       `;
     }
 
+    async function chargerProduits() {
+      afficherProduitsDemo();
+
+      if (!db) return;
+
+      try {
+        const { data: produits, error } = await db.from('produits').select('*').order('created_at', { ascending: false });
+
+        if (!error && produits && produits.length > 0) {
+          const grid = document.getElementById('productGrid');
+          grid.innerHTML = "";
+          produits.forEach(p => {
+            const catClean = (p.categorie || 'mode').toLowerCase();
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.setAttribute('data-cat', catClean);
+            
+            card.innerHTML = `
+              <img src="${p.image_url || 'https://via.placeholder.com/300x200?text=Image+Introuvable'}" alt="${p.titre || 'Produit'}" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+              <div class="product-info">
+                <span class="badge-cat">${p.categorie || 'Général'}</span>
+                <h3>${p.titre || 'Sans titre'}</h3>
+                <p class="vendeur-name">${p.nom_boutique || 'Boutique'}</p>
+                <div class="price-row">
+                  <span class="price">${p.prix ? p.prix : 'Sur devis'}</span>
+                </div>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+        }
+      } catch (err) {
+        console.error("Supabase indisponible, affichage démo conservé:", err);
+      }
+    }
+
     function filtrerCategorie(categorie, event) {
       const cards = document.querySelectorAll('.product-card');
       const buttons = document.querySelectorAll('.cat-btn');
@@ -505,29 +506,7 @@
       });
     }
 
-    document.getElementById('searchInput').addEventListener('input', filtrerProduits);
-
-    // Mini-Chat
-    function toggleChat() {
-      const box = document.getElementById('chatBox');
-      box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function envoyerMessageChat() {
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      if (text !== '') {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'msg sent';
-        msgDiv.textContent = text;
-        document.getElementById('chatMessages').appendChild(msgDiv);
-        input.value = '';
-        
-        setTimeout(() => {
-          const autoReply = document.createElement('div');
-          autoReply.className document.getElementById('searchInput').addEventListener('input', filtrerProduits);
-
-    // Mini-Chat
+        // Mini-Chat
     function toggleChat() {
       const box = document.getElementById('chatBox');
       box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
@@ -553,13 +532,14 @@
       }
     }
 
-    // Démarrage
     window.addEventListener('DOMContentLoaded', () => {
       chargerProduits();
+      document.getElementById('searchInput').addEventListener('input', filtrerProduits);
+
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('PWA Service Worker actif !'))
-          .catch(err => console.log('Erreur Service Worker PWA :', err));
+          .then(reg => console.log('Service Worker actif'))
+          .catch(err => console.log('Erreur SW:', err));
       }
     });
   </script>
