@@ -63,9 +63,9 @@
     </main>
 
     <script>
-        // Identifiants Supabase
+        // Identifiants Supabase réinitialisés
         const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eYLzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -74,7 +74,7 @@
         async function chargerVitrine() {
             const container = document.getElementById('grilleArticles');
 
-            // Si aucun nom dans l'URL, on tente de récupérer celui sauvegardé ou on demande au visiteur
+            // Si aucun nom dans l'URL, on tente de récupérer celui sauvegardé dans localStorage ou de le demander
             if (!vendeurNom) {
                 vendeurNom = localStorage.getItem('maBoutiqueNom');
                 if (!vendeurNom) {
@@ -87,16 +87,19 @@
             }
 
             try {
-                // 1. Récupération des infos du vendeur (pour obtenir son WhatsApp)
+                // 1. Récupération des infos du vendeur (numéro WhatsApp, statut, ville)
                 const { data: vData } = await db
                     .from('vendeurs')
                     .select('whatsapp, statut, ville')
                     .eq('nom_boutique', vendeurNom)
                     .maybeSingle();
 
-                const whatsappVendeur = vData && vData.whatsapp ? vData.whatsapp.replace(/[^0-9]/g, '') : '22872119966';
+                let whatsappNum = vData && vData.whatsapp ? vData.whatsapp.replace(/[^0-9]/g, '') : '22872119966';
+                if (!whatsappNum.startsWith('228')) {
+                    whatsappNum = '228' + whatsappNum;
+                }
 
-                // 2. Récupération des produits de cette boutique
+                // 2. Récupération des produits publiés par la boutique
                 const { data: produits, error } = await db
                     .from('produits')
                     .select('*')
@@ -105,7 +108,7 @@
 
                 if (error) throw error;
 
-                // En-tête dynamique
+                // Mise à jour de l'en-tête dynamique
                 document.getElementById('nomBoutique').innerText = vendeurNom;
                 document.getElementById('badgeVerifie').classList.remove('hidden');
                 document.getElementById('badgeVerifie').classList.add('inline-flex');
@@ -124,12 +127,12 @@
 
                 document.getElementById('compteurArticles').innerHTML = `<i class="fas fa-box text-violet-400"></i> ${produits.length} Article(s)`;
 
-                // 3. Affichage des produits
+                // 3. Rendu des cartes produits
                 container.innerHTML = produits.map(p => {
                     const titreProd = p.titre || p.nom || 'Article';
                     const imageProd = p.image_url || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
                     const messageWa = encodeURIComponent(`Bonjour ! Je suis intéressé par votre article "${titreProd}" vu sur WiseMarket.`);
-                    const lienWa = `https://wa.me/${whatsappVendeur.startsWith('228') ? whatsappVendeur : '228' + whatsappVendeur}?text=${messageWa}`;
+                    const lienWa = `https://wa.me/${whatsappNum}?text=${messageWa}`;
 
                     return `
                         <div class="bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between">
