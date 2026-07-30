@@ -52,7 +52,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">Prix *</label>
-                        <input type="text" id="produitPrix" required placeholder="Ex: 8.500 FCFA" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
+                        <input type="text" id="produitPrix" required placeholder="Ex: 8500 FCFA" class="w-full bg-[#090D16] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-violet-500 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">Catégorie</label>
@@ -61,6 +61,7 @@
                             <option value="Électronique">Électronique</option>
                             <option value="Beauté">Beauté & Cosmétique</option>
                             <option value="Chaussures">Chaussures</option>
+                            <option value="Nourriture">Nourriture & Restauration</option>
                             <option value="Autre">Autre</option>
                         </select>
                     </div>
@@ -91,17 +92,20 @@
     </main>
 
     <script>
+        // Identifiants Supabase
         const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eYLzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let fileSelectionne = null;
         const fileInput = document.getElementById('fileInput');
         const imgPreview = document.getElementById('imagePreview');
         const previewContainer = document.getElementById('imagePreviewContainer');
 
-        if (localStorage.getItem('wm_vendeur_nom')) {
-            document.getElementById('vendeurNom').value = localStorage.getItem('wm_vendeur_nom');
+        // Pré-remplissage du nom de la boutique si sauvegardé dans le navigateur
+        const nomSauvegarde = localStorage.getItem('maBoutiqueNom') || localStorage.getItem('wm_vendeur_nom');
+        if (nomSauvegarde) {
+            document.getElementById('vendeurNom').value = nomSauvegarde;
         }
 
         fileInput.addEventListener('change', function (e) {
@@ -146,14 +150,14 @@
 
             const vendeur = document.getElementById('vendeurNom').value.trim();
             const code = document.getElementById('vendeurCode').value.trim();
-            const nom = document.getElementById('produitNom').value.trim();
+            const titre = document.getElementById('produitNom').value.trim();
             const prix = document.getElementById('produitPrix').value.trim();
             const categorie = document.getElementById('produitCategorie').value;
             const description = document.getElementById('produitDesc').value.trim();
 
             try {
                 // 1. Vérification du vendeur et de son mot de passe
-                const { data: vData, error: vErr } = await supabase
+                const { data: vData, error: vErr } = await db
                     .from('vendeurs')
                     .select('*')
                     .eq('nom_boutique', vendeur)
@@ -163,7 +167,7 @@
                     throw new Error("Boutique introuvable. Veuillez d'abord vous inscrire.");
                 }
 
-                if (vData.code_secu !== code) {
+                if (vData.code_secret !== code) {
                     throw new Error("Mot de passe secret incorrect !");
                 }
 
@@ -171,16 +175,23 @@
                     throw new Error("⏳ Votre boutique est en cours de vérification par l'administrateur WiseMarket.");
                 }
 
-                // 2. Traitement de la photo
+                // 2. Traitement de l'image
                 let image_url = 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
                 if (fileSelectionne) {
                     image_url = await compresserPhoto(fileSelectionne);
                 }
 
-                // 3. Publication de l'article
-                const { error: pErr } = await supabase
+                // 3. Insertion de l'article dans la base de données
+                const { error: pErr } = await db
                     .from('produits')
-                    .insert([{ vendeur, code_secu: code, nom, prix, categorie, image_url, description }]);
+                    .insert([{ 
+                        nom_boutique: vendeur, 
+                        titre: titre, 
+                        prix: prix, 
+                        categorie: categorie, 
+                        image_url: image_url, 
+                        description: description 
+                    }]);
 
                 if (pErr) throw pErr;
 
