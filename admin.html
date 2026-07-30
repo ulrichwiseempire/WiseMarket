@@ -41,15 +41,16 @@
     </main>
 
     <script>
+        // Identifiants Supabase
         const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eYLzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function chargerCandidatures() {
             const container = document.getElementById('listeCandidatures');
 
             try {
-                const { data: vendeurs, error } = await supabase
+                const { data: vendeurs, error } = await db
                     .from('vendeurs')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -73,7 +74,7 @@
                                     : '<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full">En attente</span>'
                                 }
                             </div>
-                            <p class="text-xs text-slate-300">Responsable : <span class="font-bold text-slate-200">${v.nom_complet}</span></p>
+                            <p class="text-xs text-slate-300">Responsable : <span class="font-bold text-slate-200">${v.nom_prenom || 'Non renseigné'}</span></p>
                             <p class="text-xs text-slate-400"><i class="fab fa-whatsapp text-emerald-400"></i> ${v.whatsapp} | <i class="fas fa-map-marker-alt text-violet-400"></i> ${v.ville} | <span class="text-slate-500">Catégorie: ${v.categorie || 'Autre'}</span></p>
                         </div>
 
@@ -100,7 +101,7 @@
 
         async function changerStatut(id, nouveauStatut) {
             try {
-                const { error } = await supabase
+                const { error } = await db
                     .from('vendeurs')
                     .update({ statut: nouveauStatut })
                     .eq('id', id);
