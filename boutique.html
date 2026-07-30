@@ -31,7 +31,7 @@
             </div>
             
             <div class="flex items-center justify-center gap-2">
-                <h1 id="nomBoutique" class="text-xl font-black text-white">Vérification...</h1>
+                <h1 id="nomBoutique" class="text-xl font-black text-white">Chargement...</h1>
                 <span id="badgeVerifie" class="hidden bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full items-center gap-1">
                     <i class="fas fa-check-circle"></i> Vérifiée
                 </span>
@@ -44,7 +44,7 @@
                     <i class="fas fa-box text-violet-400"></i> 0 Article(s)
                 </span>
                 <button onclick="partagerVitrine()" class="bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-2 shadow-lg shadow-violet-600/20">
-                    <i class="fas fa-share-alt"></i> Partager la vitrine
+                    <i class="fas fa-share-alt"></i> Partager
                 </button>
             </div>
         </div>
@@ -56,94 +56,104 @@
             </h2>
 
             <div id="grilleArticles" class="grid grid-cols-2 gap-3">
-                <p class="text-xs text-slate-400 text-center col-span-full py-8">Chargement sécurisé de la boutique...</p>
+                <p class="text-xs text-slate-400 text-center col-span-full py-8">Chargement de la boutique...</p>
             </div>
         </div>
 
     </main>
 
     <script>
+        // Identifiants Supabase
         const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
-        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eYLzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const urlParams = new URLSearchParams(window.location.search);
         let vendeurNom = urlParams.get('vendeur');
 
-        async function chargerVitrineSecurisee() {
+        async function chargerVitrine() {
             const container = document.getElementById('grilleArticles');
 
-            // Si aucun nom dans l'URL, on demande au visiteur/vendeur de saisir le nom ET le code secret
+            // Si aucun nom dans l'URL, on tente de récupérer celui sauvegardé ou on demande au visiteur
             if (!vendeurNom) {
-                vendeurNom = prompt("Entrez le nom de la boutique à consulter :");
+                vendeurNom = localStorage.getItem('maBoutiqueNom');
                 if (!vendeurNom) {
-                    window.location.href = "index.html";
-                    return;
+                    vendeurNom = prompt("Entrez le nom de la boutique à consulter :");
+                    if (!vendeurNom) {
+                        window.location.href = "index.html";
+                        return;
+                    }
                 }
             }
 
             try {
-                // 1. On cherche les produits de ce vendeur dans Supabase
-                const { data: produits, error } = await supabase
+                // 1. Récupération des infos du vendeur (pour obtenir son WhatsApp)
+                const { data: vData } = await db
+                    .from('vendeurs')
+                    .select('whatsapp, statut, ville')
+                    .eq('nom_boutique', vendeurNom)
+                    .maybeSingle();
+
+                const whatsappVendeur = vData && vData.whatsapp ? vData.whatsapp.replace(/[^0-9]/g, '') : '22872119966';
+
+                // 2. Récupération des produits de cette boutique
+                const { data: produits, error } = await db
                     .from('produits')
                     .select('*')
-                    .eq('vendeur', vendeurNom);
+                    .eq('nom_boutique', vendeurNom)
+                    .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
-                // 2. Si la boutique n'existe pas ou n'a aucun article
+                // En-tête dynamique
+                document.getElementById('nomBoutique').innerText = vendeurNom;
+                document.getElementById('badgeVerifie').classList.remove('hidden');
+                document.getElementById('badgeVerifie').classList.add('inline-flex');
+                document.getElementById('actionsVitrine').classList.remove('hidden');
+                document.getElementById('actionsVitrine').classList.add('flex');
+
+                if (vData && vData.ville) {
+                    document.getElementById('descVitrine').innerText = `Boutique basée à ${vData.ville} — Produits disponibles sur WiseMarket Togo.`;
+                }
+
                 if (!produits || produits.length === 0) {
-                    document.getElementById('nomBoutique').innerText = "Boutique Introuvable";
-                    document.getElementById('descVitrine').innerText = "Aucune boutique enregistrée sous ce nom.";
-                    container.innerHTML = `<p class="text-xs text-red-400 text-center col-span-full py-8">❌ Cette boutique n'existe pas ou ne contient aucun article.</p>`;
+                    document.getElementById('compteurArticles').innerHTML = `<i class="fas fa-box text-violet-400"></i> 0 Article`;
+                    container.innerHTML = `<p class="text-xs text-slate-400 text-center col-span-full py-8">Cette boutique n'a pas encore publié d'articles.</p>`;
                     return;
                 }
 
-                // 3. Sécurité optionnelle : Vérifier si le code secret correspond au premier article enregistré par ce vendeur
-                const codeAttendu = produits[0].code_secu;
-                if (codeAttendu) {
-                    let codeSaisi = localStorage.getItem(`wm_code_${vendeurNom}`);
-                    
-                    if (!codeSaisi || codeSaisi !== codeAttendu) {
-                        codeSaisi = prompt(`Entrez le code secret de la boutique "${vendeurNom}" :`);
-                        if (codeSaisi !== codeAttendu) {
-                            alert("Code secret incorrect ! Accès refusé.");
-                            window.location.href = "index.html";
-                            return;
-                        }
-                        localStorage.setItem(`wm_code_${vendeurNom}`, codeSaisi);
-                    }
-                }
-
-                // Si tout est valide, on affiche la boutique
-                document.getElementById('nomBoutique').innerText = vendeurNom;
-                document.getElementById('badgeVerifie').classList.remove('hidden');
-                document.getElementById('badgeVerifie').classList.add('flex');
-                document.getElementById('actionsVitrine').classList.remove('hidden');
                 document.getElementById('compteurArticles').innerHTML = `<i class="fas fa-box text-violet-400"></i> ${produits.length} Article(s)`;
 
-                container.innerHTML = produits.map(p => `
-                    <div class="bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between">
-                        <div>
-                            <img src="${p.image_url}" alt="${p.nom}" class="w-full h-36 object-cover">
-                            <div class="p-3">
-                                <span class="text-[9px] font-bold text-violet-400 uppercase tracking-wider block mb-1">${p.categorie || 'Article'}</span>
-                                <h3 class="text-xs font-bold text-white truncate">${p.nom}</h3>
-                                <p class="text-[11px] font-black text-emerald-400 mt-1">${p.prix}</p>
+                // 3. Affichage des produits
+                container.innerHTML = produits.map(p => {
+                    const titreProd = p.titre || p.nom || 'Article';
+                    const imageProd = p.image_url || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
+                    const messageWa = encodeURIComponent(`Bonjour ! Je suis intéressé par votre article "${titreProd}" vu sur WiseMarket.`);
+                    const lienWa = `https://wa.me/${whatsappVendeur.startsWith('228') ? whatsappVendeur : '228' + whatsappVendeur}?text=${messageWa}`;
+
+                    return `
+                        <div class="bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between">
+                            <div>
+                                <img src="${imageProd}" alt="${titreProd}" class="w-full h-36 object-cover" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+                                <div class="p-3">
+                                    <span class="text-[9px] font-bold text-violet-400 uppercase tracking-wider block mb-1">${p.categorie || 'Article'}</span>
+                                    <h3 class="text-xs font-bold text-white truncate">${titreProd}</h3>
+                                    <p class="text-[11px] font-black text-emerald-400 mt-1">${p.prix || 'Sur devis'}</p>
+                                </div>
+                            </div>
+                            <div class="p-3 pt-0">
+                                <a href="${lienWa}" target="_blank" class="w-full bg-emerald-600/20 hover:bg-emerald-600 border border-emerald-500/30 text-emerald-300 hover:text-white py-2 rounded-xl text-[10px] font-bold transition flex items-center justify-center gap-1">
+                                    <i class="fab fa-whatsapp"></i> Commander
+                                </a>
                             </div>
                         </div>
-                        <div class="p-3 pt-0">
-                            <a href="https://wa.me/22890000000?text=${encodeURIComponent('Bonjour, je suis intéressé par votre article : ' + p.nom)}" target="_blank" class="w-full bg-violet-600/20 hover:bg-violet-600 border border-violet-500/30 text-violet-300 hover:text-white py-2 rounded-xl text-[10px] font-bold transition flex items-center justify-center gap-1">
-                                <i class="fab fa-whatsapp"></i> Commander
-                            </a>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
 
             } catch (err) {
-                console.error("Erreur:", err);
+                console.error("Erreur vitrine:", err);
                 document.getElementById('nomBoutique').innerText = "Erreur";
-                container.innerHTML = `<p class="text-xs text-red-400 text-center col-span-full py-8">Erreur de chargement de la vitrine.</p>`;
+                container.innerHTML = `<p class="text-xs text-red-400 text-center col-span-full py-8">Erreur de chargement des articles.</p>`;
             }
         }
 
@@ -152,7 +162,7 @@
             if (navigator.share) {
                 navigator.share({
                     title: `Boutique ${vendeurNom}`,
-                    text: `Découvrez les articles de ${vendeurNom} sur WiseMarket Togo !`,
+                    text: `Découvrez la boutique ${vendeurNom} sur WiseMarket Togo !`,
                     url: urlVitrine
                 });
             } else {
@@ -161,7 +171,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', chargerVitrineSecurisee);
+        document.addEventListener('DOMContentLoaded', chargerVitrine);
     </script>
 </body>
 </html>
