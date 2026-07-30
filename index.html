@@ -117,13 +117,13 @@
       border-top-right-radius: 12px;
     }
 
-    /* Style du bouton d'appel support */
-    .btn-contact-support {
+    /* Style du bouton WhatsApp support */
+    .btn-contact-whatsapp {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      background: #25D366; /* Vert WhatsApp / Contact pro */
+      background: #25D366; /* Vert WhatsApp */
       color: white;
       text-decoration: none;
       padding: 12px 24px;
@@ -133,7 +133,7 @@
       margin-top: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
-    .btn-contact-support:hover {
+    .btn-contact-whatsapp:hover {
       background: #1eb857;
     }
   </style>
@@ -160,7 +160,7 @@
     <ul class="sidebar-links">
       <li><a href="index.html"><i class="fa-solid fa-house"></i> Accueil</a></li>
       <li><a href="#categories" onclick="toggleSidebar()"><i class="fa-solid fa-layer-group"></i> Catégories</a></li>
-      <li><a href="tel:+22872119966"><i class="fa-solid fa-phone"></i> +228 72 11 99 66</a></li>
+      <li><a href="https://wa.me/22872119966" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp: +228 72 11 99 66</a></li>
       <li><a href="mailto:ulrichwiseempire1@gmail.com"><i class="fa-solid fa-envelope"></i> Contact Email</a></li>
     </ul>
 
@@ -248,7 +248,7 @@
 
       <!-- Produit 3 -->
       <div class="product-card" data-cat="electronique">
-        <img src="./photo4.jpg" alt="Casque Audio Pro Studio" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+        <img src="./photo6.jpg" alt="Casque Audio Pro Studio" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>Casque Audio Pro Studio</h3>
@@ -274,7 +274,7 @@
 
       <!-- Produit 5 -->
       <div class="product-card" data-cat="chaussures">
-        <img src="./photo6.jpg" alt="Mules Luxe en Daim Noir" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
+        <img src="./photo4.jpg" alt="Mules Luxe en Daim Noir" onerror="this.src='https://via.placeholder.com/300x200?text=Image+Introuvable'">
         <div class="product-info">
           <span class="badge-cat">👟 Chaussures</span>
           <h3>Mules Luxe en Daim Noir</h3>
@@ -353,17 +353,17 @@
     </div>
   </section>
 
-  <!-- BANNIÈRE SUPPORT (MODIFIÉE AVEC TON NUMÉRO DIRECT) -->
+  <!-- BANNIÈRE SUPPORT (LIEN WHATSAPP DIRECT) -->
   <section class="support-banner">
     <div class="support-icon"><i class="fa-solid fa-headset"></i></div>
     <h3>Une question ou un besoin d'aide ?</h3>
-    <p>Notre équipe administrative est joignable directement par téléphone ou WhatsApp.</p>
-    <a href="tel:+22872119966" class="btn-contact-support">
-      <i class="fa-solid fa-phone"></i> +228 72 11 99 66
+    <p>Notre équipe administrative est joignable directement sur WhatsApp.</p>
+    <a href="https://wa.me/22872119966" target="_blank" class="btn-contact-whatsapp">
+      <i class="fa-brands fa-whatsapp"></i> Discuter sur WhatsApp (+228 72 11 99 66)
     </a>
   </section>
 
-  <!-- PIED DE PAGE (CONTACT MIS À JOUR) -->
+  <!-- PIED DE PAGE -->
   <footer class="footer-pro">
     <div class="footer-grid">
       <div class="footer-col">
@@ -387,7 +387,7 @@
       <div class="footer-col">
         <h4>CONTACT</h4>
         <ul>
-          <li><a href="tel:+22872119966"><i class="fa-solid fa-phone"></i> +228 72 11 99 66</a></li>
+          <li><a href="https://wa.me/22872119966" target="_blank"><i class="fa-brands fa-whatsapp"></i> +228 72 11 99 66</a></li>
           <li><a href="mailto:ulrichwiseempire1@gmail.com"><i class="fa-solid fa-envelope"></i> ulrichwiseempire1@gmail.com</a></li>
         </ul>
       </div>
@@ -400,7 +400,7 @@
     </div>
   </footer>
 
-  <!-- BOUTON ET FENÊTRE MINI-CHAT EN DIRECT (RÉSERVÉ ACHETEUR/VENDEUR) -->
+  <!-- BOUTON ET FENÊTRE MINI-CHAT EN DIRECT (ACHETEUR/VENDEUR) -->
   <button class="chat-widget-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i></button>
 
   <div id="chatBox" class="chat-box">
