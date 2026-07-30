@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitrine Vendeur - WiseMarket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glow-violet { box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
+    </style>
+</head>
+<body class="bg-[#090D16] text-slate-100 font-sans min-h-screen">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800 bg-[#0F172A]/80 backdrop-blur-md sticky top-0 z-50 p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2 font-black text-lg text-white">
+                <span class="bg-gradient-to-r from-violet-500 to-emerald-400 bg-clip-text text-transparent">WiseMarket</span>
+            </a>
+            <a href="index.html" class="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1.5 bg-slate-900 px-3 py-2 rounded-xl border border-slate-800">
+                <i class="fas fa-arrow-left"></i> Accueil
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-8">
+        <!-- Banner / Profil du Vendeur -->
+        <div class="bg-[#0F172A] border border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 shadow-2xl relative overflow-hidden glow-violet">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-violet-600/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="flex flex-col sm:flex-row items-center gap-6 relative z-10 text-center sm:text-left">
+                <!-- Photo/Avatar Vendeur -->
+                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-tr from-violet-600 to-emerald-400 p-1 flex-shrink-0 shadow-xl">
+                    <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center border-2 border-[#0F172A]">
+                        <i class="fas fa-store text-3xl text-violet-400" id="vendorAvatarIcon"></i>
+                    </div>
+                </div>
+
+                <!-- Infos Vendeur -->
+                <div class="flex-1">
+                    <div class="flex items-center justify-center sm:justify-start gap-2 mb-1">
+                        <h1 class="text-2xl font-black text-white" id="vendorName">Boutique...</h1>
+                        <span class="text-emerald-400 text-xs bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1">
+                            <i class="fas fa-check-circle"></i> Vérifiée
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-4" id="vendorBio">Vitrine officielle des articles disponibles sur WiseMarket Togo.</p>
+                    
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                        <span class="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-300 font-semibold" id="productCount">
+                            📦 0 Article(s)
+                        </span>
+                        <button onclick="partagerBoutique()" class="text-xs bg-violet-600/20 text-violet-300 hover:bg-violet-600/30 border border-violet-500/30 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition">
+                            <i class="fas fa-share-alt"></i> Partager la vitrine
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Produits -->
+        <h2 class="text-lg font-black text-white mb-6 flex items-center gap-2">
+            <i class="fas fa-boxes text-emerald-400"></i> Articles de la boutique
+        </h2>
+
+        <!-- Grille de Produits -->
+        <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div class="col-span-full text-center py-12 text-slate-500 text-xs">Chargement de la vitrine...</div>
+        </div>
+    </main>
+
+    <script>
+        const SUPABASE_URL = "https://kaxpmfvrjeksrzyl.supabase.co";
+        const SUPABASE_KEY = "Sb_publishable_HEYqdUqe0zfTb1AodGsxeQ_Fv__b0tF";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Récupérer le nom du vendeur depuis l'URL (ex: boutique.html?vendeur=Cecile)
+        const urlParams = new URLSearchParams(window.location.search);
+        const vendeurNom = urlParams.get('vendeur') || 'Toutes les boutiques';
+
+        document.getElementById('vendorName').innerText = vendeurNom;
+
+        async function chargerVitrine() {
+            const grid = document.getElementById('productsGrid');
+            try {
+                let { data: produits, error } = await supabase
+                    .from('produits')
+                    .select('*')
+                    .eq('vendeur', vendeurNom);
+
+                if (error) throw error;
+
+                document.getElementById('productCount').innerText = `📦 ${produits.length} Article(s)`;
+
+                if (!produits || produits.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full bg-slate-900/50 border border-slate-800 rounded-2xl p-8 text-center text-slate-400 text-xs">
+                        Aucun produit disponible pour le moment dans cette boutique.
+                    </div>`;
+                    return;
+                }
+
+                grid.innerHTML = produits.map(p => `
+                    <div class="bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 transition shadow-lg flex flex-col">
+                        <img src="${p.image_url}" alt="${p.nom}" class="w-full h-40 object-cover bg-slate-900">
+                        <div class="p-3 flex flex-col flex-1 justify-between">
+                            <div>
+                                <span class="text-[10px] text-violet-400 font-bold bg-violet-500/10 px-2 py-0.5 rounded-md uppercase">${p.categorie || 'Article'}</span>
+                                <h3 class="font-bold text-white text-xs mt-1 line-clamp-1">${p.nom}</h3>
+                                <p class="text-[11px] text-slate-400 mt-1 line-clamp-2">${p.description || ''}</p>
+                            </div>
+                            <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between">
+                                <span class="font-black text-emerald-400 text-xs">${p.prix}</span>
+                                <a href="https://wa.me/22872119966?text=${encodeURIComponent('Bonjour WiseMarket, je souhaite commander l\'article "' + p.nom + '" du vendeur ' + p.vendeur)}" target="_blank" class="bg-emerald-600 text-white p-2 rounded-xl text-xs hover:bg-emerald-500 transition">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error(err);
+                grid.innerHTML = `<div class="col-span-full text-center text-red-400 text-xs">Erreur de chargement des articles.</div>`;
+            }
+        }
+
+        function partagerBoutique() {
+            if (navigator.share) {
+                navigator.share({
+                    title: `Boutique ${vendeurNom} sur WiseMarket`,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert("Lien de la boutique copié dans le presse-papier !");
+            }
+        }
+
+        chargerVitrine();
+    </script>
+</body>
+  </html>
+  
