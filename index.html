@@ -3,458 +3,251 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WiseMarket — La marketplace du Togo</title>
-
-  <!-- Icône du site et PWA avec logo1.png -->
-  <link rel="icon" type="image/png" href="logo1.png">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#111827">
-
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- CSS du Mini-Chat Firebase -->
+  <title>WiseMarket</title>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#1e293b">
   <style>
-    /* Widget de Chat */
-    .chat-widget-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #6366f1;
-      color: white;
-      border: none;
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      cursor: pointer;
-      z-index: 1000;
-      font-size: 1.4rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .chat-box {
-      display: none;
-      position: fixed;
-      bottom: 85px;
-      right: 20px;
-      width: 320px;
-      max-width: 90vw;
-      height: 420px;
-      background: #111827;
-      border: 1px solid #1f2937;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-      z-index: 1000;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .chat-header {
-      background: #1f2937;
-      padding: 12px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #fff;
-      font-weight: bold;
-      border-bottom: 1px solid #374151;
-    }
-    .chat-messages {
-      flex: 1;
-      padding: 12px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .msg {
-      max-width: 80%;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      line-height: 1.3;
-    }
-    .msg.sent {
-      align-self: flex-end;
-      background: #6366f1;
-      color: #fff;
-    }
-    .msg.received {
-      align-self: flex-start;
-      background: #1f2937;
-      color: #d1d5db;
-    }
-    .chat-input-area {
-      display: flex;
-      padding: 10px;
-      background: #1f2937;
-      gap: 6px;
-    }
-    .chat-input-area input {
-      flex: 1;
-      padding: 8px 12px;
-      background: #111827;
-      border: 1px solid #374151;
-      border-radius: 6px;
-      color: #fff;
-      outline: none;
-    }
-    .chat-input-area button {
-      background: #10b981;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .custom-note {
-      font-size: 0.75rem;
-      color: #a855f7;
-      font-weight: 600;
-      margin: 4px 0 8px 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f6f9; color: #333; padding-bottom: 60px; }
+    
+    /* Header */
+    header { background: #1e293b; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; sticky: top; top: 0; z-index: 100; }
+    .logo { font-size: 1.4rem; font-weight: bold; color: #38bdf8; }
+    .menu-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+    
+    /* Navigation latérale */
+    .sidebar { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background: #0f172a; color: white; transition: 0.3s; z-index: 200; padding: 20px; }
+    .sidebar.open { left: 0; }
+    .sidebar ul { list-style: none; margin-top: 30px; }
+    .sidebar li { margin: 20px 0; }
+    .sidebar a { color: white; text-decoration: none; font-size: 1.1rem; }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 150; }
+    .overlay.active { display: block; }
+
+    /* Recherche & Catégories */
+    .search-container { padding: 15px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .search-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+    .categories { display: flex; gap: 10px; padding: 10px 15px; overflow-x: auto; background: white; }
+    .cat-btn { padding: 8px 15px; border: none; background: #e2e8f0; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 0.9rem; }
+    .cat-btn.active { background: #0284c7; color: white; }
+
+    /* Grille de Produits */
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
+    .product-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; flex-direction: column; justify-content: space-between; }
+    .product-img { width: 100%; height: 180px; object-fit: cover; }
+    .product-info { padding: 12px; }
+    .product-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 5px; color: #1e293b; }
+    .product-price { color: #16a34a; font-weight: bold; font-size: 1.05rem; margin-bottom: 10px; }
+    .action-btns { display: flex; flex-direction: column; gap: 5px; }
+    .btn { width: 100%; padding: 8px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; text-align: center; text-decoration: none; }
+    .btn-pay { background: #16a34a; color: white; }
+    .btn-wa { background: #25d366; color: white; }
+
+    /* Widget Chat & Support */
+    .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 99; }
+    .chat-toggle { background: #0284c7; color: white; width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    .chat-box { display: none; flex-direction: column; position: fixed; bottom: 80px; right: 20px; width: 300px; height: 380px; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden; z-index: 100; }
+    .chat-header { background: #0284c7; color: white; padding: 10px; font-weight: bold; }
+    .chat-messages { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    .msg { max-width: 80%; padding: 8px 12px; border-radius: 10px; font-size: 0.85rem; }
+    .msg.sent { background: #e0f2fe; align-self: flex-end; }
+    .msg.received { background: #f1f5f9; align-self: flex-start; }
+    .chat-input-area { display: flex; padding: 8px; border-top: 1px solid #ddd; }
+    .chat-input { flex: 1; border: 1px solid #ddd; padding: 6px; border-radius: 4px; outline: none; }
+    .chat-send { background: #0284c7; color: white; border: none; padding: 6px 12px; margin-left: 5px; border-radius: 4px; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <!-- EN-TÊTE FIXE -->
-  <header class="navbar">
-    <div class="logo">Wise <span>Market</span></div>
-    
-    <div class="header-actions">
-      <button class="btn-boutique" onclick="ouvrirMaBoutique()">🛍️ Ma Boutique</button>
-      <button class="btn-burger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-    </div>
+  <!-- Sidebar / Menu -->
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <h3>WiseMarket</h3>
+    <ul>
+      <li><a href="#" onclick="toggleSidebar()">Accueil</a></li>
+      <li><a href="#" onclick="ouvrirMaBoutique(); toggleSidebar();">Ma Boutique Vendeur</a></li>
+      <li><a href="https://wa.me/22872119966?text=Bonjour,%20je%20souhaite%20devenir%20vendeur%20sur%20WiseMarket" target="_blank">Devenir Vendeur</a></li>
+      <li><a href="#" onclick="toggleChat(); toggleSidebar();">Support Client</a></li>
+    </ul>
+  </div>
+
+  <!-- En-tête -->
+  <header>
+    <div class="logo">WiseMarket</div>
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
   </header>
 
-  <!-- MENU LATÉRAL (SIDEBAR) -->
-  <div id="sidebar" class="sidebar">
-    <div class="sidebar-header">
-      <div class="logo">Wise <span>Market</span></div>
-      <button class="btn-close" onclick="toggleSidebar()">&times;</button>
-    </div>
-    
-    <ul class="sidebar-links">
-      <li><a href="index.html"><i class="fa-solid fa-house"></i> Accueil</a></li>
-      <li><a href="#categories" onclick="toggleSidebar()"><i class="fa-solid fa-layer-group"></i> Catégories</a></li>
-      <li><a href="https://wa.me/22872119966" target="_blank"><i class="fa-brands fa-whatsapp"></i> Support WhatsApp</a></li>
-      <li><a href="mailto:ulrichwiseempire1@gmail.com"><i class="fa-solid fa-envelope"></i> Contact Email</a></li>
-    </ul>
-
-    <!-- ACTIONS ESPACE VENDEUR / CONNEXION -->
-    <div class="sidebar-auth">
-      <button class="btn-connexion" onclick="seConnecterBoutique()">Connexion Boutique</button>
-      <a href="creerboutique.html" class="btn-vendre">Créer ma boutique</a>
-    </div>
-
-    <div class="sidebar-footer">
-      <p>🇹🇬 WiseMarket — La marketplace du Togo</p>
-    </div>
+  <!-- Recherche -->
+  <div class="search-container">
+    <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un produit...">
   </div>
-  <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
-  <!-- HERO SECTION -->
-  <section class="hero">
-    <div class="badge">🟢 🇹🇬 La vitrine du savoir-faire togolais</div>
-    <h1>Découvrez des créations <span>uniques & faites pour vous</span></h1>
-    <p>Commandez vos vêtements, téléphones, bijoux ou articles réalisés par nos artisans locaux.</p>
-    
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Que recherchez-vous ?">
-      <button onclick="filtrerProduits()"><i class="fa-solid fa-magnifying-glass"></i></button>
-    </div>
-  </section>
+  <!-- Filtres par catégorie -->
+  <div class="categories">
+    <button class="cat-btn active" onclick="filtrerCategorie('tous', event)">Tous</button>
+    <button class="cat-btn" onclick="filtrerCategorie('vetements', event)">Vêtements</button>
+    <button class="cat-btn" onclick="filtrerCategorie('chaussures', event)">Chaussures</button>
+    <button class="cat-btn" onclick="filtrerCategorie('electronique', event)">Électronique</button>
+    <button class="cat-btn" onclick="filtrerCategorie('nourriture', event)">Nourriture</button>
+  </div>
 
-  <!-- STATISTIQUES -->
-  <section class="stats-container">
-    <div class="stat-card">
-      <h3>1.2K+</h3>
-      <p>Vendeurs</p>
-    </div>
-    <div class="stat-card">
-      <h3>5.5K+</h3>
-      <p>Produits</p>
-    </div>
-    <div class="stat-card">
-      <h3>99%</h3>
-      <p>Satisfaits</p>
-    </div>
-  </section>
+  <!-- Catalogue produits -->
+  <main class="products-grid">
 
-  <!-- CATÉGORIES -->
-  <section class="categories-section" id="categories">
-    <h2>Catégories</h2>
-    <div class="categories-grid">
-      <button class="cat-btn active" onclick="filtrerCategorie('tous', event)">✨ Tous</button>
-      <button class="cat-btn" onclick="filtrerCategorie('mode', event)">👔 Mode & Sape</button>
-      <button class="cat-btn" onclick="filtrerCategorie('electronique', event)">📱 Tech & Gadgets</button>
-      <button class="cat-btn" onclick="filtrerCategorie('bijoux', event)">💎 Bijoux & Montres</button>
-      <button class="cat-btn" onclick="filtrerCategorie('sur-mesure', event)">🎨 Sur-mesure & Déco</button>
-    </div>
-  </section>
-
-  <!-- LISTE DES PRODUITS -->
-  <section class="products-section">
-    <h2>À la une</h2>
-    <div id="productGrid" class="products-grid">
-      
-      <!-- PRODUITS MODE -->
-      <div class="product-card" data-cat="mode">
-        <img src="1000625028.jpg" alt="Ensemble Hoodie Grey Nike">
-        <div class="product-info">
-          <span class="badge-cat">👔 Mode</span>
-          <h3>Ensemble Sweat Hoodie & Jogging Oversize</h3>
-          <p class="vendeur-name">Boutique Streetwear</p>
-          <p class="custom-note">✨ Modèle de Démonstration</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="commanderProduit('Ensemble Sweat Hoodie & Jogging Oversize')">Demander un devis</button>
-          </div>
+    <!-- Produit 1 -->
+    <div class="product-card" data-cat="vetements">
+      <img src="1000624998_2.jpg" class="product-img" alt="Ensemble Pull & Chemise">
+      <div class="product-info">
+        <div class="product-title">Ensemble Chic Pull & Chemise</div>
+        <div class="product-price">Sur Devis</div>
+        <div class="action-btns">
+          <button class="btn btn-pay" onclick="payerGateway('Ensemble Chic Pull & Chemise')">Payer (Mobile Money)</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Ensemble Chic Pull & Chemise')">Commander via WhatsApp</button>
         </div>
-      </div>
-
-      <!-- PRODUITS TECH & GADGETS -->
-      <div class="product-card" data-cat="electronique">
-        <img src="1000625095.jpg" alt="iPhone 17 Pro">
-        <div class="product-info">
-          <span class="badge-cat">📱 Tech</span>
-          <h3>iPhone 17 Pro Max Flagship</h3>
-          <p class="vendeur-name">GSM Partner Togo</p>
-          <p class="custom-note">✨ Modèle de Démonstration</p>
-          <div class="price-row">
-            <span class="price">Prix selon version</span>
-            <button class="btn-commander" onclick="commanderProduit('iPhone 17 Pro Max')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="electronique">
-        <img src="1000625096.jpg" alt="Tecno Camon 40 Pro">
-        <div class="product-info">
-          <span class="badge-cat">📱 Tech</span>
-          <h3>Tecno Camon 40 Pro (256Go / 16Go RAM)</h3>
-          <p class="vendeur-name">Tech Partner Togo</p>
-          <p class="custom-note">✨ Modèle de Démonstration</p>
-          <div class="price-row">
-            <span class="price">Prix selon stock</span>
-            <button class="btn-commander" onclick="commanderProduit('Tecno Camon 40 Pro')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="electronique">
-        <img src="1000625097.jpg" alt="Tecno Camon Écran Incurvé">
-        <div class="product-info">
-          <span class="badge-cat">📱 Tech</span>
-          <h3>Tecno Camon Écran Incurvé AMOLED Vert</h3>
-          <p class="vendeur-name">Tech Partner Togo</p>
-          <p class="custom-note">✨ Modèle de Démonstration</p>
-          <div class="price-row">
-            <span class="price">Prix selon stock</span>
-            <button class="btn-commander" onclick="commanderProduit('Tecno Camon Écran Incurvé AMOLED')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="electronique">
-        <img src="1000625098.jpg" alt="Infinix 5G Flagship">
-        <div class="product-info">
-          <span class="badge-cat">📱 Tech</span>
-          <h3>Infinix Series Flagship 5G (Titanium Gold)</h3>
-          <p class="vendeur-name">GSM Store Togo</p>
-          <p class="custom-note">✨ Modèle de Démonstration</p>
-          <div class="price-row">
-            <span class="price">Prix selon stock</span>
-            <button class="btn-commander" onclick="commanderProduit('Infinix Series Flagship 5G')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="electronique">
-        <img src="1000625008.jpg" alt="Casque Beats Wireless">
-        <div class="product-info">
-          <span class="badge-cat">📱 Tech</span>
-          <h3>Casque Audio Wireless Edition Noir & Or</h3>
-          <p class="vendeur-name">Audio Store Togo</p>
-          <p class="custom-note">✨ Modèle de Démonstration</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="commanderProduit('Casque Audio Wireless Noir & Or')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="electronique">
-        <img src="1000625007.jpg" alt="Casque Studio Pro">
-        <div class="product-info">
-          <span class="badge-cat">📱 Tech</span>
-          <h3>Casque Audio Hi-Fi Studio Pro Isolation</h3>
-          <p class="vendeur-name">Audio Store Togo</p>
-          <p class="custom-note">✨ Modèle de Démonstration</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="commanderProduit('Casque Audio Hi-Fi Studio Pro')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="electronique">
-        <img src="1000625104.jpg" alt="PC Portable HP Envy">
-        <div class="product-info">
-          <span class="badge-cat">📱 Tech</span>
-          <h3>PC Portable HP Envy Ultrabook Convertible Slim</h3>
-          <p class="vendeur-name">Informatique Express</p>
-          <p class="custom-note">✨ Modèle de Démonstration</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="commanderProduit('PC Portable HP Envy Ultrabook Slim')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- PRODUITS BIJOUX & HORLOGERIE -->
-      <div class="product-card" data-cat="bijoux">
-        <img src="1000625100.jpg" alt="Collection Montres Dorées">
-        <div class="product-info">
-          <span class="badge-cat">💎 Bijoux</span>
-          <h3>Collection Montres Homme Acier Doré Luxe</h3>
-          <p class="vendeur-name">Elegance Watch Togo</p>
-          <p class="custom-note">✨ Modèle de Démonstration</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="commanderProduit('Collection Montres Homme Acier Doré Luxe')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="bijoux">
-        <img src="1000625101.jpg" alt="Coffret Montre Casio Argent">
-        <div class="product-info">
-          <span class="badge-cat">💎 Bijoux</span>
-          <h3>Coffret Cadeau Homme (Montre Argent + Bijoux)</h3>
-          <p class="vendeur-name">Premium Gift Lomé</p>
-          <p class="custom-note">✨ Idée Cadeau / Sur-mesure</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="commanderProduit('Coffret Cadeau Homme (Montre Argent + Bijoux)')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="bijoux">
-        <img src="1000625102.jpg" alt="Parure Montre Papillon Rose Gold">
-        <div class="product-info">
-          <span class="badge-cat">💎 Bijoux</span>
-          <h3>Parure Montre Papillon & Bracelet Strass Rose Gold</h3>
-          <p class="vendeur-name">Glamour Jewels</p>
-          <p class="custom-note">✨ Idée Cadeau / Démo</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="commanderProduit('Parure Montre Papillon Rose Gold')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="bijoux">
-        <img src="1000625103.jpg" alt="Coffret Anne Klein Femme">
-        <div class="product-info">
-          <span class="badge-cat">💎 Bijoux</span>
-          <h3>Coffret Montre Anne Klein & Bracelets Trèfle</h3>
-          <p class="vendeur-name">Lux'Store Lomé</p>
-          <p class="custom-note">✨ Idée Cadeau / Démo</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="commanderProduit('Coffret Montre Anne Klein & Bracelets Trèfle')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- PRODUITS SUR-MESURE / DÉCO -->
-      <div class="product-card" data-cat="sur-mesure">
-        <img src="1000625094.jpg" alt="Tableau Photo Multi-cadres">
-        <div class="product-info">
-          <span class="badge-cat">🎨 Sur-mesure</span>
-          <h3>Tableau Mural Multi-Photos Personnalisé</h3>
-          <p class="vendeur-name">Studio Photo Partner</p>
-          <p class="custom-note">📸 Envoie tes photos après commande</p>
-          <div class="price-row">
-            <span class="price">Sur devis</span>
-            <button class="btn-commander" onclick="commanderProduit('Tableau Mural Multi-Photos Personnalisé')">Demander un devis</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- BANNIÈRE SUPPORT -->
-  <section class="support-banner">
-    <div class="support-icon"><i class="fa-solid fa-headset"></i></div>
-    <h3>Une question ou un besoin d'aide ?</h3>
-    <p>Notre équipe est à votre disposition par WhatsApp et par Email.</p>
-    <a href="https://wa.me/22872119966" target="_blank" class="btn-support"><i class="fa-brands fa-whatsapp"></i> +228 72 11 99 66</a>
-  </section>
-
-  <!-- PIED DE PAGE (FOOTER) -->
-  <footer class="footer-pro">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <h3>Wise <span>Market</span></h3>
-        <p>Achetez local, soutenez nos entrepreneurs et faites-vous livrer en toute sécurité au Togo.</p>
-      </div>
-      <div class="footer-col">
-        <h4>ACHETER</h4>
-        <ul>
-          <li><a href="#categories">Toutes les catégories</a></li>
-          <li><a href="#">Offres du moment</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>VENDEURS</h4>
-        <ul>
-          <li><a href="creerboutique.html">Devenir vendeur</a></li>
-          <li><a href="#" onclick="seConnecterBoutique()">Connexion boutique</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>CONTACT</h4>
-        <ul>
-          <li><a href="https://wa.me/22872119966" target="_blank">WhatsApp : +228 72 11 99 66</a></li>
-          <li><a href="mailto:ulrichwiseempire1@gmail.com">ulrichwiseempire1@gmail.com</a></li>
-        </ul>
       </div>
     </div>
-    
-    <div class="footer-bottom">
-      <p>© 2026 WiseMarket — Tous droits réservés</p>
-      <p class="togo-badge">🇹🇬 Fait avec fierté au Togo</p>
-      <p class="payments">Flooz | T-Money</p>
-    </div>
-  </footer>
 
-  <!-- BOUTON ET FENÊTRE MINI-CHAT EN DIRECT -->
-  <button class="chat-widget-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i></button>
+    <!-- Produit 2 -->
+    <div class="product-card" data-cat="vetements">
+      <img src="1000624999_2.jpg" class="product-img" alt="Veste Safari & Pantalon">
+      <div class="product-info">
+        <div class="product-title">Ensemble Veste Safari Noir</div>
+        <div class="product-price">Sur Devis</div>
+        <div class="action-btns">
+          <button class="btn btn-pay" onclick="payerGateway('Ensemble Veste Safari Noir')">Payer (Mobile Money)</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Ensemble Veste Safari Noir')">Commander via WhatsApp</button>
+        </div>
+      </div>
+    </div>
 
-  <div id="chatBox" class="chat-box">
-    <div class="chat-header">
-      <span>💬 Chat en direct WiseMarket</span>
-      <button onclick="toggleChat()" style="background:none; border:none; color:white; cursor:pointer;">&times;</button>
+    <!-- Produit 3 -->
+    <div class="product-card" data-cat="electronique">
+      <img src="1000625007_2.jpg" class="product-img" alt="Casque Audio Pro">
+      <div class="product-info">
+        <div class="product-title">Casque Audio Pro Studio</div>
+        <div class="product-price">Sur Devis</div>
+        <div class="action-btns">
+          <button class="btn btn-pay" onclick="payerGateway('Casque Audio Pro Studio')">Payer (Mobile Money)</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Casque Audio Pro Studio')">Commander via WhatsApp</button>
+        </div>
+      </div>
     </div>
-    <div id="chatMessages" class="chat-messages">
-      <div class="msg received">Bonjour ! Posez votre question au vendeur ou au support ici.</div>
+
+    <!-- Produit 4 -->
+    <div class="product-card" data-cat="electronique">
+      <img src="1000625008_2.jpg" class="product-img" alt="Casque Beats Wireless">
+      <div class="product-info">
+        <div class="product-title">Casque Beats Wireless Noir/Or</div>
+        <div class="product-price">Sur Devis</div>
+        <div class="action-btns">
+          <button class="btn btn-pay" onclick="payerGateway('Casque Beats Wireless Noir/Or')">Payer (Mobile Money)</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Casque Beats Wireless Noir/Or')">Commander via WhatsApp</button>
+        </div>
+      </div>
     </div>
-    <div class="chat-input-area">
-      <input type="text" id="chatInput" placeholder="Écrivez votre message...">
-      <button onclick="envoyerMessageChat()"><i class="fa-solid fa-paper-plane"></i></button>
+
+    <!-- Produit 5 -->
+    <div class="product-card" data-cat="chaussures">
+      <img src="1000625000_2.jpg" class="product-img" alt="Mules Daim Noir">
+      <div class="product-info">
+        <div class="product-title">Mules Luxe en Daim Noir</div>
+        <div class="product-price">Sur Devis</div>
+        <div class="action-btns">
+          <button class="btn btn-pay" onclick="payerGateway('Mules Luxe en Daim Noir')">Payer (Mobile Money)</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Mules Luxe en Daim Noir')">Commander via WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit 6 -->
+    <div class="product-card" data-cat="vetements">
+      <img src="1000625028_2.jpg" class="product-img" alt="Ensemble Jogging Nike">
+      <div class="product-info">
+        <div class="product-title">Ensemble Jogging Nike Gris</div>
+        <div class="product-price">Sur Devis</div>
+        <div class="action-btns">
+          <button class="btn btn-pay" onclick="payerGateway('Ensemble Jogging Nike Gris')">Payer (Mobile Money)</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Ensemble Jogging Nike Gris')">Commander via WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit 7 -->
+    <div class="product-card" data-cat="nourriture">
+      <img src="1000625029.jpg" class="product-img" alt="Plat Attiéké Poisson">
+      <div class="product-info">
+        <div class="product-title">Plat Attiéké Poisson Grillé & Bananes</div>
+        <div class="product-price">Sur Devis</div>
+        <div class="action-btns">
+          <button class="btn btn-pay" onclick="payerGateway('Plat Attiéké Poisson Grillé')">Payer (Mobile Money)</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Plat Attiéké Poisson Grillé')">Commander via WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit 8 -->
+    <div class="product-card" data-cat="nourriture">
+      <img src="1000625036.jpg" class="product-img" alt="Spaghetti Saucisse">
+      <div class="product-info">
+        <div class="product-title">Plat Spaghetti aux Saucisses</div>
+        <div class="product-price">Sur Devis</div>
+        <div class="action-btns">
+          <button class="btn btn-pay" onclick="payerGateway('Plat Spaghetti aux Saucisses')">Payer (Mobile Money)</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Plat Spaghetti aux Saucisses')">Commander via WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit 9 -->
+    <div class="product-card" data-cat="electronique">
+      <img src="1000625096_2.jpg" class="product-img" alt="Tecno Camon 40 Pro">
+      <div class="product-info">
+        <div class="product-title">Tecno Camon 40 Pro (256Go)</div>
+        <div class="product-price">Sur Devis</div>
+        <div class="action-btns">
+          <button class="btn btn-pay" onclick="payerGateway('Tecno Camon 40 Pro')">Payer (Mobile Money)</button>
+          <button class="btn btn-wa" onclick="commanderProduit('Tecno Camon 40 Pro')">Commander via WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit 10 -->
+    <div class="product-card" data-cat="electronique">
+      <img src="1000625095_2.jpg" class="product-img" alt="iPhone 17 Pro">
+      <div class="product-info">
+        <div class="product-title">iPhone 17 Pro</div>
+        <div class="product-price">Sur Devis</div>
+        <div class="action-btns">
+          <button class="btn btn-pay" onclick="payerGateway('iPhone 17 Pro')">Payer (Mobile Money)</button>
+          <button class="btn btn-wa" onclick="commanderProduit('iPhone 17 Pro')">Commander via WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Chat / Support Client -->
+  <div class="chat-widget">
+    <button class="chat-toggle" onclick="toggleChat()">💬</button>
+    <div class="chat-box" id="chatBox">
+      <div class="chat-header">Support WiseMarket</div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg received">Bonjour ! Comment pouvons-nous vous aider aujourd'hui ?</div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" class="chat-input" placeholder="Votre message...">
+        <button class="chat-send" onclick="envoyerMessageChat()">Envoyer</button>
+      </div>
     </div>
   </div>
 
-  <!-- SCRIPT LOGIQUE & SERVICE WORKER PWA -->
+  <!-- SCRIPT LOGIQUE & FONCTIONNALITÉS -->
   <script>
     function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('overlay').classList.toggle('active');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      if (sidebar) sidebar.classList.toggle('open');
+      if (overlay) overlay.classList.toggle('active');
     }
 
     function ouvrirMaBoutique() {
@@ -462,16 +255,15 @@
       if (!maBoutique) {
         seConnecterBoutique();
       } else {
-        window.location.href = `boutique.html?vendeur=${encodeURIComponent(maBoutique)}`;
+        alert("Connexion à la boutique : " + maBoutique);
       }
     }
 
     function seConnecterBoutique() {
-      let nomBoutique = prompt("Entrez le nom exact de votre boutique pour vous connecter :");
+      let nomBoutique = prompt("Entrez le nom exact de votre boutique :");
       if (nomBoutique && nomBoutique.trim() !== "") {
         localStorage.setItem('maBoutiqueNom', nomBoutique.trim());
-        alert("Connexion réussie à la boutique : " + nomBoutique.trim());
-        window.location.href = `boutique.html?vendeur=${encodeURIComponent(nomBoutique.trim())}`;
+        alert("Bienvenue dans votre espace : " + nomBoutique.trim());
       }
     }
 
@@ -487,74 +279,60 @@
 
       cards.forEach(card => {
         if (categorie === 'tous' || card.getAttribute('data-cat') === categorie) {
-          card.style.display = 'block';
+          card.style.display = 'flex';
         } else {
           card.style.display = 'none';
         }
       });
     }
 
-    // Filtrage par barre de recherche
+    // Recherche dynamique
     function filtrerProduits() {
-      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const queryInput = document.getElementById('searchInput');
+      if (!queryInput) return;
+      const query = queryInput.value.toLowerCase().trim();
       const cards = document.querySelectorAll('.product-card');
       
       cards.forEach(card => {
-        const title = card.querySelector('h3').textContent.toLowerCase();
+        const title = card.querySelector('.product-title').textContent.toLowerCase();
         if (title.includes(query)) {
-          card.style.display = 'block';
+          card.style.display = 'flex';
         } else {
           card.style.display = 'none';
         }
       });
     }
 
-    document.getElementById('searchInput').addEventListener('input', filtrerProduits);
+    const searchInputEl = document.getElementById('searchInput');
+    if (searchInputEl) {
+      searchInputEl.addEventListener('input', filtrerProduits);
+    }
 
-    // Commande WhatsApp (Sur devis)
+    // Option 1 : Commande via WhatsApp (Pour préserver l'anonymat / négociation)
     function commanderProduit(nom) {
-      const text = `Bonjour WiseMarket ! Je souhaite avoir des informations et demander un devis pour le produit suivant :%0A- *Produit* : ${encodeURIComponent(nom)}`;
+      const text = `Bonjour WiseMarket ! Je souhaite commander le produit :%0A- *Produit* : ${encodeURIComponent(nom)}`;
       window.open(`https://wa.me/22872119966?text=${text}`, '_blank');
     }
 
-    // Gestion de la boîte de Mini-Chat
+    // Option 2 : Gateway Paiement Direct (Flooz / TMoney / Yas / Carte)
+    function payerGateway(nomProduit) {
+      let moyen = prompt(`Paiement sécurisé pour : ${nomProduit}\n\nChoisissez votre moyen de paiement :\n1. TMoney / Flooz / Yas\n2. Carte Bancaire\n\nEntrez 1 ou 2 :`);
+      if (moyen === '1' || moyen === '2') {
+        alert("Redirection vers la passerelle de paiement sécurisée Mobile Money (Flooz/TMoney/Yas)...");
+      }
+    }
+
+    // Widget Chat
     function toggleChat() {
       const box = document.getElementById('chatBox');
-      box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
+      if (box) {
+        box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
+      }
     }
 
     function envoyerMessageChat() {
       const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      if (text !== '') {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'msg sent';
-        msgDiv.textConten      cards.forEach(card => {
-        const title = card.querySelector('h3').textContent.toLowerCase();
-        if (title.includes(query)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
-
-    document.getElementById('searchInput').addEventListener('input', filtrerProduits);
-
-    // Commande WhatsApp (Sur devis)
-    function commanderProduit(nom) {
-      const text = `Bonjour WiseMarket ! Je souhaite avoir des informations et demander un devis pour le produit suivant :%0A- *Produit* : ${encodeURIComponent(nom)}`;
-      window.open(`https://wa.me/22872119966?text=${text}`, '_blank');
-    }
-
-    // Gestion de la boîte de Mini-Chat
-    function toggleChat() {
-      const box = document.getElementById('chatBox');
-      box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function envoyerMessageChat() {
-      const input = document.getElementById('chatInput');
+      if (!input) return;
       const text = input.value.trim();
       if (text !== '') {
         const msgDiv = document.createElement('div');
@@ -566,9 +344,10 @@
         setTimeout(() => {
           const autoReply = document.createElement('div');
           autoReply.className = 'msg received';
-          autoReply.textContent = "Merci pour votre message. Le vendeur vous répondra sous peu !";
+          autoReply.textContent = "Merci pour votre message. Notre équipe/vendeur vous répondra sous peu !";
           document.getElementById('chatMessages').appendChild(autoReply);
-          document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+          const chatMsgs = document.getElementById('chatMessages');
+          if (chatMsgs) chatMsgs.scrollTop = chatMsgs.scrollHeight;
         }, 1000);
       }
     }
@@ -583,4 +362,5 @@
     }
   </script>
 </body>
-</html>
+            </html>
+  
