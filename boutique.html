@@ -31,15 +31,15 @@
             </div>
             
             <div class="flex items-center justify-center gap-2">
-                <h1 id="nomBoutique" class="text-xl font-black text-white">Chargement...</h1>
-                <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                <h1 id="nomBoutique" class="text-xl font-black text-white">Vérification...</h1>
+                <span id="badgeVerifie" class="hidden bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full items-center gap-1">
                     <i class="fas fa-check-circle"></i> Vérifiée
                 </span>
             </div>
             
-            <p class="text-xs text-slate-400 mt-1">Vitrine officielle des articles disponibles sur WiseMarket Togo.</p>
+            <p id="descVitrine" class="text-xs text-slate-400 mt-1">Vitrine officielle des articles disponibles sur WiseMarket Togo.</p>
 
-            <div class="flex items-center justify-center gap-3 mt-5">
+            <div id="actionsVitrine" class="hidden flex items-center justify-center gap-3 mt-5">
                 <span id="compteurArticles" class="bg-[#090D16] border border-slate-800 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5">
                     <i class="fas fa-box text-violet-400"></i> 0 Article(s)
                 </span>
@@ -56,7 +56,7 @@
             </h2>
 
             <div id="grilleArticles" class="grid grid-cols-2 gap-3">
-                <p id="loadingText" class="text-xs text-slate-400 text-center col-span-full py-8">Chargement de la vitrine...</p>
+                <p class="text-xs text-slate-400 text-center col-span-full py-8">Chargement sécurisé de la boutique...</p>
             </div>
         </div>
 
@@ -68,34 +68,59 @@
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const urlParams = new URLSearchParams(window.location.search);
-        let vendeurNom = urlParams.get('vendeur') || localStorage.getItem('wm_vendeur_nom');
+        let vendeurNom = urlParams.get('vendeur');
 
-        async function chargerVitrine() {
+        async function chargerVitrineSecurisee() {
+            const container = document.getElementById('grilleArticles');
+
+            // Si aucun nom dans l'URL, on demande au visiteur/vendeur de saisir le nom ET le code secret
             if (!vendeurNom) {
-                document.getElementById('nomBoutique').innerText = "Boutique Introuvable";
-                document.getElementById('grilleArticles').innerHTML = `<p class="text-xs text-slate-400 text-center col-span-full py-8">Aucun vendeur spécifié.</p>`;
-                return;
+                vendeurNom = prompt("Entrez le nom de la boutique à consulter :");
+                if (!vendeurNom) {
+                    window.location.href = "index.html";
+                    return;
+                }
             }
 
-            document.getElementById('nomBoutique').innerText = vendeurNom;
-
             try {
+                // 1. On cherche les produits de ce vendeur dans Supabase
                 const { data: produits, error } = await supabase
                     .from('produits')
                     .select('*')
-                    .eq('vendeur', vendeurNom)
-                    .order('created_at', { ascending: false });
+                    .eq('vendeur', vendeurNom);
 
                 if (error) throw error;
 
-                document.getElementById('compteurArticles').innerHTML = `<i class="fas fa-box text-violet-400"></i> ${produits.length} Article(s)`;
-
-                const container = document.getElementById('grilleArticles');
-
-                if (produits.length === 0) {
-                    container.innerHTML = `<p class="text-xs text-slate-400 text-center col-span-full py-8">Cette boutique n'a pas encore d'article en ligne.</p>`;
+                // 2. Si la boutique n'existe pas ou n'a aucun article
+                if (!produits || produits.length === 0) {
+                    document.getElementById('nomBoutique').innerText = "Boutique Introuvable";
+                    document.getElementById('descVitrine').innerText = "Aucune boutique enregistrée sous ce nom.";
+                    container.innerHTML = `<p class="text-xs text-red-400 text-center col-span-full py-8">❌ Cette boutique n'existe pas ou ne contient aucun article.</p>`;
                     return;
                 }
+
+                // 3. Sécurité optionnelle : Vérifier si le code secret correspond au premier article enregistré par ce vendeur
+                const codeAttendu = produits[0].code_secu;
+                if (codeAttendu) {
+                    let codeSaisi = localStorage.getItem(`wm_code_${vendeurNom}`);
+                    
+                    if (!codeSaisi || codeSaisi !== codeAttendu) {
+                        codeSaisi = prompt(`Entrez le code secret de la boutique "${vendeurNom}" :`);
+                        if (codeSaisi !== codeAttendu) {
+                            alert("Code secret incorrect ! Accès refusé.");
+                            window.location.href = "index.html";
+                            return;
+                        }
+                        localStorage.setItem(`wm_code_${vendeurNom}`, codeSaisi);
+                    }
+                }
+
+                // Si tout est valide, on affiche la boutique
+                document.getElementById('nomBoutique').innerText = vendeurNom;
+                document.getElementById('badgeVerifie').classList.remove('hidden');
+                document.getElementById('badgeVerifie').classList.add('flex');
+                document.getElementById('actionsVitrine').classList.remove('hidden');
+                document.getElementById('compteurArticles').innerHTML = `<i class="fas fa-box text-violet-400"></i> ${produits.length} Article(s)`;
 
                 container.innerHTML = produits.map(p => `
                     <div class="bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between">
@@ -116,8 +141,9 @@
                 `).join('');
 
             } catch (err) {
-                console.error("Erreur chargement vitrine:", err);
-                document.getElementById('grilleArticles').innerHTML = `<p class="text-xs text-red-400 text-center col-span-full py-8">Erreur de chargement des articles.</p>`;
+                console.error("Erreur:", err);
+                document.getElementById('nomBoutique').innerText = "Erreur";
+                container.innerHTML = `<p class="text-xs text-red-400 text-center col-span-full py-8">Erreur de chargement de la vitrine.</p>`;
             }
         }
 
@@ -131,11 +157,11 @@
                 });
             } else {
                 navigator.clipboard.writeText(urlVitrine);
-                alert("Lien de la vitrine copié ! Vous pouvez le coller sur WhatsApp.");
+                alert("Lien de la vitrine copié !");
             }
         }
 
-        document.addEventListener('DOMContentLoaded', chargerVitrine);
+        document.addEventListener('DOMContentLoaded', chargerVitrineSecurisee);
     </script>
 </body>
 </html>
