@@ -180,12 +180,13 @@
   <section class="categories-section" id="categories">
     <h2>Catégories</h2>
     <div class="categories-grid">
-      <button class="cat-btn active" onclick="filtrerCategorie('tous')">✨ Tous</button>
-      <button class="cat-btn" onclick="filtrerCategorie('mode')">👔 Mode & Sape</button>
-      <button class="cat-btn" onclick="filtrerCategorie('electronique')">📱 Tech & Gadgets</button>
-      <button class="cat-btn" onclick="filtrerCategorie('parfums')">✨ Parfums</button>
-      <button class="cat-btn" onclick="filtrerCategorie('restauration')">🍲 Nourriture</button>
-      <button class="cat-btn" onclick="filtrerCategorie('sur-mesure')">🎨 Sur-mesure</button>
+      <button class="cat-btn active" onclick="filtrerCategorie('tous', event)">✨ Tous</button>
+      <button class="cat-btn" onclick="filtrerCategorie('mode', event)">👔 Mode & Sape</button>
+      <button class="cat-btn" onclick="filtrerCategorie('electronique', event)">📱 Tech & Gadgets</button>
+      <button class="cat-btn" onclick="filtrerCategorie('parfums', event)">✨ Parfums</button>
+      <button class="cat-btn" onclick="filtrerCategorie('restauration', event)">🍲 Nourriture</button>
+      <button class="cat-btn" onclick="filtrerCategorie('sur-mesure', event)">🎨 Sur-mesure</button>
+      <button class="cat-btn" onclick="filtrerCategorie('divers', event)">📦 Autre / Divers</button>
     </div>
   </section>
 
@@ -193,7 +194,64 @@
   <section class="products-section">
     <h2>À la une</h2>
     <div id="productGrid" class="products-grid">
-      <!-- Les produits Firebase chargeront ici -->
+      
+      <!-- Produit 1 : Mode -->
+      <div class="product-card" data-cat="mode">
+        <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500" alt="T-Shirt Pagne Uniwax">
+        <div class="product-info">
+          <span class="badge-cat">👔 Mode</span>
+          <h3>T-Shirt Style Pagne Uniwax</h3>
+          <p class="vendeur-name">Boutique Partenaire</p>
+          <div class="price-row">
+            <span class="price">5 000 FCFA</span>
+            <button class="btn-commander" onclick="commanderProduit('T-Shirt Style Pagne Uniwax', '5000')">Commander</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Produit 2 : Sur-mesure (Tableau Personnalisé) -->
+      <div class="product-card" data-cat="sur-mesure">
+        <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500" alt="Tableau Portrait Sur-Mesure">
+        <div class="product-info">
+          <span class="badge-cat">🎨 Sur-mesure</span>
+          <h3>Tableau Portrait Personnalisé (Peinture)</h3>
+          <p class="vendeur-name">Artisanat Local</p>
+          <p class="custom-note">📸 Envoie ta photo après commande</p>
+          <div class="price-row">
+            <span class="price">3 000 FCFA</span>
+            <button class="btn-commander" onclick="commanderTableau('Tableau Portrait Personnalisé', '3000')">Commander</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Produit 3 : Parfums -->
+      <div class="product-card" data-cat="parfums">
+        <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=500" alt="Parfum De Luxe 50ml">
+        <div class="product-info">
+          <span class="badge-cat">✨ Parfums</span>
+          <h3>Parfum De Luxe Oud 50ml</h3>
+          <p class="vendeur-name">Boutique Partenaire</p>
+          <div class="price-row">
+            <span class="price">12 000 FCFA</span>
+            <button class="btn-commander" onclick="commanderProduit('Parfum De Luxe Oud 50ml', '12000')">Commander</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Produit 4 : Tech -->
+      <div class="product-card" data-cat="electronique">
+        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" alt="Casque Bluetooth Pro">
+        <div class="product-info">
+          <span class="badge-cat">📱 Tech</span>
+          <h3>Casque Bluetooth Sans Fil Pro</h3>
+          <p class="vendeur-name">Boutique Partenaire</p>
+          <div class="price-row">
+            <span class="price">15 000 FCFA</span>
+            <button class="btn-commander" onclick="commanderProduit('Casque Bluetooth Sans Fil Pro', '15000')">Commander</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -282,6 +340,55 @@
         alert("Connexion réussie à la boutique : " + nomBoutique.trim());
         window.location.href = `boutique.html?vendeur=${encodeURIComponent(nomBoutique.trim())}`;
       }
+    }
+
+    // Filtrage dynamique des produits par catégorie
+    function filtrerCategorie(categorie, event) {
+      const cards = document.querySelectorAll('.product-card');
+      const buttons = document.querySelectorAll('.cat-btn');
+
+      buttons.forEach(btn => btn.classList.remove('active'));
+      if (event && event.target) {
+        event.target.classList.add('active');
+      }
+
+      cards.forEach(card => {
+        if (categorie === 'tous' || card.getAttribute('data-cat') === categorie) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Filtrage par barre de recherche
+    function filtrerProduits() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.product-card');
+      
+      cards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        if (title.includes(query)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Écoute de la barre de recherche en temps réel
+    document.getElementById('searchInput').addEventListener('input', filtrerProduits);
+
+    // Commande WhatsApp standard
+    function commanderProduit(nom, prix) {
+      const text = `Bonjour ! Je souhaite commander le produit suivant sur WiseMarket :%0A- *Produit* : ${encodeURIComponent(nom)}%0A- *Prix* : ${prix} FCFA`;
+      window.open(`https://wa.me/22872119966?text=${text}`, '_blank');
+    }
+
+    // Commande sur-mesure (Tableau)
+    function commanderTableau(nom, prix) {
+      const text = `Bonjour ! Je souhaite commander un *${encodeURIComponent(nom)}* sur-mesure sur WiseMarket.%0A- *Prix* : ${prix} FCFA%0A%0A🎨 *Note* : Je souhaite vous envoyer ma photo pour la réalisation.`;
+      window.open(`https://wa.me/22872119966?text=${text}`, '_blank');
     }
 
     // Gestion de la boîte de Mini-Chat
