@@ -66,23 +66,24 @@
                     </div>
                 </div>
 
-                <!-- Champ Sélection Galerie Sécurisé -->
+                <!-- Champ Choisir Photo Ultra Direct -->
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Photo de l'article *</label>
-                    <div id="dropZone" class="border-2 border-dashed border-slate-800 hover:border-violet-500 rounded-xl p-4 bg-[#090D16] text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[110px]">
+                    <div class="relative border-2 border-dashed border-slate-800 hover:border-violet-500 rounded-xl p-4 bg-[#090D16] text-center flex flex-col items-center justify-center min-h-[120px]">
                         
-                        <input type="file" id="fileInput" accept="image/*" class="hidden">
+                        <!-- Input visiblement au-dessus de tout -->
+                        <input type="file" id="fileInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
                         
                         <div id="uploadPlaceholder" class="flex flex-col items-center gap-1.5 pointer-events-none">
                             <i class="fas fa-cloud-upload-alt text-2xl text-violet-400"></i>
-                            <span class="text-xs font-bold text-slate-300">Choisir une photo dans la galerie</span>
-                            <span class="text-[10px] text-slate-500">Formats acceptés: PNG, JPG, JPEG</span>
+                            <span class="text-xs font-bold text-slate-300">Appuyez ici pour choisir une photo</span>
+                            <span class="text-[10px] text-slate-500">Galerie / Fichiers</span>
                         </div>
 
-                        <div id="imagePreviewContainer" class="hidden flex flex-col items-center gap-2 pointer-events-none">
+                        <div id="imagePreviewContainer" class="hidden flex flex-col items-center gap-2 pointer-events-none z-10">
                             <img id="imagePreview" src="" alt="Aperçu" class="h-28 object-cover rounded-lg border border-slate-700">
-                            <span class="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
-                                <i class="fas fa-check-circle"></i> Photo prête à être publiée
+                            <span id="fileName" class="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
+                                <i class="fas fa-check-circle"></i> Photo chargée
                             </span>
                         </div>
                     </div>
@@ -110,45 +111,26 @@
 
         let imageBase64 = "";
 
-        const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
 
-        // Auto-remplir le nom de la boutique si déjà mémorisé
+        // Auto-remplir le nom de la boutique si déjà enregistré
         const nomSauve = localStorage.getItem('wm_vendeur_nom');
         if (nomSauve) document.getElementById('vendeurNom').value = nomSauve;
 
-        // Clic sur la zone déclenche l'ouverture de la galerie
-        dropZone.addEventListener('click', () => fileInput.click());
-
-        // Traitement de l'image sélectionnée
+        // Écouteur direct sur le changement de fichier
         fileInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function (event) {
-                const img = new Image();
-                img.onload = function () {
-                    // Compression simple et directe via Canvas
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 500;
-                    const scale = MAX_WIDTH / img.width;
+                imageBase64 = event.target.result;
 
-                    canvas.width = scale < 1 ? MAX_WIDTH : img.width;
-                    canvas.height = scale < 1 ? img.height * scale : img.height;
-
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                    // Conversion finale en Data URL léger
-                    imageBase64 = canvas.toDataURL('image/jpeg', 0.6);
-
-                    // Afficher la photo directement dans la zone d'aperçu
-                    document.getElementById('imagePreview').src = imageBase64;
-                    document.getElementById('uploadPlaceholder').classList.add('hidden');
-                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
-                };
-                img.src = event.target.result;
+                // Affichage direct
+                document.getElementById('imagePreview').src = imageBase64;
+                document.getElementById('fileName').innerText = "✓ " + file.name;
+                document.getElementById('uploadPlaceholder').classList.add('hidden');
+                document.getElementById('imagePreviewContainer').classList.remove('hidden');
             };
             reader.readAsDataURL(file);
         });
