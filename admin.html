@@ -3,96 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espace Admin - WiseMarket</title>
+    <title>Administration - WiseMarket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-[#090D16] text-slate-100 font-sans min-h-screen p-4 sm:p-8">
 
-    <div class="max-w-5xl mx-auto">
-        <div class="flex justify-between items-center mb-8">
+    <main class="max-w-5xl mx-auto space-y-6">
+        <!-- Header Admin -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#0F172A] border border-slate-800 p-6 rounded-3xl">
             <div>
                 <h1 class="text-2xl font-black text-white">Tableau de Bord Administrateur</h1>
                 <p class="text-xs text-slate-400">Vue d'ensemble des boutiques et des produits sur WiseMarket</p>
             </div>
-            <a href="index.html" class="text-xs font-bold bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-slate-300">
+            <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center gap-2">
                 <i class="fas fa-globe"></i> Voir le site
             </a>
         </div>
 
-        <!-- Cartes Statistiques -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-            <div class="bg-[#0F172A] border border-slate-800 rounded-2xl p-5">
-                <span class="text-xs text-slate-400 block mb-1">Nombre de Boutiques</span>
-                <span class="text-2xl font-black text-violet-400" id="totalVendeurs">0</span>
+        <!-- Statistiques -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-[#0F172A] border border-slate-800 rounded-2xl p-6">
+                <p class="text-xs font-bold text-slate-400">Nombre de Boutiques</p>
+                <p class="text-3xl font-black text-violet-400 mt-2" id="statBoutiques">0</p>
             </div>
-            <div class="bg-[#0F172A] border border-slate-800 rounded-2xl p-5">
-                <span class="text-xs text-slate-400 block mb-1">Total Articles en Ligne</span>
-                <span class="text-2xl font-black text-emerald-400" id="totalProduits">0</span>
+            <div class="bg-[#0F172A] border border-slate-800 rounded-2xl p-6">
+                <p class="text-xs font-bold text-slate-400">Total Articles en Ligne</p>
+                <p class="text-3xl font-black text-emerald-400 mt-2" id="statArticles">0</p>
             </div>
         </div>
 
-        <!-- Liste des Boutiques -->
+        <!-- Liste des Boutiques Inscrites -->
         <div class="bg-[#0F172A] border border-slate-800 rounded-2xl p-6">
-            <h2 class="text-sm font-bold text-white mb-4">Toutes les Boutiques Inscrites</h2>
+            <h2 class="text-base font-bold text-white mb-4">Toutes les Boutiques Inscrites</h2>
             <div id="listeBoutiques" class="space-y-3">
                 <p class="text-xs text-slate-500">Chargement des données...</p>
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
-        const SUPABASE_URL = "https://kaxpmfvrjeksrzyl.supabase.co";
-        const SUPABASE_KEY = "Sb_publishable_HEYqdUqe0zfTb1AodGsxeQ_Fv__b0tF";
+        const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
+        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        async function chargerAdmin() {
+        async function chargerAdminData() {
+            const elStatBoutiques = document.getElementById('statBoutiques');
+            const elStatArticles = document.getElementById('statArticles');
+            const elListe = document.getElementById('listeBoutiques');
+
             try {
-                let { data: produits, error } = await supabase.from('produits').select('*');
+                // Récupérer tous les produits
+                const { data: produits, error } = await supabase
+                    .from('produits')
+                    .select('*');
+
                 if (error) throw error;
 
-                document.getElementById('totalProduits').innerText = produits.length;
-
-                // Regrouper par nom de vendeur
-                const vendeursMap = {};
-                produits.forEach(p => {
-                    const v = p.vendeur || 'Inconnu';
-                    vendeursMap[v] = (vendeursMap[v] || 0) + 1;
-                });
-
-                const vendeursNoms = Object.keys(vendeursMap);
-                document.getElementById('totalVendeurs').innerText = vendeursNoms.length;
-
-                const listeDiv = document.getElementById('listeBoutiques');
-                if (vendeursNoms.length === 0) {
-                    listeDiv.innerHTML = `<p class="text-xs text-slate-500">Aucune boutique enregistrée.</p>`;
+                if (!produits || produits.length === 0) {
+                    elStatBoutiques.innerText = "0";
+                    elStatArticles.innerText = "0";
+                    elListe.innerHTML = `<p class="text-xs text-slate-400">Aucun produit ou boutique enregistré pour le moment.</p>`;
                     return;
                 }
 
-                listeDiv.innerHTML = vendeursNoms.map(v => `
-                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-3.5 rounded-xl text-xs">
+                // Compter le total des articles
+                elStatArticles.innerText = produits.length;
+
+                // Extraire et compter les vendeurs uniques (boutiques)
+                const boutiquesMap = {};
+                produits.forEach(p => {
+                    const nom = p.vendeur || 'Anonyme';
+                    boutiquesMap[nom] = (boutiquesMap[nom] || 0) + 1;
+                });
+
+                const listeVendeurs = Object.keys(boutiquesMap);
+                elStatBoutiques.innerText = listeVendeurs.length;
+
+                // Afficher la liste des boutiques et leur nombre d'articles
+                elListe.innerHTML = listeVendeurs.map(vendeur => `
+                    <div class="flex items-center justify-between p-3 bg-slate-900/60 border border-slate-800 rounded-xl">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-violet-600/20 text-violet-400 font-bold flex items-center justify-center">
-                                ${v.charAt(0).toUpperCase()}
+                            <div class="w-8 h-8 rounded-lg bg-violet-600/20 text-violet-400 flex items-center justify-center font-bold text-xs">
+                                <i class="fas fa-store"></i>
                             </div>
-                            <div>
-                                <span class="font-bold text-white block">${v}</span>
-                                <span class="text-[10px] text-slate-400">${vendeursMap[v]} article(s) publié(s)</span>
-                            </div>
+                            <span class="text-xs font-bold text-white">${vendeur}</span>
                         </div>
-                        <a href="boutique.html?vendeur=${encodeURIComponent(v)}" target="_blank" class="bg-violet-600 hover:bg-violet-500 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] transition">
-                            Voir la boutique <i class="fas fa-external-link-alt ml-1"></i>
-                        </a>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[11px] bg-slate-800 text-slate-300 font-semibold px-2.5 py-1 rounded-lg">
+                                ${boutiquesMap[vendeur]} article(s)
+                            </span>
+                            <a href="boutique.html?vendeur=${encodeURIComponent(vendeur)}" class="text-xs text-violet-400 hover:underline font-bold">
+                                Voir la vitrine →
+                            </a>
+                        </div>
                     </div>
                 `).join('');
 
             } catch (err) {
-                console.error(err);
+                console.error("Erreur Admin:", err);
+                elListe.innerHTML = `<p class="text-xs text-red-400">Impossible de charger les données. Vérifiez la connexion à Supabase.</p>`;
             }
         }
 
-        chargerAdmin();
+        chargerAdminData();
     </script>
 </body>
 </html>
