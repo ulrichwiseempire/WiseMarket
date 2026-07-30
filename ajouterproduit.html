@@ -66,24 +66,18 @@
                     </div>
                 </div>
 
-                <!-- Champ Choisir Photo Ultra Direct -->
+                <!-- Zone Photo Sécurisée -->
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Photo de l'article *</label>
-                    <div class="relative border-2 border-dashed border-slate-800 hover:border-violet-500 rounded-xl p-4 bg-[#090D16] text-center flex flex-col items-center justify-center min-h-[120px]">
+                    
+                    <!-- Input classique stylisé visible pour garantir la compatibilité mobile -->
+                    <div class="bg-[#090D16] border-2 border-dashed border-slate-800 rounded-xl p-4 text-center">
+                        <input type="file" id="fileInput" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-violet-600 file:text-white hover:file:bg-violet-500 cursor-pointer">
                         
-                        <!-- Input visiblement au-dessus de tout -->
-                        <input type="file" id="fileInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
-                        
-                        <div id="uploadPlaceholder" class="flex flex-col items-center gap-1.5 pointer-events-none">
-                            <i class="fas fa-cloud-upload-alt text-2xl text-violet-400"></i>
-                            <span class="text-xs font-bold text-slate-300">Appuyez ici pour choisir une photo</span>
-                            <span class="text-[10px] text-slate-500">Galerie / Fichiers</span>
-                        </div>
-
-                        <div id="imagePreviewContainer" class="hidden flex flex-col items-center gap-2 pointer-events-none z-10">
-                            <img id="imagePreview" src="" alt="Aperçu" class="h-28 object-cover rounded-lg border border-slate-700">
-                            <span id="fileName" class="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
-                                <i class="fas fa-check-circle"></i> Photo chargée
+                        <div id="imagePreviewContainer" class="hidden mt-4 flex flex-col items-center gap-2">
+                            <img id="imagePreview" src="" alt="Aperçu" class="h-36 object-cover rounded-xl border border-violet-500/50 shadow-md">
+                            <span class="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
+                                <i class="fas fa-check-circle"></i> Photo sélectionnée avec succès !
                             </span>
                         </div>
                     </div>
@@ -109,33 +103,53 @@
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let imageBase64 = "";
+        let fileSelectionne = null;
 
         const fileInput = document.getElementById('fileInput');
+        const imgPreview = document.getElementById('imagePreview');
+        const previewContainer = document.getElementById('imagePreviewContainer');
 
         // Auto-remplir le nom de la boutique si déjà enregistré
         const nomSauve = localStorage.getItem('wm_vendeur_nom');
         if (nomSauve) document.getElementById('vendeurNom').value = nomSauve;
 
-        // Écouteur direct sur le changement de fichier
+        // Détection instantanée lors du choix de l'image
         fileInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                imageBase64 = event.target.result;
-
-                // Affichage direct
-                document.getElementById('imagePreview').src = imageBase64;
-                document.getElementById('fileName').innerText = "✓ " + file.name;
-                document.getElementById('uploadPlaceholder').classList.add('hidden');
-                document.getElementById('imagePreviewContainer').classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
+            if (file) {
+                fileSelectionne = file;
+                // Aperçu instantané sans charger la mémoire du téléphone
+                imgPreview.src = URL.createObjectURL(file);
+                previewContainer.classList.remove('hidden');
+            }
         });
 
-        // Envoi du formulaire
+        // Fonction d'optimisation / compression au moment de l'envoi
+        function compresserPhoto(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 500;
+                        const scale = MAX_WIDTH / img.width;
+
+                        canvas.width = scale < 1 ? MAX_WIDTH : img.width;
+                        canvas.height = scale < 1 ? img.height * scale : img.height;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        resolve(canvas.toDataURL('image/jpeg', 0.6));
+                    };
+                };
+            });
+        }
+
+        // Soumission du formulaire
         document.getElementById('formAjoutProduit').addEventListener('submit', async function (e) {
             e.preventDefault();
             
@@ -151,9 +165,15 @@
             const prix = document.getElementById('produitPrix').value.trim();
             const categorie = document.getElementById('produitCategorie').value;
             const description = document.getElementById('produitDesc').value.trim();
-            const image_url = imageBase64 || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
+            
+            let image_url = 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
 
             try {
+                // Si l'utilisateur a sélectionné une photo, on la compresse avant envoi
+                if (fileSelectionne) {
+                    image_url = await compresserPhoto(fileSelectionne);
+                }
+
                 const { data, error } = await supabase
                     .from('produits')
                     .insert([{ vendeur, nom, prix, categorie, image_url, description }]);
@@ -172,7 +192,7 @@
             } catch (err) {
                 console.error("Erreur publication:", err);
                 msg.className = "text-xs text-center font-bold p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 block";
-                msg.innerText = "Erreur de connexion. Veuillez réessayer.";
+                msg.innerText = "Erreur lors de la publication. Veuillez réessayer.";
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-paper-plane"></i> Réessayer`;
             }
