@@ -1,0 +1,256 @@
+/* Reset & Styles de base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+  background-color: #0b0f19;
+  color: #f3f4f6;
+  padding-bottom: 20px;
+}
+
+/* En-tête / Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #111827;
+  border-bottom: 1px solid #1f2937;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #fff;
+}
+.logo span { color: #10b981; }
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-boutique {
+  background: #1f2937;
+  color: #fff;
+  border: 1px solid #374151;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-burger {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 5px;
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 40px 20px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.badge {
+  display: inline-block;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.hero h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+  margin-bottom: 15px;
+}
+.hero h1 span { color: #818cf8; }
+.hero p {
+  color: #9ca3af;
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+}
+
+/* Barre de recherche */
+.search-bar {
+  display: flex;
+  gap: 8px;
+  background: #1f2937;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid #374151;
+}
+.search-bar input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 8px 12px;
+  outline: none;
+}
+.search-bar button {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Statistiques (Style Wylia) */
+.stats-container {
+  display: flex;
+  justify-content: space-around;
+  background: #111827;
+  padding: 20px 10px;
+  margin: 30px 15px;
+  border-radius: 12px;
+  border: 1px solid #1f2937;
+  text-align: center;
+}
+.stat-card h3 {
+  font-size: 1.5rem;
+  color: #818cf8;
+  margin-bottom: 2px;
+}
+.stat-card p {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+/* Menu Latéral Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 250px;
+  height: 100%;
+  background: #111827;
+  color: white;
+  z-index: 1000;
+  transition: right 0.3s ease;
+  padding: 20px;
+  box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+}
+.sidebar.open { right: 0; }
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1f2937;
+  padding-bottom: 15px;
+}
+.btn-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+.sidebar-links {
+  list-style: none;
+  padding: 20px 0;
+}
+.sidebar-links li { margin-bottom: 20px; }
+.sidebar-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.overlay {
+  position: fixed;
+  top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  z-index: 999;
+}
+.overlay.active { display: block; }
+
+/* Catégories */
+.categories-section { padding: 20px 15px; }
+.categories-section h2 { font-size: 1.2rem; margin-bottom: 15px; }
+.categories-grid {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+.cat-btn {
+  background: #1f2937;
+  color: #9ca3af;
+  border: 1px solid #374151;
+  padding: 8px 16px;
+  border-radius: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.cat-btn.active {
+  background: #6366f1;
+  color: white;
+  border-color: #6366f1;
+}
+
+/* Grille de Produits */
+.products-section { padding: 20px 15px; }
+.products-section h2 { font-size: 1.2rem; margin-bottom: 15px; }
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 15px;
+}
+
+/* Bannière Support */
+.support-banner {
+  background: #1e1b4b;
+  border: 1px solid #3730a3;
+  color: white;
+  text-align: center;
+  padding: 25px 15px;
+  border-radius: 16px;
+  margin: 40px 15px 20px;
+}
+.support-icon { font-size: 2rem; margin-bottom: 8px; color: #818cf8; }
+.support-banner h3 { font-size: 1.1rem; margin-bottom: 6px; }
+.support-banner p { font-size: 0.85rem; color: #c7d2fe; margin-bottom: 15px; }
+.btn-support {
+  display: inline-block;
+  background: #f97316;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* Footer */
+.footer-pro {
+  background: #030712;
+  color: #6b7280;
+  padding: 30px 15px 15px;
+  margin-top: 40px;
+  border-top: 1px solid #1f2937;
+  font-size: 0.85rem;
+}
+.footer-bottom {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.togo-badge { color: #10b981; font-weight: bold; }
+  
