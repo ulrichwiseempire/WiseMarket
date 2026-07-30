@@ -53,13 +53,13 @@ body {
   padding: 5px;
 }
 
-/* Menu Latéral Sidebar */
+/* Menu Latéral Sidebar (CORRIGÉ POUR ÉCRAN MOBILE) */
 .sidebar {
   position: fixed;
   top: 0;
   right: -300px;
   width: 280px;
-  height: 100%;
+  height: 100vh; /* Ajusté à la hauteur exacte de l'écran */
   background: #0f172a;
   color: white;
   z-index: 1000;
@@ -68,6 +68,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow-y: auto; /* Active le défilement fluide sur petits écrans */
 }
 .sidebar.open { right: 0; }
 .sidebar-header {
@@ -86,10 +87,10 @@ body {
 }
 .sidebar-links {
   list-style: none;
-  padding: 20px 0;
-  flex: 1;
+  padding: 10px 0;
+  flex: 0 1 auto; /* Ajuste l'espace pour ne pas pousser les boutons vers le bas */
 }
-.sidebar-links li { margin-bottom: 20px; }
+.sidebar-links li { margin-bottom: 12px; }
 .sidebar-links a {
   color: #cbd5e1;
   text-decoration: none;
@@ -99,13 +100,14 @@ body {
   gap: 12px;
 }
 
-/* Zone Auth Sidebar */
+/* Zone Auth Sidebar (BOUTONS DIRECTEMENT VISIBLES) */
 .sidebar-auth {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 15px 0;
+  padding: 10px 0;
   border-top: 1px solid #1e293b;
+  margin-top: auto;
 }
 .btn-connexion {
   background: transparent;
@@ -142,6 +144,12 @@ body {
   z-index: 999;
 }
 .overlay.active { display: block; }
+
+/* Masquer automatiquement le bouton du chat lors de l'ouverture du menu */
+.sidebar.open ~ .chat-widget-btn,
+.sidebar.open ~ #chatBox {
+  display: none !important;
+}
 
 /* Hero Section */
 .hero {
@@ -251,7 +259,7 @@ body {
   gap: 15px;
 }
 
-/* Design des Cartes Produits (COMPLÉTÉ) */
+/* Design des Cartes Produits */
 .product-card {
   background: #111827;
   border: 1px solid #1f2937;
@@ -403,4 +411,5 @@ body {
   .hero h1 {
     font-size: 2.2rem;
   }
-}
+  }
+                      
