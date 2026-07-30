@@ -201,7 +201,7 @@
       
       <!-- PRODUITS MODE -->
       <div class="product-card" data-cat="mode">
-        <img src="images/1000625028.jpg" alt="Ensemble Hoodie Grey Nike">
+        <img src="1000625028.jpg" alt="Ensemble Hoodie Grey Nike">
         <div class="product-info">
           <span class="badge-cat">👔 Mode</span>
           <h3>Ensemble Sweat Hoodie & Jogging Oversize</h3>
@@ -216,7 +216,7 @@
 
       <!-- PRODUITS TECH & GADGETS -->
       <div class="product-card" data-cat="electronique">
-        <img src="images/1000625095.jpg" alt="iPhone 17 Pro">
+        <img src="1000625095.jpg" alt="iPhone 17 Pro">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>iPhone 17 Pro Max Flagship</h3>
@@ -230,7 +230,7 @@
       </div>
 
       <div class="product-card" data-cat="electronique">
-        <img src="images/1000625096.jpg" alt="Tecno Camon 40 Pro">
+        <img src="1000625096.jpg" alt="Tecno Camon 40 Pro">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>Tecno Camon 40 Pro (256Go / 16Go RAM)</h3>
@@ -244,7 +244,7 @@
       </div>
 
       <div class="product-card" data-cat="electronique">
-        <img src="images/1000625097.jpg" alt="Tecno Camon Écran Incurvé">
+        <img src="1000625097.jpg" alt="Tecno Camon Écran Incurvé">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>Tecno Camon Écran Incurvé AMOLED Vert</h3>
@@ -258,7 +258,7 @@
       </div>
 
       <div class="product-card" data-cat="electronique">
-        <img src="images/1000625098.jpg" alt="Infinix 5G Flagship">
+        <img src="1000625098.jpg" alt="Infinix 5G Flagship">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>Infinix Series Flagship 5G (Titanium Gold)</h3>
@@ -272,7 +272,7 @@
       </div>
 
       <div class="product-card" data-cat="electronique">
-        <img src="images/1000625008.jpg" alt="Casque Beats Wireless">
+        <img src="1000625008.jpg" alt="Casque Beats Wireless">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>Casque Audio Wireless Edition Noir & Or</h3>
@@ -286,7 +286,7 @@
       </div>
 
       <div class="product-card" data-cat="electronique">
-        <img src="images/1000625007.jpg" alt="Casque Studio Pro">
+        <img src="1000625007.jpg" alt="Casque Studio Pro">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>Casque Audio Hi-Fi Studio Pro Isolation</h3>
@@ -300,7 +300,7 @@
       </div>
 
       <div class="product-card" data-cat="electronique">
-        <img src="images/1000625104.jpg" alt="PC Portable HP Envy">
+        <img src="1000625104.jpg" alt="PC Portable HP Envy">
         <div class="product-info">
           <span class="badge-cat">📱 Tech</span>
           <h3>PC Portable HP Envy Ultrabook Convertible Slim</h3>
@@ -315,7 +315,7 @@
 
       <!-- PRODUITS BIJOUX & HORLOGERIE -->
       <div class="product-card" data-cat="bijoux">
-        <img src="images/1000625100.jpg" alt="Collection Montres Dorées">
+        <img src="1000625100.jpg" alt="Collection Montres Dorées">
         <div class="product-info">
           <span class="badge-cat">💎 Bijoux</span>
           <h3>Collection Montres Homme Acier Doré Luxe</h3>
@@ -329,7 +329,7 @@
       </div>
 
       <div class="product-card" data-cat="bijoux">
-        <img src="images/1000625101.jpg" alt="Coffret Montre Casio Argent">
+        <img src="1000625101.jpg" alt="Coffret Montre Casio Argent">
         <div class="product-info">
           <span class="badge-cat">💎 Bijoux</span>
           <h3>Coffret Cadeau Homme (Montre Argent + Bijoux)</h3>
@@ -343,7 +343,7 @@
       </div>
 
       <div class="product-card" data-cat="bijoux">
-        <img src="images/1000625102.jpg" alt="Parure Montre Papillon Rose Gold">
+        <img src="1000625102.jpg" alt="Parure Montre Papillon Rose Gold">
         <div class="product-info">
           <span class="badge-cat">💎 Bijoux</span>
           <h3>Parure Montre Papillon & Bracelet Strass Rose Gold</h3>
@@ -357,7 +357,7 @@
       </div>
 
       <div class="product-card" data-cat="bijoux">
-        <img src="images/1000625103.jpg" alt="Coffret Anne Klein Femme">
+        <img src="1000625103.jpg" alt="Coffret Anne Klein Femme">
         <div class="product-info">
           <span class="badge-cat">💎 Bijoux</span>
           <h3>Coffret Montre Anne Klein & Bracelets Trèfle</h3>
@@ -372,7 +372,7 @@
 
       <!-- PRODUITS SUR-MESURE / DÉCO -->
       <div class="product-card" data-cat="sur-mesure">
-        <img src="images/1000625094.jpg" alt="Tableau Photo Multi-cadres">
+        <img src="1000625094.jpg" alt="Tableau Photo Multi-cadres">
         <div class="product-info">
           <span class="badge-cat">🎨 Sur-mesure</span>
           <h3>Tableau Mural Multi-Photos Personnalisé</h3>
@@ -527,4 +527,60 @@
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
       if (text !== '') {
-        const msgDiv = docu
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'msg sent';
+        msgDiv.textConten      cards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        if (title.includes(query)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    document.getElementById('searchInput').addEventListener('input', filtrerProduits);
+
+    // Commande WhatsApp (Sur devis)
+    function commanderProduit(nom) {
+      const text = `Bonjour WiseMarket ! Je souhaite avoir des informations et demander un devis pour le produit suivant :%0A- *Produit* : ${encodeURIComponent(nom)}`;
+      window.open(`https://wa.me/22872119966?text=${text}`, '_blank');
+    }
+
+    // Gestion de la boîte de Mini-Chat
+    function toggleChat() {
+      const box = document.getElementById('chatBox');
+      box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function envoyerMessageChat() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (text !== '') {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'msg sent';
+        msgDiv.textContent = text;
+        document.getElementById('chatMessages').appendChild(msgDiv);
+        input.value = '';
+        
+        setTimeout(() => {
+          const autoReply = document.createElement('div');
+          autoReply.className = 'msg received';
+          autoReply.textContent = "Merci pour votre message. Le vendeur vous répondra sous peu !";
+          document.getElementById('chatMessages').appendChild(autoReply);
+          document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+        }, 1000);
+      }
+    }
+
+    // Activation PWA (Service Worker)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('PWA Service Worker actif !'))
+          .catch(err => console.log('Erreur Service Worker PWA :', err));
+      });
+    }
+  </script>
+</body>
+</html>
