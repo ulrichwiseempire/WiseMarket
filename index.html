@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <!-- EN-TÊTE FIXE AVEC MENU BURGER -->
+  <!-- EN-TÊTE FIXE -->
   <header class="navbar">
     <div class="logo">Wise <span>Market</span></div>
     
@@ -19,20 +19,27 @@
     </div>
   </header>
 
-  <!-- MENU LATÉRAL (SIDEBAR) -->
+  <!-- MENU LATÉRAL (SIDEBAR - STYLE WYLIA) -->
   <div id="sidebar" class="sidebar">
     <div class="sidebar-header">
       <div class="logo">Wise <span>Market</span></div>
       <button class="btn-close" onclick="toggleSidebar()">&times;</button>
     </div>
+    
     <ul class="sidebar-links">
       <li><a href="index.html"><i class="fa-solid fa-house"></i> Accueil</a></li>
-      <li><a href="#categories"><i class="fa-solid fa-layer-group"></i> Catégories</a></li>
-      <li><a href="ajouterproduit.html"><i class="fa-solid fa-store"></i> Espace Vendeur</a></li>
-      <li><a href="https://wa.me/228XXXXXXXX" target="_blank"><i class="fa-solid fa-headset"></i> Support / Contact</a></li>
+      <li><a href="#categories" onclick="toggleSidebar()"><i class="fa-solid fa-layer-group"></i> Catégories</a></li>
+      <li><a href="https://wa.me/228XXXXXXXX" target="_blank"><i class="fa-solid fa-headset"></i> Support WhatsApp</a></li>
     </ul>
+
+    <!-- ACTIONS ESPACE VENDEUR / CONNEXION -->
+    <div class="sidebar-auth">
+      <button class="btn-connexion" onclick="seConnecterBoutique()">Connexion Boutique</button>
+      <a href="ajouterproduit.html" class="btn-vendre">Créer ma boutique</a>
+    </div>
+
     <div class="sidebar-footer">
-      <p>🇹🇬 WiseMarket — Marketplace Togolaise</p>
+      <p>🇹🇬 WiseMarket — La marketplace du Togo</p>
     </div>
   </div>
   <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
@@ -41,39 +48,39 @@
   <section class="hero">
     <div class="badge">🟢 🇹🇬 La vitrine du savoir-faire togolais</div>
     <h1>Découvrez des créations <span>uniques & faites pour vous</span></h1>
-    <p>Commandez vos vêtements, téléphones, plats locaux ou articles sur-mesure réalisés par nos vendeurs du Togo.</p>
+    <p>Commandez vos vêtements, téléphones, parfums ou articles réalisés par nos artisans locaux.</p>
     
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Que recherchez-vous ? (ex: Pagne, iPhone, Parfum...)">
-      <button onclick="filtrerProduits()"><i class="fa-solid fa-magnifying-glass"></i> Chercher</button>
+      <input type="text" id="searchInput" placeholder="Que recherchez-vous ?">
+      <button onclick="filtrerProduits()"><i class="fa-solid fa-magnifying-glass"></i></button>
     </div>
   </section>
 
-  <!-- SECTION STATISTIQUES (Style Wylia) -->
+  <!-- STATISTIQUES -->
   <section class="stats-container">
     <div class="stat-card">
       <h3>1.2K+</h3>
-      <p>Vendeurs actifs</p>
+      <p>Vendeurs</p>
     </div>
     <div class="stat-card">
       <h3>5.5K+</h3>
-      <p>Produits disponibles</p>
+      <p>Produits</p>
     </div>
     <div class="stat-card">
       <h3>99%</h3>
-      <p>Clients satisfaits</p>
+      <p>Satisfaits</p>
     </div>
   </section>
 
-  <!-- CATÉGORIES ENRICHIES -->
+  <!-- CATÉGORIES -->
   <section class="categories-section" id="categories">
-    <h2>Explorez par catégorie</h2>
+    <h2>Catégories</h2>
     <div class="categories-grid">
       <button class="cat-btn active" onclick="filtrerCategorie('tous')">✨ Tous</button>
       <button class="cat-btn" onclick="filtrerCategorie('mode')">👔 Mode & Sape</button>
       <button class="cat-btn" onclick="filtrerCategorie('electronique')">📱 Tech & Gadgets</button>
-      <button class="cat-btn" onclick="filtrerCategorie('parfums')">✨ Parfums & Soins</button>
-      <button class="cat-btn" onclick="filtrerCategorie('restauration')">🍲 Nourriture & Resto</button>
+      <button class="cat-btn" onclick="filtrerCategorie('parfums')">✨ Parfums</button>
+      <button class="cat-btn" onclick="filtrerCategorie('restauration')">🍲 Nourriture</button>
       <button class="cat-btn" onclick="filtrerCategorie('sur-mesure')">🎨 Sur-mesure</button>
     </div>
   </section>
@@ -82,11 +89,11 @@
   <section class="products-section">
     <h2>À la une</h2>
     <div id="productGrid" class="products-grid">
-      <!-- Les produits Firebase s'afficheront ici -->
+      <!-- Les produits Firebase chargeront ici -->
     </div>
   </section>
 
-  <!-- BANNIÈRE SUPPORT (Style Wylia) -->
+  <!-- BANNIÈRE SUPPORT -->
   <section class="support-banner">
     <div class="support-icon"><i class="fa-solid fa-comments"></i></div>
     <h3>Une question ou un besoin d'aide ?</h3>
@@ -94,7 +101,7 @@
     <a href="https://wa.me/228XXXXXXXX" target="_blank" class="btn-support">Nous contacter sur WhatsApp</a>
   </section>
 
-  <!-- PIED DE PAGE (FOOTER) PRO -->
+  <!-- PIED DE PAGE (FOOTER) CORRIGÉ -->
   <footer class="footer-pro">
     <div class="footer-grid">
       <div class="footer-col">
@@ -120,13 +127,11 @@
     <div class="footer-bottom">
       <p>© 2026 WiseMarket — Tous droits réservés</p>
       <p class="togo-badge">🇹🇬 Fait avec fierté au Togo</p>
-      <div class="payment-badges">
-        <span>Flooz</span> | <span>T-Money</span>
-      </div>
+      <p class="payments">Flooz | T-Money</p>
     </div>
   </footer>
 
-  <!-- SCRIPT DU MENU BURGER & LOGIQUE -->
+  <!-- SCRIPT LOGIQUE -->
   <script>
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
@@ -136,14 +141,19 @@
     function ouvrirMaBoutique() {
       let maBoutique = localStorage.getItem('maBoutiqueNom');
       if (!maBoutique) {
-        maBoutique = prompt("Entrez le nom exact de votre boutique :");
-        if (maBoutique) {
-          localStorage.setItem('maBoutiqueNom', maBoutique.trim());
-        } else {
-          return;
-        }
+        seConnecterBoutique();
+      } else {
+        window.location.href = `boutique.html?vendeur=${encodeURIComponent(maBoutique)}`;
       }
-      window.location.href = `boutique.html?vendeur=${encodeURIComponent(maBoutique)}`;
+    }
+
+    function seConnecterBoutique() {
+      let nomBoutique = prompt("Entrez le nom exact de votre boutique pour vous connecter :");
+      if (nomBoutique && nomBoutique.trim() !== "") {
+        localStorage.setItem('maBoutiqueNom', nomBoutique.trim());
+        alert("Connexion réussie à la boutique : " + nomBoutique.trim());
+        window.location.href = `boutique.html?vendeur=${encodeURIComponent(nomBoutique.trim())}`;
+      }
     }
   </script>
 </body>
