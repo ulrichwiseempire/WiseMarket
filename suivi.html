@@ -140,9 +140,7 @@
             if (!confirm("Avez-vous bien reçu votre produit et payé le livreur ?")) return;
             
 
-            if (!confirm("Avez-vous bien reçu votre produit en bon état ? Cette action débloquera l'argent pour le vendeur.")) {
-                return;
-            }
+            
 
             try {
                 const { error } = await db
