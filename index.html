@@ -208,9 +208,10 @@
                     </select>
                 </div>
 
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition mt-2">
-                    <i class="fas fa-lock"></i> Payer & Bloquer le montant
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-2xl transition flex items-center justify-center gap-2">
+    <i class="fas fa-check-circle"></i> Commander maintenant
                 </button>
+                
             </form>
         </div>
     </div>
@@ -526,19 +527,23 @@ function changerQuantite(valeur) {
     let qte = parseInt(input.value) + valeur;
     if (qte < 1) qte = 1;
     input.value = qte;
-}
-
 function ouvrirModalCommande(produit) {
     produitActuel = produit;
     document.getElementById('modalProduitTitre').innerText = produit.titre;
-    document.getElementById('modalProduitPrix').innerText = produit.prix + " FCFA";
-    document.getElementById('modalProduitImage').src = produit.image_url || 'https://via.placeholder.com/150';
-    document.getElementById('quantiteProduit').value = 1;
     
+    // Extraction propre des chiffres
+    const prixClean = parseInt((produit.prix || 0).toString().replace(/[^0-9]/g, ''), 10) || 0;
+    document.getElementById('modalProduitPrix').innerText = prixClean.toLocaleString() + " FCFA";
+    
+    document.getElementById('modalProduitImage').src = produit.image_url || '';
+    document.getElementById('quantiteProduit').value = 1;
+
     const modal = document.getElementById('modalCommande');
     modal.classList.remove('hidden');
     modal.classList.add('flex');
 }
+    
+    
 
 function fermerModalCommande() {
     const modal = document.getElementById('modalCommande');
