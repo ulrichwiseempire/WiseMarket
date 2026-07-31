@@ -292,8 +292,7 @@
             const filtres = tousLesProduits.filter(p => p.titre.toLowerCase().includes(query));
             afficherProduits(filtres);
         }
-
-        // --- GESTION DU CHAT ET NOTIFICATIONS ---
+// --- GESTION DU CHAT ET NOTIFICATIONS ---
 let abonnementChat = null;
 const sonNotification = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c3817342.mp3?filename=iphone-notification-90317.mp3');
 
@@ -311,20 +310,23 @@ function fermerChat() {
 }
 
 function ouvrirFormulaireCommande() {
-    fermerChat();
-    const modalCmd = document.getElementById('modalCommande');
+    const modalCmd = document.getElementById('modalCommande') || document.getElementById('modalFormulaireCommande');
     if (modalCmd) {
+        fermerChat();
         modalCmd.classList.remove('hidden');
+        
         const titreCmd = document.getElementById('cmdNomProduit');
         if (titreCmd && produitActuel) titreCmd.textContent = produitActuel.titre;
         
         const prixCmd = document.getElementById('cmdPrixProduit');
         if (prixCmd && produitActuel) prixCmd.textContent = produitActuel.prix + ' FCFA';
+    } else {
+        alert("Paiement bientôt disponible pour ce produit !");
     }
 }
 
 function fermerFormCommande() {
-    const modalCmd = document.getElementById('modalCommande');
+    const modalCmd = document.getElementById('modalCommande') || document.getElementById('modalFormulaireCommande');
     if (modalCmd) modalCmd.classList.add('hidden');
 }
 
@@ -400,7 +402,7 @@ function afficherUnMessage(m) {
     const couleurBg = estMoi ? 'bg-violet-600 text-white' : 'bg-slate-800 text-slate-200 border border-slate-700';
 
     const contenu = m.contenu.startsWith('data:image') || (m.contenu.startsWith('http') && (m.contenu.endsWith('.png') || m.contenu.endsWith('.jpg') || m.contenu.endsWith('.jpeg')))
-        ? `<img src="${m.contenu}" class="rounded-xl max-h-40 object-cover cursor-pointer" onclick="zoomerImage('${m.contenu}')">`
+        ? `<img src="${m.contenu}" class="rounded-xl max-h-40 object-cover cursor-pointer" onclick="window.open('${m.contenu}', '_blank')">`
         : `<p>${m.contenu}</p>`;
 
     box.innerHTML += `
@@ -434,16 +436,40 @@ async function envoyerMessageChat() {
     }
 }
 
+// Fonction pour envoyer des photos dans le chat 📷
+async function envoyerImageChat(event) {
+    const file = event.target.files[0];
+    if (!file || !produitActuel) return;
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const imageBase64 = e.target.result;
+        afficherUnMessage({ auteur: 'ACHETEUR', contenu: imageBase64 });
+
+        try {
+            await db.from('messages').insert([{
+                produit_id: String(produitActuel.id),
+                nom_boutique: produitActuel.nom_boutique || '',
+                auteur: 'ACHETEUR',
+                contenu: imageBase64
+            }]);
+        } catch (err) {
+            console.error("Erreur envoi image:", err);
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
 // --- GESTION DES COMMANDES ET PAIEMENT ---
 async function traiterPaiementFinal(e) {
     e.preventDefault();
     if (!produitActuel) return;
 
     const codeCommande = "WM-" + Math.floor(1000 + Math.random() * 9000);
-    const nom = document.getElementById('cmdNomClient').value;
-    const tel = document.getElementById('cmdTelClient').value;
-    const adresse = document.getElementById('cmdAdresse').value;
-    const moyen = document.getElementById('cmdMoyenPaiement').value;
+    const nom = document.getElementById('cmdNomClient') ? document.getElementById('cmdNomClient').value : 'Client';
+    const tel = document.getElementById('cmdTelClient') ? document.getElementById('cmdTelClient').value : '';
+    const adresse = document.getElementById('cmdAdresse') ? document.getElementById('cmdAdresse').value : '';
+    const moyen = document.getElementById('cmdMoyenPaiement') ? document.getElementById('cmdMoyenPaiement').value : 'Mobile Money';
 
     try {
         const { error } = await db.from('commandes').insert([{
@@ -472,3 +498,5 @@ document.addEventListener('DOMContentLoaded', chargerProduits);
 </script>
 </body>
 </html>
+
+        
