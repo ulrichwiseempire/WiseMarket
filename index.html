@@ -294,49 +294,127 @@
         }
 
         function ouvrirChat(idProduit) {
-            if (tousLesProduits && tousLesProduits.length > 0) {
-                produitActuel = tousLesProduits.find(p => String(p.id) === String(idProduit));
-            }
-            if (produitActuel) {
-                document.getElementById('chatNomBoutique').textContent = produitActuel.nom_boutique || 'Vendeur WiseMarket';
-                document.getElementById('chatNomProduit').textContent = produitActuel.titre;
-
-                // NOTIFICATION DYNAMIQUE
-                const badge = document.getElementById('badgeNotif');
-                const boxNotif = document.getElementById('contenuNotif');
-                if (badge && boxNotif) {
-                    badge.classList.remove('hidden');
-                    boxNotif.innerHTML = `<div class="p-2 bg-violet-900/30 border border-violet-500/30 rounded-xl text-left"><p class="text-white font-bold">Discussion Ouverte</p><p class="text-[11px] text-slate-300">Vous avez démarré une session pour ${produitActuel.titre}.</p></div>`;
-                }
-            }
-            document.getElementById('modalChat').classList.remove('hidden');
-        }
-
-        function fermerChat() { document.getElementById('modalChat').classList.add('hidden'); }
-        function ouvrirFormulaireCommande() { document.getElementById('modalFormCommande').classList.remove('hidden'); }
-        function fermerFormCommande() { document.getElementById('modalFormCommande').classList.add('hidden'); }
-
-         function envoyerMessageChat() {
-    const input = document.getElementById('inputMessageChat');
-    const msg = input.value.trim();
-    if (!msg) return;
-    const box = document.getElementById('chatMessages');
-    box.innerHTML += `<div class="flex justify-end"><div class="bg-violet-600 text-white rounded-2xl p-2.5 max-w-[80%]"><p>${msg}</p></div></div>`;
-    input.value = '';
+            
     box.scrollTop = box.scrollHeight;
         }
 
-                function envoyerImageChat(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const box = document.getElementById('chatMessages');
-                    box.innerHTML += `<div class="flex justify-end"><div class="bg-violet-600 text-white rounded-2xl p-1.5 max-w-[80%]"><img src="${e.target.result}" class="rounded-xl max-h-40 object-cover cursor-pointer" onclick="zoomerImage('${e.target.result}')"></div></div>`;
-                    box.scrollTop = box.scrollHeight;
+                let abonnementChat = null;
+
+// Son de notification propre (effet style iPhone/subtil)
+const sonNotification = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c3817342.mp3?filename=iphone-notification-90317.mp3');
+
+// Demander la permission pour les notifications visuelles au chargement de la page
+if (typeof Notification !== 'undefined' && Notification.permission !== "granted" && Notification.permission !== "denied") {
+    Notification.requestPermission();
+}
+
+async function ouvrirChat(idProduit) {
+    if (tousLesProduits && tousLesProduits.length > 0) {
+        produitActuel = tousLesProduits.find(p => String(p.id) === String(idProduit));
+    }
+    if (!produitActuel) return;
+
+    document.getElementById('chatNomBoutique').textContent = produitActuel.nom_boutique || 'Vendeur WiseMarket';
+    document.getElementById('chatNomProduit').textContent = produitActuel.titre;
+
+    document.getElementById('modalChat').classList.remove('hidden');
+
+    // Charger les anciens messages depuis Supabase
+    await chargerMessagesChat(produitActuel.id);
+
+    // Écouter les nouveaux messages en TEMPS RÉEL
+    if (abonnementChat) db.removeChannel(abonnementChat);
+    
+    abonnementChat = db.channel(`chat-${produitActuel.id}`)
+        .on('postgres_changes', { 
+            event: 'INSERT', 
+            schema: 'public', 
+            table: 'messages', 
+            filter: `produit_id=eq.${produitActuel.id}` 
+        }, payload => {
+            afficherUnMessage(payload.new);
+
+            // Si le message ne vient pas de l'acheteur actuel (donc c'est une réponse ou un nouveau message)
+            if (payload.new.auteur !== 'ACHETEUR') {
+                // 1. Jouer le son type iPhone
+                sonNotification.play().catch(e => console.log("Audio bloqué par le navigateur :", e));
+
+                // 2. Afficher une notification visuelle sur le téléphone
+                if (typeof Notification !== 'undefined' && Notification.permission === "granted") {
+                    new Notification("Nouveau message - WiseMarket 🛍️", {
+                        body: payload.new.contenu.length > 50 ? payload.new.contenu.substring(0, 50) + '...' : payload.new.contenu,
+                        icon: 'https://cdn-icons-png.flaticon.com/512/733/733585.png'
+                    });
                 }
-                reader.readAsDataURL(input.files[0]);
             }
+        })
+        .subscribe();
+}
+
+async function chargerMessagesChat(produitId) {
+    const box = document.getElementById('chatMessages');
+    box.innerHTML = `
+        <div class="bg-violet-950/40 border border-violet-800/40 rounded-2xl p-3 text-[11px] text-violet-200 mb-3">
+            <p class="font-bold mb-1"><i class="fas fa-lock"></i> Chat Sécurisé WiseMarket</p>
+            <p>Posez vos questions au vendeur ou passez commande en toute sécurité.</p>
+        </div>
+    `;
+
+    try {
+        const { data: msgs, error } = await db.from('messages')
+            .select('*')
+            .eq('produit_id', String(produitId))
+            .order('created_at', { ascending: true });
+
+        if (error) throw error;
+        if (msgs && msgs.length > 0) {
+            msgs.forEach(m => afficherUnMessage(m));
         }
+    } catch (err) {
+        console.error("Erreur chargement messages:", err);
+    }
+}
+
+function afficherUnMessage(m) {
+    const box = document.getElementById('chatMessages');
+    const estMoi = m.auteur === 'ACHETEUR';
+
+    const alignement = estMoi ? 'justify-end' : 'justify-start';
+    const couleurBg = estMoi ? 'bg-violet-600 text-white' : 'bg-slate-800 text-slate-200 border border-slate-700';
+
+    const contenu = m.contenu.startsWith('data:image') || (m.contenu.startsWith('http') && (m.contenu.endsWith('.png') || m.contenu.endsWith('.jpg') || m.contenu.endsWith('.jpeg')))
+        ? `<img src="${m.contenu}" class="rounded-xl max-h-40 object-cover cursor-pointer" onclick="zoomerImage('${m.contenu}')">`
+        : `<p>${m.contenu}</p>`;
+
+    box.innerHTML += `
+        <div class="flex ${alignement} mb-2">
+            <div class="${couleurBg} rounded-2xl p-2.5 max-w-[80%] text-xs shadow">
+                ${contenu}
+            </div>
+        </div>
+    `;
+    box.scrollTop = box.scrollHeight;
+}
+
+async function envoyerMessageChat() {
+    const input = document.getElementById('inputMessageChat');
+    const msg = input.value.trim();
+    if (!msg || !produitActuel) return;
+
+    input.value = '';
+
+    try {
+        await db.from('messages').insert([{
+            produit_id: String(produitActuel.id),
+            nom_boutique: produitActuel.nom_boutique || '',
+            auteur: 'ACHETEUR',
+            contenu: msg
+        }]);
+    } catch (err) {
+        console.error("Erreur envoi message:", err);
+    }
+}
+        
 
         async function traiterPaiementFinal(e) {
             e.preventDefault();
