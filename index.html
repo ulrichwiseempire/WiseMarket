@@ -309,10 +309,11 @@ function fermerChat() {
     }
 }
 
+// OUVRIR LE FORMULAIRE DE COMMANDE (Nom, WhatsApp, Paiement)
 function ouvrirFormulaireCommande() {
-    const modalCmd = document.getElementById('modalCommande') || document.getElementById('modalFormulaireCommande');
+    fermerChat(); // On ferme le chat
+    const modalCmd = document.getElementById('modalFormCommande'); // ID exact du HTML !
     if (modalCmd) {
-        fermerChat();
         modalCmd.classList.remove('hidden');
         
         const titreCmd = document.getElementById('cmdNomProduit');
@@ -320,13 +321,11 @@ function ouvrirFormulaireCommande() {
         
         const prixCmd = document.getElementById('cmdPrixProduit');
         if (prixCmd && produitActuel) prixCmd.textContent = produitActuel.prix + ' FCFA';
-    } else {
-        alert("Paiement bientôt disponible pour ce produit !");
     }
 }
 
 function fermerFormCommande() {
-    const modalCmd = document.getElementById('modalCommande') || document.getElementById('modalFormulaireCommande');
+    const modalCmd = document.getElementById('modalFormCommande');
     if (modalCmd) modalCmd.classList.add('hidden');
 }
 
@@ -374,7 +373,7 @@ async function chargerMessagesChat(produitId) {
     box.innerHTML = `
         <div class="bg-violet-950/40 border border-violet-800/40 rounded-2xl p-3 text-[11px] text-violet-200 mb-3">
             <p class="font-bold mb-1"><i class="fas fa-lock"></i> Chat Sécurisé WiseMarket</p>
-            <p>Posez vos questions au vendeur ou passez commande en toute sécurité.</p>
+            <p>Posez vos questions au vendeur ou cliquez sur le bouton ci-dessous pour commander de façon sécurisée.</p>
         </div>
     `;
 
@@ -436,7 +435,7 @@ async function envoyerMessageChat() {
     }
 }
 
-// Fonction pour envoyer des photos dans le chat 📷
+// ENVOYER UNE PHOTO DANS LE CHAT 📷
 async function envoyerImageChat(event) {
     const file = event.target.files[0];
     if (!file || !produitActuel) return;
@@ -460,16 +459,16 @@ async function envoyerImageChat(event) {
     reader.readAsDataURL(file);
 }
 
-// --- GESTION DES COMMANDES ET PAIEMENT ---
+// --- TRAITEMENT DU PAIEMENT ET COMMANDE ---
 async function traiterPaiementFinal(e) {
     e.preventDefault();
     if (!produitActuel) return;
 
     const codeCommande = "WM-" + Math.floor(1000 + Math.random() * 9000);
-    const nom = document.getElementById('cmdNomClient') ? document.getElementById('cmdNomClient').value : 'Client';
-    const tel = document.getElementById('cmdTelClient') ? document.getElementById('cmdTelClient').value : '';
-    const adresse = document.getElementById('cmdAdresse') ? document.getElementById('cmdAdresse').value : '';
-    const moyen = document.getElementById('cmdMoyenPaiement') ? document.getElementById('cmdMoyenPaiement').value : 'Mobile Money';
+    const nom = document.getElementById('cmdNomClient').value;
+    const tel = document.getElementById('cmdTelClient').value;
+    const adresse = document.getElementById('cmdAdresse').value;
+    const moyen = document.getElementById('cmdMoyenPaiement').value;
 
     try {
         const { error } = await db.from('commandes').insert([{
@@ -486,7 +485,7 @@ async function traiterPaiementFinal(e) {
 
         if (error) console.warn("Supabase commandes warning:", error);
 
-        alert(`✅ PAIEMENT CONFIRMÉ ET SÉCURISÉ !\n\nVotre Code de Commande : ${codeCommande}\nConservez-le précieusement.`);
+        alert(`✅ PAIEMENT CONFIRMÉ ET SÉCURISÉ !\n\nVotre Code de Commande : ${codeCommande}\nConservez-le précieusement pour le suivi.`);
         window.location.href = 'suivi.html';
     } catch (err) {
         console.error(err);
@@ -498,5 +497,3 @@ document.addEventListener('DOMContentLoaded', chargerProduits);
 </script>
 </body>
 </html>
-
-        
