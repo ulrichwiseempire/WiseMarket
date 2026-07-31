@@ -103,25 +103,28 @@
             msg.className = "hidden text-center text-xs p-3 rounded-xl border";
 
             try {
-                // VERIFICATION DANS LA TABLE DES BOUTIQUES / PRODUITS
+                // VERIFICATION DANS LA TABLE DES PRODUITS/BOUTIQUES
                 const { data, error } = await db
                     .from('produits')
                     .select('*')
-                    .eq('nom_boutique', nom)
+                    .ilike('nom_boutique', nom)
                     .limit(1);
 
                 if (error) throw error;
 
                 if (data && data.length > 0) {
+                    const nomExact = data[0].nom_boutique;
+
                     // SAUVEGARDE EN LOCALSTORAGE
-                    localStorage.setItem('wisemarket_boutique', nom);
+                    localStorage.setItem('wisemarket_boutique', nomExact);
                     
                     msg.textContent = "Connexion réussie ! Redirection vers votre boutique...";
                     msg.classList.remove('hidden');
                     msg.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-400');
 
+                    // REDIRECTION VERS BOUTIQUE.HTML AVEC LE BON PARAMÈTRE
                     setTimeout(() => {
-                        window.location.href = "maboutique.html";
+                        window.location.href = `boutique.html?nom=${encodeURIComponent(nomExact)}`;
                     }, 1200);
 
                 } else {
@@ -143,5 +146,4 @@
         }
     </script>
 </body>
-  </html>
-  
+</html>
