@@ -314,25 +314,18 @@ function fermerChat() {
     }
 }
 
-// OUVRIR LE FORMULAIRE DE COMMANDE (Nom, WhatsApp, Paiement)
+    // OUVRIR LE FORMULAIRE DE COMMANDE
 function ouvrirFormulaireCommande() {
-    fermerChat(); // On ferme le chat
-    const modalCmd = document.getElementById('modalFormCommande'); // ID exact du HTML !
-    if (modalCmd) {
-        modalCmd.classList.remove('hidden');
-        
-        const titreCmd = document.getElementById('cmdNomProduit');
-        if (titreCmd && produitActuel) titreCmd.textContent = produitActuel.titre;
-        
-        const prixCmd = document.getElementById('cmdPrixProduit');
-        if (prixCmd && produitActuel) prixCmd.textContent = produitActuel.prix + ' FCFA';
+    fermerChat(); // On ferme le chat si ouvert
+    if (produitActuel) {
+        ouvrirModalCommande(produitActuel);
     }
 }
 
 function fermerFormCommande() {
-    const modalCmd = document.getElementById('modalFormCommande');
-    if (modalCmd) modalCmd.classList.add('hidden');
+    fermerModalCommande();
 }
+    
 
 async function ouvrirChat(idProduit) {
     if (tousLesProduits && tousLesProduits.length > 0) {
@@ -488,60 +481,69 @@ async function envoyerImageChat(event) {
         
 
 // --- TRAITEMENT DU PAIEMENT ET COMMANDE ---
-async function traiterPaiementFinal(e) {
+async function validerCommandeLivraison(e) {
     if (e) e.preventDefault();
     if (!produitActuel) return;
 
-    const codeCommande = "WM-" + Math.floor(1000 + Math.random() * 9000);
-    const nom = document.getElementById('cmdNomClient').value;
-    const tel = document.getElementById('cmdTelClient').value;
-    const adresse = document.getElementById('cmdAdresse').value;
-    const moyen = document.getElementById('cmdMoyenPaiement').value;
+    const nom = document.getElementById('nomClient').value;
+    const tel = document.getElementById('telClient').value;
+    const adresse = document.getElementById('adresseLivraison').value;
+    const quantite = parseInt(document.getElementById('quantiteProduit').value) || 1;
 
-    const emailAuto = tel ? tel.replace(/[^0-9]/g, '') + "@wisemarket.tg" : "client@wisemarket.tg";
+    const codeCommande = 'WM-' + Math.floor(100000 + Math.random() * 900000);
+    const prixTotal = (produitActuel.prix || 0) * quantite;
 
     try {
-        await db.from('commandes').insert([{
+        const { data, error } = await db.from('commandes').insert([{
             code_commande: codeCommande,
             nom_client: nom,
             telephone_client: tel,
             adresse_livraison: adresse,
             titre_produit: produitActuel.titre,
             nom_boutique: produitActuel.nom_boutique,
-            prix: produitActuel.prix,
-            moyen_paiement: moyen,
-            statut: 'PAYE_BLOQUE'
+            prix: prixTotal,
+            quantite: quantite,
+            moyen_paiement: 'LIVRAISON',
+            statut: 'EN_ATTENTE_LIVRAISON'
         }]);
+
+        if (error) throw error;
+
+        alert(`Commande enregistrée !\nCode : ${codeCommande}\nPaiement à la livraison.`);
+        window.location.href = `suivi.html?code=${codeCommande}`;
+
     } catch (err) {
         console.error("Erreur Supabase:", err);
-    }
-
-    if (typeof FedaPay !== 'undefined') {
-        FedaPay.init({
-            public_key: 'pk_live_hj7eGqgtGJIPoIJHW6yxOKRi',
-            transaction: {
-                amount: produitActuel.prix || 5000,
-                description: 'Commande ' + codeCommande + ' - ' + produitActuel.titre
-            },
-            customer: {
-                email: emailAuto,
-                lastname: nom,
-                phone_number: {
-                    number: tel,
-                    country: 'TG'
-                }
-            },
-            onComplete: function(res) {
-                if (res && res.reason === FedaPay.CHECKOUT_COMPLETED) {
-                    alert('PAIEMENT CONFIRME !\nCode: ' + codeCommande);
-                    window.location.href = 'suivi.html';
-                }
-            }
-        });
-    } else {
-        alert("Le module FedaPay ne s'est pas chargé. Vérifie ta connexion internet.");
+        alert("Impossible de valider la commande. Réessaie.");
     }
 }
+
+function changerQuantite(valeur) {
+    const input = document.getElementById('quantiteProduit');
+    if (!input) return;
+    let qte = parseInt(input.value) + valeur;
+    if (qte < 1) qte = 1;
+    input.value = qte;
+}
+
+function ouvrirModalCommande(produit) {
+    produitActuel = produit;
+    document.getElementById('modalProduitTitre').innerText = produit.titre;
+    document.getElementById('modalProduitPrix').innerText = produit.prix + " FCFA";
+    document.getElementById('modalProduitImage').src = produit.image_url || 'https://via.placeholder.com/150';
+    document.getElementById('quantiteProduit').value = 1;
+    
+    const modal = document.getElementById('modalCommande');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function fermerModalCommande() {
+    const modal = document.getElementById('modalCommande');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+        
         
         function deconnecterBoutique() {
     localStorage.removeItem('wisemarket_boutique');
@@ -552,5 +554,63 @@ async function traiterPaiementFinal(e) {
 
 document.addEventListener('DOMContentLoaded', chargerProduits);
 </script>
+<!-- MODAL DE COMMANDE (PAIEMENT À LA LIVRAISON) -->
+<div id="modalCommande" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full space-y-4 text-white">
+        
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+            <h3 class="text-lg font-bold">Passer la commande</h3>
+            <button type="button" onclick="fermerModalCommande()" class="text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+        </div>
+
+        <!-- Récapitulatif Produit -->
+        <div class="bg-slate-800/50 p-3 rounded-xl flex items-center gap-3">
+            <img id="modalProduitImage" src="" class="w-14 h-14 object-cover rounded-lg bg-slate-800">
+            <div>
+                <h4 id="modalProduitTitre" class="font-bold text-sm"></h4>
+                <p id="modalProduitPrix" class="text-emerald-400 font-extrabold text-sm"></p>
+            </div>
+        </div>
+
+        <form onsubmit="validerCommandeLivraison(event)" class="space-y-3">
+            
+            <!-- Sélecteur de Quantité -->
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Quantité</label>
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="changerQuantite(-1)" class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 font-bold text-lg hover:bg-slate-700">-</button>
+                    <input type="number" id="quantiteProduit" value="1" min="1" readonly class="w-16 text-center bg-slate-950 border border-slate-800 rounded-lg p-2 font-bold text-white">
+                    <button type="button" onclick="changerQuantite(1)" class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 font-bold text-lg hover:bg-slate-700">+</button>
+                </div>
+            </div>
+
+            <!-- Champs Client -->
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Votre Nom complet</label>
+                <input type="text" id="nomClient" required placeholder="Ex: Jean Kouassi" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-violet-500">
+            </div>
+
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Numéro de téléphone</label>
+                <input type="tel" id="telClient" required placeholder="Ex: 90000000" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-violet-500">
+            </div>
+
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Quartier & Précisions de livraison</label>
+                <textarea id="adresseLivraison" required rows="2" placeholder="Ex: Agbalépédogan, en face de la pharmacie..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-violet-500"></textarea>
+            </div>
+
+            <!-- Message de Sécurité -->
+            <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-400">
+                🔒 <strong>Paiement à la livraison :</strong> Vous ne payez qu'au livreur une fois votre colis reçu et vérifié.
+            </div>
+
+            <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold p-3 rounded-xl transition">
+                Confirmer la commande
+            </button>
+        </form>
+    </div>
+</div>
+    
 </body>
 </html>
