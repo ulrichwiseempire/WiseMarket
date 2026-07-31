@@ -525,16 +525,20 @@ function changerQuantite(valeur) {
     const input = document.getElementById('quantiteProduit');
     if (!input) return;
     let qte = parseInt(input.value) + valeur;
-    if (qte < 1) qte = 1;
+        if (qte < 1) qte = 1;
     input.value = qte;
+}
+
 function ouvrirModalCommande(produit) {
     produitActuel = produit;
     document.getElementById('modalProduitTitre').innerText = produit.titre;
-    
-    // Extraction propre des chiffres
-    const prixClean = parseInt((produit.prix || 0).toString().replace(/[^0-9]/g, ''), 10) || 0;
-    document.getElementById('modalProduitPrix').innerText = prixClean.toLocaleString() + " FCFA";
-    
+
+    // 1. Extraction et nettoyage du prix
+    const prixClean = parseInt(String(produit.prix).replace(/\D/g, ''), 10) || 0;
+
+    // 2. Affichage
+    document.getElementById('modalProduitPrix').innerText = prixClean.toLocaleString('fr-FR') + ' FCFA';
+
     document.getElementById('modalProduitImage').src = produit.image_url || '';
     document.getElementById('quantiteProduit').value = 1;
 
@@ -542,6 +546,7 @@ function ouvrirModalCommande(produit) {
     modal.classList.remove('hidden');
     modal.classList.add('flex');
 }
+        
     
     
 
