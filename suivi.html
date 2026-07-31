@@ -71,8 +71,8 @@
                     <button onclick="confirmerReception()" id="btnConfirmer" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
                         <i class="fas fa-check-circle"></i> Confirmer la réception de mon colis
                     </button>
-                    <p class="text-[10px] text-slate-500 text-center">En cliquant ici, vous attestez avoir reçu votre article en bon état et débloquez les fonds au vendeur.</p>
-                </div>
+                    <p class="text-[10px] text-slate-500 text-center">En cliquant ici, vous confirmez avoir bien reçu votre colis et réglé le livreur.</p>
+                    
 
             </div>
 
@@ -114,6 +114,7 @@
                 document.getElementById('detBoutique').textContent = data.nom_boutique;
                 document.getElementById('detPrix').textContent = (data.prix || 0) + ' FCFA';
                 
+                
 
                 const badge = document.getElementById('badgeStatut');
                 const zoneBtn = document.getElementById('zoneConfirmation');
@@ -136,7 +137,8 @@
         }
 
         async function confirmerReception() {
-            if (!commandeActuelle) return;
+            if (!confirm("Avez-vous bien reçu votre produit et payé le livreur ?")) return;
+            
 
             if (!confirm("Avez-vous bien reçu votre produit en bon état ? Cette action débloquera l'argent pour le vendeur.")) {
                 return;
@@ -150,7 +152,8 @@
 
                 if (error) throw error;
 
-                alert("Merci ! La réception est confirmée. Les fonds sont débloqués au vendeur.");
+                alert("Merci pour votre confiance ! Votre commande est marquée comme livrée.");
+                
                 window.location.reload();
 
             } catch (err) {
