@@ -112,7 +112,8 @@
                 document.getElementById('badgeCode').textContent = data.code_commande;
                 document.getElementById('detProduit').textContent = data.titre_produit;
                 document.getElementById('detBoutique').textContent = data.nom_boutique;
-                document.getElementById('detPrix').textContent = data.prix + ' FCFA';
+                document.getElementById('detPrix').textContent = (data.prix || 0) + ' FCFA';
+                
 
                 const badge = document.getElementById('badgeStatut');
                 const zoneBtn = document.getElementById('zoneConfirmation');
@@ -123,7 +124,7 @@
                     zoneBtn.innerHTML = `<p class="text-xs text-emerald-400 font-bold text-center py-2"><i class="fas fa-check"></i> Cette commande est déjà validée. Merci de votre confiance !</p>`;
                 } else {
                     badge.className = "text-[11px] font-bold px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400";
-                    badge.textContent = "⏳ Argent Bloqué / En attente de livraison";
+                    badge.textContent = "⏳ En attente de livraison";
                 }
 
                 document.getElementById('cardDetails').classList.remove('hidden');
