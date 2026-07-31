@@ -293,19 +293,39 @@
             afficherProduits(filtres);
         }
 
-        function ouvrirChat(idProduit) {
-            
-    box.scrollTop = box.scrollHeight;
-        }
-
-                let abonnementChat = null;
-
-// Son de notification propre (effet style iPhone/subtil)
+        // --- GESTION DU CHAT ET NOTIFICATIONS ---
+let abonnementChat = null;
 const sonNotification = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c3817342.mp3?filename=iphone-notification-90317.mp3');
 
-// Demander la permission pour les notifications visuelles au chargement de la page
 if (typeof Notification !== 'undefined' && Notification.permission !== "granted" && Notification.permission !== "denied") {
     Notification.requestPermission();
+}
+
+function fermerChat() {
+    const modal = document.getElementById('modalChat');
+    if (modal) modal.classList.add('hidden');
+    if (abonnementChat) {
+        db.removeChannel(abonnementChat);
+        abonnementChat = null;
+    }
+}
+
+function ouvrirFormulaireCommande() {
+    fermerChat();
+    const modalCmd = document.getElementById('modalCommande');
+    if (modalCmd) {
+        modalCmd.classList.remove('hidden');
+        const titreCmd = document.getElementById('cmdNomProduit');
+        if (titreCmd && produitActuel) titreCmd.textContent = produitActuel.titre;
+        
+        const prixCmd = document.getElementById('cmdPrixProduit');
+        if (prixCmd && produitActuel) prixCmd.textContent = produitActuel.prix + ' FCFA';
+    }
+}
+
+function fermerFormCommande() {
+    const modalCmd = document.getElementById('modalCommande');
+    if (modalCmd) modalCmd.classList.add('hidden');
 }
 
 async function ouvrirChat(idProduit) {
@@ -319,10 +339,8 @@ async function ouvrirChat(idProduit) {
 
     document.getElementById('modalChat').classList.remove('hidden');
 
-    // Charger les anciens messages depuis Supabase
     await chargerMessagesChat(produitActuel.id);
 
-    // Écouter les nouveaux messages en TEMPS RÉEL
     if (abonnementChat) db.removeChannel(abonnementChat);
     
     abonnementChat = db.channel(`chat-${produitActuel.id}`)
@@ -332,14 +350,10 @@ async function ouvrirChat(idProduit) {
             table: 'messages', 
             filter: `produit_id=eq.${produitActuel.id}` 
         }, payload => {
-            afficherUnMessage(payload.new);
-
-            // Si le message ne vient pas de l'acheteur actuel (donc c'est une réponse ou un nouveau message)
             if (payload.new.auteur !== 'ACHETEUR') {
-                // 1. Jouer le son type iPhone
-                sonNotification.play().catch(e => console.log("Audio bloqué par le navigateur :", e));
+                afficherUnMessage(payload.new);
+                sonNotification.play().catch(e => console.log("Audio bloqué :", e));
 
-                // 2. Afficher une notification visuelle sur le téléphone
                 if (typeof Notification !== 'undefined' && Notification.permission === "granted") {
                     new Notification("Nouveau message - WiseMarket 🛍️", {
                         body: payload.new.contenu.length > 50 ? payload.new.contenu.substring(0, 50) + '...' : payload.new.contenu,
@@ -353,6 +367,8 @@ async function ouvrirChat(idProduit) {
 
 async function chargerMessagesChat(produitId) {
     const box = document.getElementById('chatMessages');
+    if (!box) return;
+
     box.innerHTML = `
         <div class="bg-violet-950/40 border border-violet-800/40 rounded-2xl p-3 text-[11px] text-violet-200 mb-3">
             <p class="font-bold mb-1"><i class="fas fa-lock"></i> Chat Sécurisé WiseMarket</p>
@@ -377,8 +393,9 @@ async function chargerMessagesChat(produitId) {
 
 function afficherUnMessage(m) {
     const box = document.getElementById('chatMessages');
-    const estMoi = m.auteur === 'ACHETEUR';
+    if (!box) return;
 
+    const estMoi = m.auteur === 'ACHETEUR';
     const alignement = estMoi ? 'justify-end' : 'justify-start';
     const couleurBg = estMoi ? 'bg-violet-600 text-white' : 'bg-slate-800 text-slate-200 border border-slate-700';
 
@@ -402,6 +419,8 @@ async function envoyerMessageChat() {
     if (!msg || !produitActuel) return;
 
     input.value = '';
+    const messageTemp = { auteur: 'ACHETEUR', contenu: msg };
+    afficherUnMessage(messageTemp);
 
     try {
         await db.from('messages').insert([{
@@ -414,43 +433,42 @@ async function envoyerMessageChat() {
         console.error("Erreur envoi message:", err);
     }
 }
-        
 
-        async function traiterPaiementFinal(e) {
-            e.preventDefault();
-            if (!produitActuel) return;
+// --- GESTION DES COMMANDES ET PAIEMENT ---
+async function traiterPaiementFinal(e) {
+    e.preventDefault();
+    if (!produitActuel) return;
 
-            const codeCommande = "WM-" + Math.floor(1000 + Math.random() * 9000);
-            const nom = document.getElementById('cmdNomClient').value;
-            const tel = document.getElementById('cmdTelClient').value;
-            const adresse = document.getElementById('cmdAdresse').value;
-            const moyen = document.getElementById('cmdMoyenPaiement').value;
+    const codeCommande = "WM-" + Math.floor(1000 + Math.random() * 9000);
+    const nom = document.getElementById('cmdNomClient').value;
+    const tel = document.getElementById('cmdTelClient').value;
+    const adresse = document.getElementById('cmdAdresse').value;
+    const moyen = document.getElementById('cmdMoyenPaiement').value;
 
-            try {
-                const { error } = await db.from('commandes').insert([{
-                    code_commande: codeCommande,
-                    nom_client: nom,
-                    telephone_client: tel,
-                    adresse_livraison: adresse,
-                    titre_produit: produitActuel.titre,
-                    nom_boutique: produitActuel.nom_boutique,
-                    prix: produitActuel.prix,
-                    moyen_paiement: moyen,
-                    statut: 'PAYE_BLOQUE'
-                }]);
+    try {
+        const { error } = await db.from('commandes').insert([{
+            code_commande: codeCommande,
+            nom_client: nom,
+            telephone_client: tel,
+            adresse_livraison: adresse,
+            titre_produit: produitActuel.titre,
+            nom_boutique: produitActuel.nom_boutique,
+            prix: produitActuel.prix,
+            moyen_paiement: moyen,
+            statut: 'PAYE_BLOQUE'
+        }]);
 
-                if (error) console.warn("Supabase commandes warning:", error);
+        if (error) console.warn("Supabase commandes warning:", error);
 
-                alert(`✅ PAIEMENT CONFIRMÉ ET SÉCURISÉ !\n\nVotre Code de Commande : ${codeCommande}\n\nConservez précieusement ce code. Allez dans 'Suivi de commande' pour valider la réception du produit dès que vous l'aurez en main !`);
-                window.location.href = `suivi.html`;
+        alert(`✅ PAIEMENT CONFIRMÉ ET SÉCURISÉ !\n\nVotre Code de Commande : ${codeCommande}\nConservez-le précieusement.`);
+        window.location.href = 'suivi.html';
+    } catch (err) {
+        console.error(err);
+        alert("Erreur lors de l'enregistrement de la commande.");
+    }
+}
 
-            } catch (err) {
-                console.error(err);
-                alert("Erreur lors de l'enregistrement de la commande.");
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', chargerProduits);
-    </script>
+document.addEventListener('DOMContentLoaded', chargerProduits);
+</script>
 </body>
 </html>
