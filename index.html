@@ -72,7 +72,12 @@
                 <a href="connexion.html" class="flex items-center gap-3 text-violet-300 hover:text-white text-sm font-bold p-2.5 rounded-xl bg-violet-600/20 border border-violet-500/30">
                     <i class="fas fa-sign-in-alt w-5 text-violet-400"></i> Se Connecter
                 </a>
-
+                        <!-- BOUTON SE DÉCONNECTER -->
+            <button onclick="deconnecterBoutique()" class="w-full flex items-center gap-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition text-sm font-bold">
+    <i class="fas fa-sign-out-alt w-5 text-red-400"></i> Se Déconnecter
+            </button>
+            
+                
                 <!-- TOUS LES FOSSIERS ASSOCIÉS EXACTEMENT -->
                 <a href="inscription.html" class="flex items-center gap-3 text-emerald-400 hover:text-emerald-300 text-sm font-bold p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
     <i class="fas fa-plus-circle w-5"></i> Créer une Boutique
@@ -538,7 +543,12 @@ async function traiterPaiementFinal(e) {
     }
 }
         
-                 
+        function deconnecterBoutique() {
+    localStorage.removeItem('wisemarket_boutique');
+    localStorage.removeItem('ma_boutique');
+    window.location.href = "index.html";
+        }
+              
 
 document.addEventListener('DOMContentLoaded', chargerProduits);
 </script>
