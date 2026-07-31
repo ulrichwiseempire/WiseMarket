@@ -440,24 +440,47 @@ async function envoyerImageChat(event) {
     const file = event.target.files[0];
     if (!file || !produitActuel) return;
 
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-        const imageBase64 = e.target.result;
-        afficherUnMessage({ auteur: 'ACHETEUR', contenu: imageBase64 });
+    // 1. Affichage immédiat à l'écran
+    const localUrl = URL.createObjectURL(file);
+    afficherUnMessage({ 
+        auteur: 'ACHETEUR', 
+        contenu: `<img src="${localUrl}" style="max-width: 200px; border-radius: 8px;" />` 
+    });
 
-        try {
-            await db.from('messages').insert([{
-                produit_id: String(produitActuel.id),
-                nom_boutique: produitActuel.nom_boutique || '',
-                auteur: 'ACHETEUR',
-                contenu: imageBase64
-            }]);
-        } catch (err) {
-            console.error("Erreur envoi image:", err);
+    try {
+        // 2. Upload vers Supabase Storage
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+
+        const { data, error: uploadError } = await db.storage
+            .from('chat-photos')
+            .upload(fileName, file);
+
+        if (uploadError) {
+            console.error("Erreur storage:", uploadError);
+            return;
         }
-    };
-    reader.readAsDataURL(file);
+
+        // 3. Lien public de la photo
+        const { data: publicUrlData } = db.storage
+            .from('chat-photos')
+            .getPublicUrl(fileName);
+
+        const imageUrl = publicUrlData.publicUrl;
+
+        // 4. Enregistrement dans la table 'messages' Supabase
+        await db.from('messages').insert([{
+            produit_id: String(produitActuel.id),
+            nom_boutique: produitActuel.nom_boutique,
+            auteur: 'ACHETEUR',
+            contenu: `<img src="${imageUrl}" style="max-width: 200px; border-radius: 8px;" />`
+        }]);
+
+    } catch (err) {
+        console.error("Erreur envoi image:", err);
+    }
 }
+        
 
 // --- TRAITEMENT DU PAIEMENT ET COMMANDE ---
 async function traiterPaiementFinal(e) {
@@ -470,7 +493,11 @@ async function traiterPaiementFinal(e) {
     const adresse = document.getElementById('cmdAdresse').value;
     const moyen = document.getElementById('cmdMoyenPaiement').value;
 
+    // Email automatique basé sur le téléphone pour FedaPay
+    const emailAuto = tel ? `${tel.replace(/[^0-9]/g, '')}@wisemarket.tg` : 'client@wisemarket.tg';
+
     try {
+        // 1. Enregistrement dans Supabase
         const { error } = await db.from('commandes').insert([{
             code_commande: codeCommande,
             nom_client: nom,
@@ -485,13 +512,35 @@ async function traiterPaiementFinal(e) {
 
         if (error) console.warn("Supabase commandes warning:", error);
 
-        alert(`✅ PAIEMENT CONFIRMÉ ET SÉCURISÉ !\n\nVotre Code de Commande : ${codeCommande}\nConservez-le précieusement pour le suivi.`);
-        window.location.href = 'suivi.html';
+        // 2. Déclenchement du guichet FedaPay
+        FedaPay.init({
+            public_key: 'pk_live_hj7eGqgtGJIPoIJHW6yxOKRi',
+            transaction: {
+                amount: produitActuel.prix || 5000,
+                description: `Commande ${codeCommande} - ${produitActuel.titre}`
+            },
+            customer: {
+                email: emailAuto,
+                lastname: nom,
+                phone_number: {
+                    number: tel,
+                    country: 'TG'
+                }
+            },
+            onComplete: ({ reason }) => {
+                if (reason === FedaPay.CHECKOUT_COMPLETED) {
+                    alert(`✅ PAIEMENT CONFIRMÉ ET SÉCURISÉ !\n\nVotre Code de Commande : ${codeCommande}`);
+                    window.location.href = 'suivi.html';
+                }
+            }
+        });
+
     } catch (err) {
         console.error(err);
         alert("Erreur lors de l'enregistrement de la commande.");
     }
 }
+        
 
 document.addEventListener('DOMContentLoaded', chargerProduits);
 </script>
