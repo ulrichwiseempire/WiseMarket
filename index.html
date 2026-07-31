@@ -491,7 +491,9 @@ async function validerCommandeLivraison(e) {
     const quantite = parseInt(document.getElementById('quantiteProduit').value) || 1;
 
     const codeCommande = 'WM-' + Math.floor(100000 + Math.random() * 900000);
-    const prixTotal = (produitActuel.prix || 0) * quantite;
+    const prixChiffre = parseInt((produitActuel.prix || 0).toString().replace(/[^0-9]/g, ''), 10) || 0;
+const prixTotal = prixChiffre * quantite;
+    
 
     try {
         const { data, error } = await db.from('commandes').insert([{
@@ -605,9 +607,10 @@ document.addEventListener('DOMContentLoaded', chargerProduits);
                 🔒 <strong>Paiement à la livraison :</strong> Vous ne payez qu'au livreur une fois votre colis reçu et vérifié.
             </div>
 
-            <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold p-3 rounded-xl transition">
-                Confirmer la commande
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-2xl transition flex items-center justify-center gap-2">
+    <i class="fas fa-check-circle"></i> Commander maintenant
             </button>
+            
         </form>
     </div>
 </div>
