@@ -497,7 +497,7 @@ async function traiterPaiementFinal(e) {
     const emailAuto = tel ? `${tel.replace(/[^0-9]/g, '')}@wisemarket.tg` : 'client@wisemarket.tg';
 
     try {
-        // 1. Enregistrement dans Supabase
+        // 1. Essai d'enregistrement dans Supabase
         const { error } = await db.from('commandes').insert([{
             code_commande: codeCommande,
             nom_client: nom,
@@ -510,37 +510,36 @@ async function traiterPaiementFinal(e) {
             statut: 'PAYE_BLOQUE'
         }]);
 
-        if (error) console.warn("Supabase commandes warning:", error);
-
-        // 2. Déclenchement du guichet FedaPay
-        FedaPay.init({
-            public_key: 'pk_live_hj7eGqgtGJIPoIJHW6yxOKRi',
-            transaction: {
-                amount: produitActuel.prix || 5000,
-                description: `Commande ${codeCommande} - ${produitActuel.titre}`
-            },
-            customer: {
-                email: emailAuto,
-                lastname: nom,
-                phone_number: {
-                    number: tel,
-                    country: 'TG'
-                }
-            },
-            onComplete: ({ reason }) => {
-                if (reason === FedaPay.CHECKOUT_COMPLETED) {
-                    alert(`✅ PAIEMENT CONFIRMÉ ET SÉCURISÉ !\n\nVotre Code de Commande : ${codeCommande}`);
-                    window.location.href = 'suivi.html';
-                }
-            }
-        });
+        if (error) console.error("Détail erreur Supabase :", error);
 
     } catch (err) {
-        console.error(err);
-        alert("Erreur lors de l'enregistrement de la commande.");
+        console.error("Erreur enregistrement :", err);
     }
+
+    // 2. Déclenchement du guichet FedaPay (s'ouvre toujours)
+    FedaPay.init({
+        public_key: 'pk_live_hj7eGqgtGJIPoIJHW6yxOKRi',
+        transaction: {
+            amount: produitActuel.prix || 5000,
+            description: `Commande ${codeCommande} - ${produitActuel.titre}`
+        },
+        customer: {
+            email: emailAuto,
+            lastname: nom,
+            phone_number: {
+                number: tel,
+                country: 'TG'
+            }
+        },
+        onComplete: ({ reason }) => {
+            if (reason === FedaPay.CHECKOUT_COMPLETED) {
+                alert(`✅ PAIEMENT CONFIRMÉ ET SÉCURISÉ !\n\nVotre Code de Commande : ${codeCommande}`);
+                window.location.href = 'suivi.html';
+            }
+        }
+    });
 }
-        
+                 
 
 document.addEventListener('DOMContentLoaded', chargerProduits);
 </script>
