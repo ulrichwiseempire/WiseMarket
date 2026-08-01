@@ -25,8 +25,8 @@
     <main class="max-w-xl mx-auto p-4 sm:p-6 space-y-6">
         
         <!-- En-tête de la Boutique -->
-        <div class="bg-[#0F172A] border border-slate-800 rounded-3xl p-6 text-center glow-violet relative overflow-hidden">
-            <div class="w-20 h-20 rounded-full bg-violet-600/20 border-2 border-violet-500/50 mx-auto flex items-center justify-center text-violet-400 mb-4 shadow-lg shadow-violet-500/20">
+        <div class="bg-[#0F172A] border border-slate-800 rounded-3xl p-6 text-center glow-violet relative overflow-hidden space-y-4">
+            <div class="w-20 h-20 rounded-full bg-violet-600/20 border-2 border-violet-500/50 mx-auto flex items-center justify-center text-violet-400 shadow-lg shadow-violet-500/20">
                 <i class="fas fa-store text-3xl"></i>
             </div>
             
@@ -37,17 +37,27 @@
                 </span>
             </div>
             
-            <p id="descVitrine" class="text-xs text-slate-400 mt-1">Vitrine officielle des articles disponibles sur WiseMarket Togo.</p>
+            <p id="descVitrine" class="text-xs text-slate-400">Vitrine officielle des articles disponibles sur WiseMarket Togo.</p>
 
-            <div id="actionsVitrine" class="hidden flex items-center justify-center gap-3 mt-5">
+            <!-- BOUTONS D'ACTION (Partager, Nombre d'articles, Mes Commandes) -->
+            <div id="actionsVitrine" class="hidden flex flex-wrap items-center justify-center gap-2 pt-2">
                 <span id="compteurArticles" class="bg-[#090D16] border border-slate-800 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5">
                     <i class="fas fa-box text-violet-400"></i> 0 Article(s)
                 </span>
-                <button onclick="partagerVitrine()" class="bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-2 shadow-lg shadow-violet-600/20">
+
+                <button onclick="partagerVitrine()" class="bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-violet-600/20">
                     <i class="fas fa-share-alt"></i> Partager
+                </button>
+
+                <!-- BOUTON MES COMMANDES -->
+                <button onclick="ouvrirMesCommandes()" class="w-full mt-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fas fa-box-open"></i> Voir mes commandes reçues
                 </button>
             </div>
         </div>
+
+        <!-- ZONE D'AFFICHAGE DES COMMANDES (Initilalement cachée) -->
+        <div id="zoneCommandesVendeur" class="hidden space-y-3"></div>
 
         <!-- Section Articles -->
         <div>
@@ -63,7 +73,6 @@
     </main>
 
     <script>
-        // Identifiants Supabase réinitialisés
         const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -74,9 +83,8 @@
         async function chargerVitrine() {
             const container = document.getElementById('grilleArticles');
 
-            // Si aucun nom dans l'URL, on tente de récupérer celui sauvegardé dans localStorage ou de le demander
             if (!vendeurNom) {
-                vendeurNom = localStorage.getItem('maBoutiqueNom');
+                vendeurNom = localStorage.getItem('maBoutiqueNom') || localStorage.getItem('ma_boutique');
                 if (!vendeurNom) {
                     vendeurNom = prompt("Entrez le nom de la boutique à consulter :");
                     if (!vendeurNom) {
@@ -87,7 +95,6 @@
             }
 
             try {
-                // 1. Récupération des infos du vendeur (numéro WhatsApp, statut, ville)
                 const { data: vData } = await db
                     .from('vendeurs')
                     .select('whatsapp, statut, ville')
@@ -99,7 +106,6 @@
                     whatsappNum = '228' + whatsappNum;
                 }
 
-                // 2. Récupération des produits publiés par la boutique
                 const { data: produits, error } = await db
                     .from('produits')
                     .select('*')
@@ -108,7 +114,6 @@
 
                 if (error) throw error;
 
-                // Mise à jour de l'en-tête dynamique
                 document.getElementById('nomBoutique').innerText = vendeurNom;
                 document.getElementById('badgeVerifie').classList.remove('hidden');
                 document.getElementById('badgeVerifie').classList.add('inline-flex');
@@ -127,7 +132,6 @@
 
                 document.getElementById('compteurArticles').innerHTML = `<i class="fas fa-box text-violet-400"></i> ${produits.length} Article(s)`;
 
-                // 3. Rendu des cartes produits
                 container.innerHTML = produits.map(p => {
                     const titreProd = p.titre || p.nom || 'Article';
                     const imageProd = p.image_url || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
@@ -160,6 +164,109 @@
             }
         }
 
+        // --- GESTION DU TABLEAU DE BORD COMMANDES VENDEUR ---
+        async function ouvrirMesCommandes() {
+            if (!vendeurNom) {
+                alert("Impossible de déterminer le nom de la boutique.");
+                return;
+            }
+
+            const zoneCommandes = document.getElementById('zoneCommandesVendeur');
+            zoneCommandes.classList.toggle('hidden');
+
+            if (!zoneCommandes.classList.contains('hidden')) {
+                zoneCommandes.innerHTML = "<p class='text-center text-slate-400 py-4 text-xs'>⌛ Chargement des commandes...</p>";
+
+                const { data: commandes, error } = await db
+                    .from('commandes')
+                    .select('*')
+                    .eq('nom_boutique', vendeurNom)
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error("Erreur SQL :", error);
+                    zoneCommandes.innerHTML = "<p class='text-red-400 text-center py-4 text-xs'>Erreur de chargement.</p>";
+                    return;
+                }
+
+                if (!commandes || commandes.length === 0) {
+                    zoneCommandes.innerHTML = `
+                        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl text-center">
+                            <p class="text-slate-400 text-xs font-medium">Aucune commande reçue pour le moment.</p>
+                        </div>`;
+                    return;
+                }
+
+                zoneCommandes.innerHTML = `
+                    <h3 class="text-xs font-bold text-white mb-2 flex items-center gap-2">
+                        <i class="fas fa-box text-amber-400"></i> Commandes reçues (${commandes.length})
+                    </h3>
+                    <div class="space-y-3">
+                        ${commandes.map(cmd => {
+                            let badgeColor = "bg-amber-500/10 border-amber-500/30 text-amber-300";
+                            let statusText = "⏳ En attente";
+                            
+                            if (cmd.statut === 'ACCEPTE') {
+                                badgeColor = "bg-blue-500/10 border-blue-500/30 text-blue-300";
+                                statusText = "🔵 En préparation";
+                            } else if (cmd.statut === 'LIVRE') {
+                                badgeColor = "bg-emerald-500/10 border-emerald-500/30 text-emerald-300";
+                                statusText = "✅ Livrée";
+                            }
+
+                            return `
+                            <div class="bg-[#0F172A] p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
+                                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                                    <span class="font-bold text-white">👤 ${cmd.nom_client || 'Client'}</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-full border font-bold ${badgeColor}">
+                                        ${statusText}
+                                    </span>
+                                </div>
+
+                                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                                    <p class="font-bold text-violet-300">🛍️ ${cmd.titre_produit}</p>
+                                    <p class="text-slate-400 mt-0.5">Quantité : <b class="text-white">${cmd.quantite || 1}</b> | Prix : <b class="text-emerald-400">${cmd.prix ? cmd.prix + ' FCFA' : 'N/C'}</b></p>
+                                </div>
+
+                                <div class="text-slate-300 space-y-1 bg-slate-900/50 p-2.5 rounded-xl border border-slate-800/50">
+                                    <p>📍 <b>Quartier :</b> ${cmd.adresse_livraison || 'Non spécifié'}</p>
+                                    <p>📞 <b>Tél :</b> <a href="tel:${cmd.telephone_client}" class="text-violet-400 font-bold underline">${cmd.telephone_client || 'N/C'}</a></p>
+                                </div>
+
+                                <div class="flex gap-2 pt-1">
+                                    ${cmd.statut === 'EN_ATTENTE_LIVRAISON' || !cmd.statut ? `
+                                        <button onclick="changerStatutCommande('${cmd.id}', 'ACCEPTE')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl transition">
+                                            👍 Accepter
+                                        </button>
+                                    ` : ''}
+
+                                    ${cmd.statut !== 'LIVRE' ? `
+                                        <button onclick="changerStatutCommande('${cmd.id}', 'LIVRE')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl transition">
+                                            ✅ Marquer Livré
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        async function changerStatutCommande(idCommande, nouveauStatut) {
+            const { error } = await db
+                .from('commandes')
+                .update({ statut: nouveauStatut })
+                .eq('id', idCommande);
+
+            if (error) {
+                alert("Erreur lors de la mise à jour");
+            } else {
+                ouvrirMesCommandes();
+            }
+        }
+
         function partagerVitrine() {
             const urlVitrine = window.location.href;
             if (navigator.share) {
@@ -177,4 +284,5 @@
         document.addEventListener('DOMContentLoaded', chargerVitrine);
     </script>
 </body>
-</html>
+    </html>
+    
