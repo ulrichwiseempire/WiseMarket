@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiseMarket - Achetez & Vendez en toute sécurité</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glow-violet { box-shadow: 0 0 25px rgba(139, 92, 246, 0.15); }
+        .product-img { height: 220px; width: 100%; object-fit: cover; cursor: pointer; }
+    </style>
+</head>
+<body class="bg-[#090D16] text-slate-100 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="border-b border-slate-800 bg-[#0F172A]/90 backdrop-blur-md sticky top-0 z-40 p-4">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="text-lg font-black text-white tracking-wider flex items-center gap-2">
+                Wise<span class="text-emerald-400">Market</span>
+            </a>
+
+            <div class="flex items-center gap-2.5">
+                <button onclick="toggleNotifications()" class="relative w-9 h-9 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center text-slate-300 hover:text-amber-400 transition">
+                    <i class="fas fa-bell"></i>
+                    <span id="badgeNotif" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">1</span>
+                </button>
+
+                <!-- BOUTON MA BOUTIQUE -->
+                <a href="boutique.html" class="bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-violet-600/20">
+                    <i class="fas fa-store"></i> <span>Ma Boutique</span>
+                </a>
+
+                <button onclick="toggleMenu()" class="w-9 h-9 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center text-slate-300 hover:text-white">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- PANEL NOTIFICATION -->
+    <div id="panelNotif" class="fixed top-16 right-4 sm:right-12 w-80 bg-[#0F172A] border border-slate-800 rounded-2xl shadow-2xl z-50 hidden p-4 space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                <i class="fas fa-bell text-amber-400"></i> Notifications
+            </h3>
+            <button onclick="toggleNotifications()" class="text-slate-400 text-xs hover:text-white"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="contenuNotif" class="text-xs text-slate-400 text-center py-4">
+            Aucune nouvelle notification.
+        </div>
+    </div>
+
+    <!-- MENU LATÉRAL BURGER (Harmonisé & Dynamique) -->
+    <div id="sideMenu" class="fixed inset-y-0 right-0 w-72 bg-[#0F172A] border-l border-slate-800 z-50 transform translate-x-full transition-transform duration-300 p-5 flex flex-col justify-between">
+        <div class="space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <h2 class="text-sm font-bold text-white">Menu Navigation</h2>
+                <button onclick="toggleMenu()" class="text-slate-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+            </div>
+
+            <nav class="space-y-2">
+                <a href="index.html" class="flex items-center gap-3 text-slate-200 hover:text-white text-sm font-medium p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 transition border border-slate-700/50">
+                    <i class="fas fa-home w-5 text-violet-400"></i> Accueil
+                </a>
+
+                <a href="suivi.html" class="flex items-center gap-3 text-slate-200 hover:text-white text-sm font-medium p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 transition border border-slate-700/50">
+                    <i class="fas fa-box w-5 text-amber-400"></i> Suivi de Commande
+                </a>
+
+                <!-- ZONE CONNEXION OU DÉCONNEXION (GÉRÉE EN JS) -->
+                <div id="zoneAuthMenu"></div>
+                
+                <a href="inscription.html" class="flex items-center gap-3 text-slate-200 hover:text-white text-sm font-medium p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 transition border border-slate-700/50">
+                    <i class="fas fa-plus-circle w-5 text-emerald-400"></i> Créer une Boutique
+                </a>
+
+                <!-- ZONE AJOUTER PRODUIT (AFFICHE SEULEMENT SI VENDEUR CONNECTÉ) -->
+                <div id="zoneAjoutProduit"></div>
+            </nav>
+        </div>
+
+        <div class="border-t border-slate-800 pt-4 space-y-2">
+            <p class="text-[11px] text-slate-400 font-medium">Assistance & Support</p>
+            <a href="https://wa.me/22872119966?text=Bonjour%20WiseMarket,%20j'ai%20une%20question..." target="_blank" class="w-full bg-emerald-600/20 hover:bg-emerald-600 border border-emerald-500/30 text-emerald-300 hover:text-white text-xs font-bold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-2">
+                <i class="fab fa-whatsapp text-sm"></i> Service Client
+            </a>
+            <p class="text-[10px] text-slate-500 text-center">Paiements sécurisés & Support 24/7</p>
+        </div>
+    </div>
+
+    <!-- ACCUEIL PRINCIPAL -->
+    <main class="max-w-4xl mx-auto p-4 sm:p-6 space-y-6 w-full flex-grow">
+        <div class="bg-gradient-to-r from-violet-900/40 to-slate-900 border border-violet-500/20 rounded-3xl p-6 glow-violet text-center space-y-3">
+            <h1 class="text-xl sm:text-2xl font-black text-white">Commandez en toute confiance</h1>
+            <p class="text-xs text-slate-300 max-w-md mx-auto">Toutes les transactions sont protégées. L'argent est bloqué et transféré au vendeur uniquement après réception garantie !</p>
+            <div class="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] px-3 py-1.5 rounded-full mt-2">
+                <i class="fas fa-shield-alt"></i> Attention : Ne réalisez aucun paiement en dehors de WiseMarket.
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <div class="relative">
+                <input type="text" id="inputRecherche" onkeyup="filtrerProduits()" placeholder="Que recherchez-vous ?" class="w-full bg-[#0F172A] border border-slate-800 rounded-2xl py-3 pl-4 pr-10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-violet-500">
+                <i class="fas fa-search absolute right-4 top-3.5 text-slate-500 text-xs"></i>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+            <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                <i class="fas fa-fire text-amber-400"></i> Articles Récents
+            </h2>
+            <span id="compteurArticles" class="text-xs text-slate-400 font-semibold">0 article</span>
+        </div>
+
+        <div id="grilleProduits" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- SPINNER ANIMÉ PENDANT LE CHARGEMENT -->
+            <div class="col-span-full flex flex-col items-center justify-center py-16 space-y-3">
+                <div class="w-8 h-8 border-4 border-violet-500/20 border-t-violet-500 rounded-full animate-spin"></div>
+                <p class="text-xs text-slate-400 font-medium">Chargement du catalogue...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL ZOOM IMAGE -->
+    <div id="modalZoom" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4 cursor-pointer" onclick="fermerZoom()">
+        <img id="imgZoom" src="" class="max-w-full max-h-full object-contain rounded-2xl shadow-2xl">
+    </div>
+
+    <!-- MODAL DE COMMANDE (PAIEMENT À LA LIVRAISON) -->
+    <div id="modalCommande" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full space-y-4 text-white">
+            
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold">Passer la commande</h3>
+                <button type="button" onclick="fermerModalCommande()" class="text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+
+            <!-- Récapitulatif Produit -->
+            <div class="bg-slate-800/50 p-3 rounded-xl flex items-center gap-3">
+                <img id="modalProduitImage" src="" class="w-14 h-14 object-cover rounded-lg bg-slate-800">
+                <div>
+                    <h4 id="modalProduitTitre" class="font-bold text-sm"></h4>
+                    <p id="modalProduitPrix" class="text-emerald-400 font-extrabold text-sm"></p>
+                </div>
+            </div>
+
+            <form onsubmit="validerCommandeLivraison(event)" class="space-y-3">
+                
+                <!-- Sélecteur de Quantité -->
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Quantité</label>
+                    <div class="flex items-center gap-3">
+                        <button type="button" onclick="changerQuantite(-1)" class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 font-bold text-lg hover:bg-slate-700">-</button>
+                        <input type="number" id="quantiteProduit" value="1" min="1" readonly class="w-16 text-center bg-slate-950 border border-slate-800 rounded-lg p-2 font-bold text-white">
+                        <button type="button" onclick="changerQuantite(1)" class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 font-bold text-lg hover:bg-slate-700">+</button>
+                    </div>
+                </div>
+
+                <!-- Champs Client -->
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Votre Nom complet</label>
+                    <input type="text" id="nomClient" required placeholder="Ex: Jean Kouassi" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-violet-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Numéro de téléphone</label>
+                    <input type="tel" id="telClient" required placeholder="Ex: 90000000" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-violet-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Quartier & Précisions de livraison</label>
+                    <textarea id="adresseLivraison" required rows="2" placeholder="Ex: Agbalépédogan, en face de la pharmacie..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-violet-500"></textarea>
+                </div>
+
+                <!-- Message de Sécurité -->
+                <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-400">
+                    🔒 <strong>Paiement à la livraison :</strong> Vous ne payez qu'au livreur une fois votre colis reçu et vérifié.
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-2xl transition flex items-center justify-center gap-2">
+                    <i class="fas fa-check-circle"></i> Commander maintenant
+                </button>
+                
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER AMÉLIORÉ ET LIÉ -->
+    <footer class="border-t border-slate-800 bg-[#0F172A] pt-8 pb-6 text-xs text-slate-400">
+        <div class="max-w-4xl mx-auto px-4 space-y-6">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center sm:text-left">
+                <!-- 1. À propos -->
+                <div class="space-y-2">
+                    <h4 class="text-sm font-bold text-white tracking-wider">Wise<span class="text-emerald-400">Market</span></h4>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">
+                        La plateforme sécurisée d'achat et de vente au Togo. Transactions garanties et paiement à la livraison.
+                    </p>
+                </div>
+
+                <!-- 2. Guide & Communauté -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">Informations</h4>
+                    <ul class="space-y-2 text-[11px]">
+                        <li>
+                            <a href="explications.html" class="hover:text-violet-400 transition font-medium flex items-center justify-center sm:justify-start gap-1.5">
+                                <i class="fas fa-question-circle text-violet-400"></i> Comment ça marche ?
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://chat.whatsapp.com/FQzjfYvUiQW9MdN1HLMadn?s=cl&p=a&ilr=4" target="_blank" class="hover:text-emerald-400 transition font-medium text-emerald-300 flex items-center justify-center sm:justify-start gap-1.5">
+                                <i class="fab fa-whatsapp text-emerald-400"></i> Club Vendeurs (WhatsApp)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://linktr.ee/ulrichwiseempire" target="_blank" class="hover:text-amber-400 transition font-medium text-amber-300 flex items-center justify-center sm:justify-start gap-1.5">
+                                <i class="fas fa-link text-amber-400"></i> Tous nos réseaux (Linktree)
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 3. Contact Direct -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">Support Client</h4>
+                    <p class="text-[11px] text-slate-400">Une question ou besoin d'assistance ?</p>
+                    <a href="https://wa.me/22872119966?text=Bonjour%20WiseMarket,%20j'ai%20une%20question..." target="_blank" class="inline-flex items-center gap-2 bg-emerald-600/20 hover:bg-emerald-600 border border-emerald-500/30 text-emerald-300 hover:text-white px-3 py-2 rounded-xl transition text-xs font-bold">
+                        <i class="fab fa-whatsapp text-sm"></i> +228 72 11 99 66
+                    </a>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800/80 pt-4 text-center text-[11px] text-slate-500">
+                <p>© 2026 WiseMarket Togo. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const SUPABASE_URL = "https://kaxpmfvrjeksrzylsjsa.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtheHBtZnZyamVrc3J6eWxzanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTgyMTEsImV4cCI6MjEwMDg5NDIxMX0.APYwZG-nO3Id-qgsVtYovq4nq94VHu2vWwwlPcrJyZM";
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let tousLesProduits = [];
+        let produitActuel = null;
+        let mapVendeurs = {};
+
+        function toggleMenu() { document.getElementById('sideMenu').classList.toggle('translate-x-full'); }
+        function toggleNotifications() { document.getElementById('panelNotif').classList.toggle('hidden'); }
+
+        // --- GESTION INTELLIGENTE DU MENU VENDEUR ---
+        function gererBoutonsAuth() {
+            const zoneAuth = document.getElementById('zoneAuthMenu');
+            const zoneAjoutProduit = document.getElementById('zoneAjoutProduit');
+            if (!zoneAuth) return;
+
+            // Vérifie si un vendeur est connecté
+            const vInfo = localStorage.getItem('wisemarket_boutique') || localStorage.getItem('ma_boutique');
+
+            if (vInfo) {
+                // Vendeur connecté : Afficher Déconnexion + Bouton Ajouter Produit
+                zoneAuth.innerHTML = `
+                    <button onclick="deconnecterBoutique()" class="w-full flex items-center gap-3 p-3 rounded-xl bg-slate-800/40 hover:bg-red-500/20 border border-slate-700/50 text-slate-200 hover:text-red-400 transition text-sm font-medium">
+                        <i class="fas fa-sign-out-alt w-5 text-red-400"></i> Se Déconnecter
+                    </button>
+                `;
+                if (zoneAjoutProduit) {
+                    zoneAjoutProduit.innerHTML = `
+                        <a href="ajouterproduit.html" class="flex items-center gap-3 text-slate-200 hover:text-white text-sm font-medium p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 transition border border-slate-700/50">
+                            <i class="fas fa-box-open w-5 text-blue-400"></i> Ajouter un Produit
+                        </a>
+                    `;
+                }
+            } else {
+                // Visiteur non connecté : Afficher uniquement Se Connecter
+                zoneAuth.innerHTML = `
+                    <a href="connexion.html" class="flex items-center gap-3 text-slate-200 hover:text-white text-sm font-medium p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 transition border border-slate-700/50">
+                        <i class="fas fa-sign-in-alt w-5 text-violet-400"></i> Se Connecter
+                    </a>
+                `;
+                if (zoneAjoutProduit) zoneAjoutProduit.innerHTML = '';
+            }
+        }
+
+        async function chargerProduits() {
+            const container = document.getElementById('grilleProduits');
+            const compteur = document.getElementById('compteurArticles');
+
+            try {
+                const { data: vendeurs } = await db.from('vendeurs').select('nom_boutique, whatsapp');
+                if (vendeurs) {
+                    vendeurs.forEach(v => {
+                        let num = v.whatsapp ? v.whatsapp.replace(/[^0-9]/g, '') : '22872119966';
+                        if (!num.startsWith('228')) num = '228' + num;
+                        mapVendeurs[v.nom_boutique] = num;
+                    });
+                }
+
+                const { data: produits, error } = await db.from('produits').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+
+                tousLesProduits = produits || [];
+                compteur.textContent = `${tousLesProduits.length} article${tousLesProduits.length > 1 ? 's' : ''}`;
+
+                if (tousLesProduits.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-slate-400 text-center col-span-full py-12">Aucun article publié pour le moment.</p>`;
+                    return;
+                }
+
+                afficherProduits(tousLesProduits);
+
+            } catch (err) {
+                console.error("Erreur produits:", err);
+                container.innerHTML = `<p class="text-xs text-red-400 text-center col-span-full py-8">Impossible de charger les produits.</p>`;
+            }
+        }
+
+                function afficherProduits(liste) {
+            const container = document.getElementById('grilleProduits');
+            container.innerHTML = liste.map(p => {
+                const numWa = mapVendeurs[p.nom_boutique] || '22872119966';
+                const msgWa = encodeURIComponent(`Bonjour ! Je suis intéressé par votre article "${p.titre}" (${p.prix ? p.prix + ' FCFA' : 'Sur devis'}) vu sur WiseMarket.`);
+                const lienWa = `https://wa.me/${numWa}?text=${msgWa}`;
+
+                return `
+                <div class="bg-[#0F172A] border border-slate-800 rounded-3xl overflow-hidden flex flex-col justify-between hover:border-slate-700 transition shadow-lg">
+                    <div>
+                        <div class="relative bg-black/30">
+                            <img src="${p.image_url || 'https://via.placeholder.com/300'}" alt="${p.titre}" class="product-img" onclick="zoomerImage('${p.image_url || 'https://via.placeholder.com/300'}')">
+                            <span class="absolute top-3 left-3 bg-violet-600/90 text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                ${p.categorie || 'Article'}
+                            </span>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <h3 class="text-sm font-bold text-white line-clamp-1">${p.titre}</h3>
+                            <p class="text-xs text-slate-400 line-clamp-2">${p.description || 'Pas de description.'}</p>
+                            <div class="flex items-center justify-between pt-2">
+                                <span class="text-base font-black text-emerald-400">${p.prix ? p.prix + ' FCFA' : 'Sur devis'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0 grid grid-cols-2 gap-2">
+                        <button onclick="ouvrirModalParId('${p.id}')" class="bg-emerald-600/20 hover:bg-emerald-600 border border-emerald-500/30 text-emerald-300 hover:text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
+                            <i class="fas fa-shopping-cart"></i> Commander
+                        </button>
+                        <a href="${lienWa}" target="_blank" class="bg-violet-600/20 hover:bg-violet-600 border border-violet-500/30 text-violet-300 hover:text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
+                            <i class="fab fa-whatsapp"></i> Discuter
+                        </a>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function zoomerImage(src) {
+            document.getElementById('imgZoom').src = src;
+            document.getElementById('modalZoom').classList.remove('hidden');
+        }
+
+        function fermerZoom() {
+            document.getElementById('modalZoom').classList.add('hidden');
+        }
+
+        function filtrerProduits() {
+            const query = document.getElementById('inputRecherche').value.toLowerCase();
+            const filtres = tousLesProduits.filter(p => p.titre.toLowerCase().includes(query));
+            afficherProduits(filtres);
+        }
+
+        function ouvrirModalParId(idProduit) {
+            const prod = tousLesProduits.find(p => String(p.id) === String(idProduit));
+            if (prod) ouvrirModalCommande(prod);
+        }
+
+        async function validerCommandeLivraison(e) {
+            if (e) e.preventDefault();
+            if (!produitActuel) return;
+
+            const nom = document.getElementById('nomClient').value;
+            const tel = document.getElementById('telClient').value;
+            const adresse = document.getElementById('adresseLivraison').value;
+            const quantite = parseInt(document.getElementById('quantiteProduit').value) || 1;
+
+            const codeCommande = 'WM-' + Math.floor(100000 + Math.random() * 900000);
+            const prixChiffre = parseInt((produitActuel.prix || 0).toString().replace(/[^0-9]/g, ''), 10) || 0;
+            const prixTotal = prixChiffre * quantite;
+
+            try {
+                const { data, error } = await db.from('commandes').insert([{
+                    code_commande: codeCommande,
+                    nom_client: nom,
+                    telephone_client: tel,
+                    adresse_livraison: adresse,
+                    titre_produit: produitActuel.titre,
+                    nom_boutique: produitActuel.nom_boutique,
+                    prix: prixTotal,
+                    quantite: quantite,
+                    moyen_paiement: 'LIVRAISON',
+                    statut: 'EN_ATTENTE_LIVRAISON'
+                }]);
+
+                if (error) throw error;
+
+                alert(`Commande enregistrée !\nCode : ${codeCommande}\nPaiement à la livraison.`);
+                window.location.href = `suivi.html?code=${codeCommande}`;
+
+            } catch (err) {
+                console.error("Erreur Supabase:", err);
+                alert("Impossible de valider la commande. Réessaie.");
+            }
+        }
+
+        function changerQuantite(valeur) {
+            const input = document.getElementById('quantiteProduit');
+            if (!input) return;
+            let qte = parseInt(input.value) + valeur;
+            if (qte < 1) qte = 1;
+            input.value = qte;
+        }
+
+        function ouvrirModalCommande(produit) {
+            produitActuel = produit;
+            document.getElementById('modalProduitTitre').innerText = produit.titre;
+
+            const prixClean = parseInt(String(produit.prix).replace(/\D/g, ''), 10) || 0;
+            document.getElementById('modalProduitPrix').innerText = prixClean.toLocaleString('fr-FR') + ' FCFA';
+
+            document.getElementById('modalProduitImage').src = produit.image_url || '';
+            document.getElementById('quantiteProduit').value = 1;
+
+            const modal = document.getElementById('modalCommande');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function fermerModalCommande() {
+            const modal = document.getElementById('modalCommande');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function deconnecterBoutique() {
+            localStorage.removeItem('wisemarket_boutique');
+            localStorage.removeItem('ma_boutique');
+            window.location.href = "index.html";
+        }
+
+        // Lancement au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            chargerProduits();
+            gererBoutonsAuth();
+        });
+    </script>
+</body>
+</html>
+
