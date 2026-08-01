@@ -214,6 +214,10 @@
                                 statusText = "✅ Livrée";
                             }
 
+                            // Échappement des apostrophes pour éviter les erreurs JavaScript dans onclick
+                            const safeNomClient = (cmd.nom_client || '').replace(/'/g, "\\'");
+                            const safeTitreProduit = (cmd.titre_produit || '').replace(/'/g, "\\'");
+
                             return `
                             <div class="bg-[#0F172A] p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
                                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -235,13 +239,13 @@
 
                                 <div class="flex gap-2 pt-1">
                                     ${cmd.statut === 'EN_ATTENTE_LIVRAISON' || !cmd.statut ? `
-                                        <button onclick="changerStatutCommande('${cmd.id}', 'ACCEPTE')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl transition">
+                                        <button onclick="changerStatutCommande('${cmd.id}', 'ACCEPTE', '${cmd.telephone_client}', '${safeNomClient}', '${safeTitreProduit}')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl transition">
                                             👍 Accepter
                                         </button>
                                     ` : ''}
 
                                     ${cmd.statut !== 'LIVRE' ? `
-                                        <button onclick="changerStatutCommande('${cmd.id}', 'LIVRE')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl transition">
+                                        <button onclick="changerStatutCommande('${cmd.id}', 'LIVRE', '${cmd.telephone_client}', '${safeNomClient}', '${safeTitreProduit}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl transition">
                                             ✅ Marquer Livré
                                         </button>
                                     ` : ''}
@@ -254,7 +258,8 @@
             }
         }
 
-        async function changerStatutCommande(idCommande, nouveauStatut) {
+        async function changerStatutCommande(idCommande, nouveauStatut, telClient, nomClient, produitNom) {
+            // 1. Mise à jour du statut dans Supabase
             const { error } = await db
                 .from('commandes')
                 .update({ statut: nouveauStatut })
@@ -262,9 +267,29 @@
 
             if (error) {
                 alert("Erreur lors de la mise à jour");
-            } else {
-                ouvrirMesCommandes();
+                return;
             }
+
+            // 2. Envoi automatique de la notification WhatsApp au client
+            if (telClient && telClient !== 'undefined') {
+                let cleanTel = telClient.replace(/[^0-9]/g, '');
+                if (!cleanTel.startsWith('228')) cleanTel = '228' + cleanTel;
+
+                let txtMsg = "";
+                if (nouveauStatut === 'ACCEPTE') {
+                    txtMsg = `Bonjour ${nomClient || ''} ! 👋 Votre commande pour "${produitNom}" a été ACCEPTÉE par notre boutique. Nous préparons votre livraison ! 📦`;
+                } else if (nouveauStatut === 'LIVRE') {
+                    txtMsg = `Bonjour ${nomClient || ''} ! 🎉 Votre commande pour "${produitNom}" a été marquée comme LIVRÉE. Merci pour votre confiance sur WiseMarket ! ⭐`;
+                }
+
+                if (txtMsg) {
+                    const waUrl = `https://wa.me/${cleanTel}?text=${encodeURIComponent(txtMsg)}`;
+                    window.open(waUrl, '_blank');
+                }
+            }
+
+            // 3. Recharger l'affichage des commandes
+            ouvrirMesCommandes();
         }
 
         function partagerVitrine() {
@@ -284,5 +309,4 @@
         document.addEventListener('DOMContentLoaded', chargerVitrine);
     </script>
 </body>
-    </html>
-    
+</html>
