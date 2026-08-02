@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Connexion Vendeur - WiseMarket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -71,7 +74,7 @@
 
             <div class="border-t border-slate-800 pt-4 text-center text-xs text-slate-400 space-y-2">
                 <p>Vous n'avez pas encore de boutique ?</p>
-                <a href="creerboutique.html" class="text-emerald-400 font-bold hover:underline inline-block">
+                <a href="inscription.html" class="text-emerald-400 font-bold hover:underline inline-block">
                     Créer Ma Boutique
                 </a>
             </div>
@@ -93,8 +96,8 @@
         async function connecterBoutique(e) {
             e.preventDefault();
             
-            const nom = document.getElementById('nomBoutique').value.trim();
-            const pass = document.getElementById('passBoutique').value.trim();
+            const nomSaisi = document.getElementById('nomBoutique').value.trim();
+            const passSaisi = document.getElementById('passBoutique').value.trim();
             const btn = document.getElementById('btnConnecter');
             const msg = document.getElementById('messageStatut');
 
@@ -103,41 +106,59 @@
             msg.className = "hidden text-center text-xs p-3 rounded-xl border";
 
             try {
-                // VERIFICATION DANS LA TABLE DES PRODUITS/BOUTIQUES
-                const { data, error } = await db
-                    .from('produits')
+                // 1. RECHERCHE DANS LA TABLE VENDEURS (Insensible à la casse)
+                const { data: vendeurs, error } = await db
+                    .from('vendeurs')
                     .select('*')
-                    .ilike('nom_boutique', nom)
-                    .limit(1);
+                    .ilike('nom_boutique', nomSaisi);
 
                 if (error) throw error;
 
-                if (data && data.length > 0) {
-                    const nomExact = data[0].nom_boutique;
-
-                    // SAUVEGARDE EN LOCALSTORAGE
-                    localStorage.setItem('wisemarket_boutique', nomExact);
-                    
-                    msg.textContent = "Connexion réussie ! Redirection vers votre boutique...";
-                    msg.classList.remove('hidden');
-                    msg.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-400');
-
-                    // REDIRECTION VERS BOUTIQUE.HTML AVEC LE BON PARAMÈTRE
-                    setTimeout(() => {
-                        window.location.href = `boutique.html?nom=${encodeURIComponent(nomExact)}`;
-                    }, 1200);
-
-                } else {
+                // 2. SI LA BOUTIQUE N'EXISTE PAS
+                if (!vendeurs || vendeurs.length === 0) {
                     msg.textContent = "Nom de boutique introuvable. Assurez-vous d'avoir créé votre boutique.";
                     msg.classList.remove('hidden');
                     msg.classList.add('bg-red-500/10', 'border-red-500/30', 'text-red-400');
                     btn.disabled = false;
                     btn.innerHTML = `<i class="fas fa-sign-in-alt"></i> Se Connecter`;
+                    return;
                 }
+
+                const vendeur = vendeurs[0];
+
+                // 3. VÉRIFICATION DU MOT DE PASSE (Si le champ existe dans Supabase)
+                if (vendeur.mot_de_passe && vendeur.mot_de_passe !== passSaisi) {
+                    msg.textContent = "Mot de passe incorrect.";
+                    msg.classList.remove('hidden');
+                    msg.classList.add('bg-red-500/10', 'border-red-500/30', 'text-red-400');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fas fa-sign-in-alt"></i> Se Connecter`;
+                    return;
+                }
+
+                // 4. SAUVEGARDE UNIFORMISÉE ET PROPRE EN LOCALSTORAGE
+                localStorage.setItem('wisemarket_boutique', JSON.stringify({ nom_boutique: vendeur.nom_boutique }));
+                localStorage.setItem('ma_boutique', vendeur.nom_boutique);
+
+                // Ajout dans la liste des multi-boutiques enregistrées sur le téléphone
+                let mesBoutiques = JSON.parse(localStorage.getItem('mes_boutiques')) || [];
+                if (!mesBoutiques.some(b => b.nom_boutique.toLowerCase() === vendeur.nom_boutique.toLowerCase())) {
+                    mesBoutiques.push({ nom_boutique: vendeur.nom_boutique });
+                    localStorage.setItem('mes_boutiques', JSON.stringify(mesBoutiques));
+                }
+                
+                msg.textContent = "Connexion réussie ! Redirection vers votre boutique...";
+                msg.classList.remove('hidden');
+                msg.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-400');
+
+                // REDIRECTION PROPRE
+                setTimeout(() => {
+                    window.location.href = "boutique.html";
+                }, 1000);
 
             } catch (err) {
                 console.error("Erreur connexion:", err);
-                msg.textContent = "Erreur de connexion réseau. Veuillez réessayer.";
+                msg.textContent = "Erreur de connexion au serveur. Veuillez réessayer.";
                 msg.classList.remove('hidden');
                 msg.classList.add('bg-red-500/10', 'border-red-500/30', 'text-red-400');
                 btn.disabled = false;
