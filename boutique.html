@@ -293,18 +293,19 @@
         }
 
         function partagerVitrine() {
-            const urlVitrine = window.location.href;
-            if (navigator.share) {
-                navigator.share({
-                    title: `Boutique ${vendeurNom}`,
-                    text: `Découvrez la boutique ${vendeurNom} sur WiseMarket Togo !`,
-                    url: urlVitrine
-                });
-            } else {
-                navigator.clipboard.writeText(urlVitrine);
-                alert("Lien de la vitrine copié !");
-            }
+    const urlClean = `${window.location.origin}${window.location.pathname}?vendeur=${encodeURIComponent(vendeurNom)}`;
+    if (navigator.share) {
+        navigator.share({
+            title: `Boutique ${vendeurNom}`,
+            text: `Découvrez la boutique ${vendeurNom} sur WiseMarket Togo !`,
+            url: urlClean
+        }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(urlClean);
+        alert("Lien de la vitrine copié !");
+    }
         }
+        
 
         document.addEventListener('DOMContentLoaded', chargerVitrine);
     </script>
