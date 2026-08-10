@@ -83,16 +83,19 @@
         async function chargerVitrine() {
             const container = document.getElementById('grilleArticles');
 
+                const maBoutiqueConnectee = localStorage.getItem('maBoutiqueNom') || localStorage.getItem('ma_boutique');
+
+    if (!vendeurNom) {
+        vendeurNom = maBoutiqueConnectee;
+        if (!vendeurNom) {
+            vendeurNom = prompt("Entrez le nom de la boutique à consulter :");
             if (!vendeurNom) {
-                vendeurNom = localStorage.getItem('maBoutiqueNom') || localStorage.getItem('ma_boutique');
-                if (!vendeurNom) {
-                    vendeurNom = prompt("Entrez le nom de la boutique à consulter :");
-                    if (!vendeurNom) {
-                        window.location.href = "index.html";
-                        return;
-                    }
-                }
+                window.location.href = "index.html";
+                return;
             }
+        }
+    }
+            
 
             try {
                 const { data: vData } = await db
@@ -120,6 +123,16 @@
                 document.getElementById('actionsVitrine').classList.remove('hidden');
                 document.getElementById('actionsVitrine').classList.add('flex');
 
+                      // --- SÉCURITÉ : Cacher le bouton aux clients ---
+        const btnCommandes = document.querySelector("button[onclick='ouvrirMesCommandes()']");
+        if (btnCommandes) {
+            if (!maBoutiqueConnectee || maBoutiqueConnectee.trim().toLowerCase() !== vendeurNom.trim().toLowerCase()) {
+                btnCommandes.style.display = 'none';
+            } else {
+                btnCommandes.style.display = 'block';
+            }
+        }
+                
                 if (vData && vData.ville) {
                     document.getElementById('descVitrine').innerText = `Boutique basée à ${vData.ville} — Produits disponibles sur WiseMarket Togo.`;
                 }
