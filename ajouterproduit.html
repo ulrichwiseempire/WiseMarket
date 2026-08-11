@@ -178,10 +178,12 @@
                 }
 
                 // 2. Traitement de l'image
-                let image_url = 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80';
-                if (fileSelectionne) {
-                    image_url = await compresserPhoto(fileSelectionne);
-                }
+if (!fileSelectionne) {
+    throw new Error("📷 Veuillez sélectionner une photo dans votre galerie avant de publier !");
+}
+
+let image_url = await compresserPhoto(fileSelectionne);
+                
 
                 // 3. Insertion de l'article dans Supabase
                 const { error: pErr } = await db
