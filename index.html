@@ -114,7 +114,23 @@
                 <i class="fas fa-search absolute right-4 top-3.5 text-slate-500 text-xs"></i>
             </div>
         </div>
-
+<!-- FILTRE PAR VILLE -->
+<div class="mb-4 flex items-center gap-2">
+    <label for="filtreVille" class="text-xs font-semibold text-slate-400 whitespace-nowrap">
+        <i class="fas fa-map-marker-alt text-violet-400"></i> Ville :
+    </label>
+    <select id="filtreVille" onchange="chargerProduits()" class="bg-[#0F172A] border border-slate-800 text-white text-xs rounded-xl p-2.5 w-full focus:outline-none focus:border-violet-500">
+        <option value="">Toutes les villes</option>
+        <option value="Lomé">Lomé</option>
+        <option value="Kara">Kara</option>
+        <option value="Sokodé">Sokodé</option>
+        <option value="Kpalimé">Kpalimé</option>
+        <option value="Atakpamé">Atakpamé</option>
+        <option value="Dapaong">Dapaong</option>
+        <option value="Tsévié">Tsévié</option>
+    </select>
+</div>
+        
         <div class="flex items-center justify-between">
             <h2 class="text-sm font-bold text-white flex items-center gap-2">
                 <i class="fas fa-fire text-amber-400"></i> Articles Récents
@@ -337,21 +353,47 @@
         }
 
         async function chargerProduits() {
-            const container = document.getElementById('grilleProduits');
-            const compteur = document.getElementById('compteurArticles');
+    const container = document.getElementById('grilleProduits');
+    const compteur = document.getElementById('compteurArticles');
+    const villeChoisie = document.getElementById('filtreVille') ? document.getElementById('filtreVille').value : '';
 
-            try {
-                const { data: vendeurs } = await db.from('vendeurs').select('nom_boutique, whatsapp');
-                if (vendeurs) {
-                    vendeurs.forEach(v => {
-                        let num = v.whatsapp ? v.whatsapp.replace(/[^0-9]/g, '') : '22872119966';
-                        if (!num.startsWith('228')) num = '228' + num;
-                        mapVendeurs[v.nom_boutique] = num;
-                    });
-                }
+    try {
+        // 1. Filtrer les vendeurs selon la ville sélectionnée
+        let queryVendeurs = db.from('vendeurs').select('nom_boutique, whatsapp, ville');
+        if (villeChoisie) {
+            queryVendeurs = queryVendeurs.eq('ville', villeChoisie);
+        }
 
-                const { data: produits, error } = await db.from('produits').select('*').order('created_at', { ascending: false });
-                if (error) throw error;
+        const { data: vendeurs } = await queryVendeurs;
+        
+        const mapVendeurs = {};
+        const vendeursValides = [];
+
+        if (vendeurs) {
+            vendeurs.forEach(v => {
+                let num = v.whatsapp ? v.whatsapp.replace(/[^0-9]/g, '') : '22872119966';
+                if (!num.startsWith('228')) num = '228' + num;
+                mapVendeurs[v.nom_boutique] = num;
+                vendeursValides.push(v.nom_boutique);
+            });
+        }
+
+        // Si une ville est choisie mais qu'aucun vendeur n'y existe
+        if (villeChoisie && vendeursValides.length === 0) {
+            compteur.textContent = "0 article";
+            container.innerHTML = `<p class="text-xs text-slate-400 text-center col-span-full py-8">Aucun article disponible pour : ${villeChoisie}.</p>`;
+            return;
+        }
+
+        // 2. Charger les produits (filtrés si une ville est sélectionnée)
+        let queryProduits = db.from('produits').select('*').order('created_at', { ascending: false });
+        if (villeChoisie) {
+            queryProduits = queryProduits.in('nom_boutique', vendeursValides);
+        }
+
+        const { data: produits, error } = await queryProduits;
+        if (error) throw error;
+                
 
                 tousLesProduits = produits || [];
                 compteur.textContent = `${tousLesProduits.length} article${tousLesProduits.length > 1 ? 's' : ''}`;
@@ -398,6 +440,11 @@
                             ` : ''}
                         </div>
                         <div class="p-4 space-y-2">
+                         <!-- Lien cliquable vers la boutique du vendeur -->
+<a href="boutique.html?vendeur=${encodeURIComponent(p.nom_boutique)}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-violet-400 hover:text-violet-300 hover:underline mb-1">
+    <i class="fas fa-store text-[11px]"></i> ${p.nom_boutique || 'Voir la boutique'}
+</a>
+
                             <h3 class="text-sm font-bold text-white line-clamp-1">${p.titre}</h3>
                             <p class="text-xs text-slate-400 line-clamp-2">${p.description || 'Pas de description.'}</p>
                             <div class="flex items-center justify-between pt-2">
